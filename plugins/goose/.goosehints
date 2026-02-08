@@ -1,0 +1,49 @@
+This project follows a structured software development lifecycle using
+agent skills from jwilger/agent-skills.
+
+## Workflow: Test-Driven Development
+
+All code changes follow the red/domain/green/domain cycle:
+
+1. RED: Write ONE failing test. Run it. Verify it fails. Stop.
+2. DOMAIN: Review for primitive obsession. Create types with stubs. Stop.
+3. GREEN: Minimal implementation to pass the test. Run it. Verify it passes. Stop.
+4. DOMAIN: Review implementation for domain violations. Stop.
+
+Phase boundaries: RED edits only test files, DOMAIN edits only type
+definitions, GREEN edits only implementation code.
+
+## Domain Modeling
+
+Use domain types, not primitives. Email not String, Money not float.
+Parse at the boundary, trust types internally. Make invalid states
+unrepresentable. Name types for what they ARE in the domain, not what
+they are made of (UserName not NonEmptyString).
+
+## Architecture
+
+Check for docs/ARCHITECTURE.md before making structural changes. If it
+exists, follow documented decisions. Record new architecture decisions as ADRs (see architecture-decisions
+skill for format).
+
+## Code Review
+
+Before creating a PR, verify three stages:
+1. Spec compliance: every criterion has a test
+2. Code quality: no dead code, duplication, or complexity
+3. Domain integrity: no primitive obsession, types enforce invariants
+
+## Testing
+
+Always run tests and paste the actual output. Never assume a test will
+pass or fail. One assertion per test. Commit after each completed cycle.
+
+## Recipes
+
+SDLC workflow recipes are available in the recipes/ directory:
+- tdd-cycle.yaml: Red/domain/green/domain implementation workflow
+- event-modeling.yaml: Domain discovery and modeling session
+- code-review.yaml: Three-stage review protocol
+- pr-workflow.yaml: PR creation with quality gates
+
+Run a recipe with: goose run --recipe recipes/<name>.yaml
