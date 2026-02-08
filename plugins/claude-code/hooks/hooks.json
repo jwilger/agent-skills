@@ -1,0 +1,30 @@
+{
+  "hooks": {
+    "SubagentStop": [
+      {
+        "hooks": [
+          {
+            "type": "prompt",
+            "prompt": "DOMAIN REVIEW CHECKPOINT (MANDATORY)\n\nDetect which agent just completed and enforce domain review requirements.\n\nExamine the conversation to determine which agent just finished. Look for agent invocation patterns, self-identification, and file modification patterns (test files = red, production = green).\n\n**If red just completed:**\nA failing test was just written. Domain review is MANDATORY before proceeding.\nNext action MUST be: Launch domain agent with DOMAIN_CONTEXT: AFTER_RED\nBlock if orchestrator tries to skip directly to GREEN.\n\n**If green just completed:**\nProduction code was just implemented. Domain review is MANDATORY before proceeding.\nNext action MUST be: Launch domain agent with DOMAIN_CONTEXT: AFTER_GREEN\nBlock if orchestrator tries to write another test without review.\n\n**If domain just completed:**\nDomain review passed, workflow may continue. Allow orchestrator to proceed.\n\n**If any other agent completed:**\nAllow (domain review not required).\n\nAfter RED or GREEN (domain review required):\n{\"ok\": false, \"reason\": \"Domain review is MANDATORY after {agent} phase. You must launch the domain agent with appropriate DOMAIN_CONTEXT before proceeding. This is NOT optional.\"}\n\nAfter DOMAIN or other agents:\n{\"ok\": true}\n\nThis enforces the TDD cycle: RED -> DOMAIN -> GREEN -> DOMAIN.\nSee skills/tdd-cycle/SKILL.md for the methodology this enforces."
+          }
+        ]
+      },
+      {
+        "hooks": [
+          {
+            "type": "prompt",
+            "prompt": "SUBAGENT COMPLETED - ORCHESTRATION REMINDER\n\nAn agent just finished. Before proceeding:\n\nYOU ARE AN ORCHESTRATOR, NOT AN IMPLEMENTER.\n\nYou MUST NEVER use Edit or Write tools directly on project files.\n\nRole selection for file edits:\n- Test code -> Launch red agent\n- Production code -> Launch green agent\n- Type definitions -> Launch domain agent\n- Architecture docs -> Launch adr, architecture-facilitator, or architect agent\n- Event model docs -> Launch gwt, workflow-modeler, model-checker, or discovery agent\n- Config/docs/scripts -> Launch file-updater agent\n\nTDD CYCLE CHECKPOINT:\n- After RED -> Launch domain (review test)\n- After DOMAIN (post-red) -> Launch green (implement)\n- After GREEN -> Launch domain (review implementation)\n- After DOMAIN (post-green) -> Next test or refactor\n\nNO EXCEPTIONS. NO \"QUICK FIXES\". NO \"JUST ONE LINE\".\n\nAgents have ZERO memory of this conversation - provide complete context every time:\n- File paths\n- Test names and error messages\n- Current TDD phase\n- Requirements and constraints\n\nSee skills/orchestration/SKILL.md for the methodology this enforces.\n\nRespond with JSON only: {\"ok\": true}"
+          }
+        ]
+      },
+      {
+        "hooks": [
+          {
+            "type": "prompt",
+            "prompt": "QUESTION DETECTION - USER INPUT ENFORCEMENT\n\nAnalyze the agent's final output for patterns indicating it's blocking on user input.\n\nBLOCKING QUESTION PATTERNS (require AskUserQuestion tool):\n- \"Before I proceed, I need to know...\"\n- \"I have a few questions:\"\n- Numbered/bulleted lists of questions (2+)\n- \"Should I... or should I...\"\n- \"Which approach would you prefer:\"\n\nACCEPTABLE PATTERNS (no tool needed):\n- Single clarifying question while continuing work\n- Rhetorical questions in explanations\n- Questions the agent answers itself\n\nBLOCK if ALL of these are true:\n- Output contains 2+ questions requiring user input to proceed\n- Questions use blocking language (\"before I\", \"I need to know\")\n- Agent has NOT taken action (appears to be waiting)\n- AskUserQuestion tool was NOT used\n\nALLOW if ANY of these are true:\n- AskUserQuestion was used with structured options\n- Only 0-1 simple questions asked\n- Questions are informational/rhetorical\n- Agent continued working and asked incidental questions\n\nTo block: {\"ok\": false, \"reason\": \"You asked multiple questions requiring user input but didn't use AskUserQuestion. Please reformulate using AskUserQuestion tool with structured options.\"}\nTo allow: {\"ok\": true}\n\nSee skills/user-input-protocol/SKILL.md for the methodology this enforces."
+          }
+        ]
+      }
+    ]
+  }
+}
