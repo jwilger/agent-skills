@@ -7,8 +7,9 @@ description: >-
   The orchestrator never writes files directly.
 license: CC0-1.0
 compatibility: >-
-  Works on any harness. On harnesses with subagents (Claude Code, OpenCode),
-  use parallel delegation. On harnesses without, play roles sequentially.
+  Works on any harness. Adapts to the delegation topology available:
+  hub-and-spoke (flat), shallow hierarchy, or sequential role-switching.
+  Hub-and-spoke is the default assumption.
 metadata:
   author: jwilger
   version: "1.0"
@@ -49,9 +50,23 @@ specialized roles.
 | Architecture docs | Architect | `ARCHITECTURE.md`, ADRs |
 | Config, docs, scripts | File Updater | Everything not specialized |
 
-On harnesses with subagents, delegate to separate agent instances. On
-harnesses without, shift into the appropriate role explicitly: "I am now
-acting as the Test Writer role" -- then shift back to orchestrator when done.
+How roles map to agents depends on the harness delegation topology:
+
+- **Hub-and-spoke (flat):** The orchestrator spawns leaf-node specialists
+  directly. Specialists cannot sub-delegate. All coordination flows through
+  the orchestrator. Common on Claude Code, Amp, and OpenAI Agents SDK.
+- **Shallow hierarchy:** The orchestrator delegates to specialists who may
+  invoke one level of sub-specialists. Cap depth at 2-3 levels; deeper
+  nesting duplicates work and degrades context quality. Common on OpenCode,
+  Goose, and CrewAI.
+- **Sequential role-switching:** The orchestrator plays each role itself:
+  "I am now acting as the Test Writer role" -- then shifts back when done.
+  Use on single-agent harnesses or when the orchestrator cannot spawn.
+
+When in doubt, prefer hub-and-spoke. Flat delegation gives the orchestrator
+unmediated feedback from every role and keeps coordination simple. Roles are
+leaf workers -- if a role needs sub-work done, it reports back to the
+orchestrator, which decides whether to decompose further.
 
 **Do not:**
 - Make "quick fixes" directly ("just one line")
@@ -154,6 +169,20 @@ partial progress. Re-delegating would discard all of that and start cold.
 **Note:** The "Provide Complete Context Every Time" practice applies to
 NEW delegations only. Resumed agents already have their context.
 
+### Respect Delegation Depth
+
+Do not nest delegation deeper than the harness supports. Even on harnesses
+that allow deep nesting, prefer shallow topologies:
+
+- **3-4 active agents** is the empirical sweet spot per workflow cycle
+- Deeper trees add coordination cost with diminishing quality returns
+- Subagents duplicating parent work is a sign of excessive depth
+- Context gets summarized (lossy) at each delegation boundary
+
+If a role needs help, it reports back to the orchestrator rather than
+spawning its own specialists. The orchestrator decides whether to decompose
+further. This keeps feedback loops short and coordination centralized.
+
 ## Enforcement Note
 
 This skill provides advisory guidance. It cannot mechanically prevent the
@@ -176,6 +205,7 @@ After completing a workflow cycle guided by this skill, verify:
 - [ ] Role concerns were addressed before proceeding (not ignored)
 - [ ] User was consulted for any unresolved disagreements
 - [ ] Agents needing user input were resumed (not re-delegated) when the harness supports it
+- [ ] Delegation depth matched harness topology (no nesting beyond what is supported)
 
 ## Dependencies
 
