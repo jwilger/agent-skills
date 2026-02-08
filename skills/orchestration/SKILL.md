@@ -162,7 +162,8 @@ plugin support (Claude Code hooks, OpenCode event hooks), enforcement plugins
 add mechanical guardrails -- PreToolUse hooks block unauthorized file edits,
 SubagentStop hooks require domain review after red and green phases. On
 harnesses without enforcement, follow these practices by convention. If you
-observe violations, point them out.
+observe violations, point them out. For available enforcement plugins, see
+the [Harness Plugin Availability](../../README.md#harness-plugin-availability) table.
 
 ## Verification
 
@@ -188,5 +189,5 @@ orchestrates. For enhanced workflows, it integrates with:
 
 Missing a dependency? Install with:
 ```
-npx skills add jwilger/agent-skills/domain-modeling
+npx skills add jwilger/agent-skills --skill domain-modeling
 ```

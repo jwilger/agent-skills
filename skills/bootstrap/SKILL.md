@@ -87,7 +87,7 @@ developer choose which to install.
 
 **Install command format:**
 ```
-npx skills add jwilger/agent-skills/<skill-name>
+npx skills add jwilger/agent-skills --skill <skill-name>
 ```
 
 ### Let the Developer Decide
@@ -100,6 +100,8 @@ If the developer wants everything, provide a single combined command.
 
 This skill is purely advisory. It recommends skills but cannot install them.
 The developer must run install commands themselves or confirm installation.
+For available enforcement plugins, see the
+[Harness Plugin Availability](../../README.md#harness-plugin-availability) table.
 
 ## Verification
 

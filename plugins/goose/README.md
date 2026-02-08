@@ -42,10 +42,10 @@ If your Goose setup supports reading skills (via CONTEXT_FILE_NAMES or
 MCP), install the skills for deeper guidance:
 
 ```bash
-npx skills add jwilger/agent-skills/tdd-cycle
-npx skills add jwilger/agent-skills/domain-modeling
-npx skills add jwilger/agent-skills/code-review
-npx skills add jwilger/agent-skills/architecture-decisions
+npx skills add jwilger/agent-skills --skill tdd-cycle
+npx skills add jwilger/agent-skills --skill domain-modeling
+npx skills add jwilger/agent-skills --skill code-review
+npx skills add jwilger/agent-skills --skill architecture-decisions
 ```
 
 ## Recipes
