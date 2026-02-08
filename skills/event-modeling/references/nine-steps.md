@@ -34,6 +34,10 @@ Arrange brainstormed events into the timeline -- the "plot" of the workflow.
 
 ## Step 4: Create Wireframes
 
+These wireframes do not need to represent the actual UI/UX of the
+application. Their purpose is to provide a complete accounting of what data
+a user can see and what actions a user can take from each screen.
+
 For each user interaction point, create an ASCII wireframe showing:
 - What data the user SEES (from read models)
 - What data the user PROVIDES (command inputs)
@@ -67,9 +71,12 @@ Commands can fail; events cannot.
 
 ## Step 6: Design Read Models
 
-For each actor at each workflow point:
+Read models exist to support data displayed on wireframes as well as data
+needed by automations. For each actor at each workflow point, and for each
+automation:
 - "What does this person need to see?"
 - "What information do they need to make decisions?"
+- "What data does this automation need to determine its next action?"
 
 Verify every read model field traces back to an event. Example:
 ```

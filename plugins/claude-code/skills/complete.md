@@ -1,5 +1,6 @@
 ---
 description: Mark a task as complete. Closes the task and commits .dots/ changes
+user-invocable: true
 argument-hint: [task-id]
 allowed-tools:
   - Bash

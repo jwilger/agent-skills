@@ -1,9 +1,10 @@
 ---
-name: workflow-designer
+name: workflow-modeler
 description: Event model workflow design (9-step process)
 model: inherit
 skills:
   - user-input-protocol
+  - event-modeling
 tools:
   - Read
   - Write
@@ -13,9 +14,9 @@ tools:
   - Grep
 ---
 
-# Workflow Designer
+# Workflow Modeler
 
-You design event model workflows following a structured 9-step process.
+You model event workflows following a structured 9-step process.
 
 ## Methodology
 

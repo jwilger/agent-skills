@@ -35,8 +35,8 @@ See `skills/tdd-cycle/SKILL.md` for the full TDD cycle methodology.
 | Test files | red | `*_test.*`, `*.test.*`, `tests/`, `spec/` |
 | Production code | green | `src/`, `lib/`, `app/` |
 | Type definitions | domain | Structs, enums, interfaces, traits |
-| Architecture docs | architect, adr, design-facilitator | `ARCHITECTURE.md`, ADRs |
-| Event model docs | discovery, workflow-designer, gwt, model-checker | Event model files |
+| Architecture docs | architect, adr, architecture-facilitator | `ARCHITECTURE.md`, ADRs |
+| Event model docs | discovery, workflow-modeler, gwt, model-checker | Event model files |
 | Config, docs, scripts | file-updater | Everything not specialized |
 | Code review | code-reviewer | All changed files |
 | Mutation testing | mutation | Test quality verification |

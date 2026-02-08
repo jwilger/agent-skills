@@ -100,8 +100,11 @@ Each ADR PR:
 3. Uses the PR description as the full decision record (see `references/adr-template.md`)
 4. Gets labeled `adr` for discoverability
 
-When GitHub is not available, create decision records as files in
-`docs/decisions/NNNN-<slug>.md` using the same template structure.
+When GitHub PRs are not available, record the architecture decision in
+the commit message of the commit that updates `docs/ARCHITECTURE.md`.
+Use the same template structure (Context, Decision, Alternatives,
+Consequences). The commit message becomes the decision record, and
+`git log -- docs/ARCHITECTURE.md` becomes the decision history.
 
 ### Facilitate Decisions Systematically
 

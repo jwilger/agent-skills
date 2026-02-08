@@ -75,7 +75,7 @@ the agent on correct behavior through clear principles and practices.
 
 **Harness Plugins** add *mechanical enforcement* on harnesses that support
 it. Hooks that prevent editing the wrong file during the wrong TDD phase,
-gates that force domain review between red and green, slash commands that
+gates that force domain review between red and green, skills that
 wire up multi-step workflows. Plugins make the experience better on
 specific harnesses but are never required.
 
@@ -122,7 +122,7 @@ each other by name but never assume internal structure.
 
 | Harness | Skills | Plugin | Enforcement |
 |---------|--------|--------|-------------|
-| Claude Code | All 13 | Planned | Hooks, subagents, commands |
+| Claude Code | All 13 | Planned | Hooks, subagents, skills |
 | OpenCode | All 13 | Planned | JS/TS modules, event hooks |
 | Codex | All 13 | Planned | AGENTS.md, commands |
 | Cursor / Windsurf | All 13 | Planned | Rules files |

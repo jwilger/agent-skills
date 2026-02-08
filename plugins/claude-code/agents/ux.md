@@ -2,6 +2,8 @@
 name: ux
 description: UX and accessibility reviewer
 model: inherit
+skills:
+  - atomic-design
 tools:
   - Read
   - Glob

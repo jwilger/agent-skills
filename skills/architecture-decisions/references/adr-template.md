@@ -49,6 +49,32 @@ State the decision in active voice:
 - Or "N/A"
 ```
 
+## Without GitHub PRs: Commit Message Format
+
+When GitHub PRs are not available, use the same template structure in the
+commit message for the commit that updates `docs/ARCHITECTURE.md`:
+
+```bash
+git add docs/ARCHITECTURE.md
+git commit -m "arch: <brief decision summary>
+
+## Context
+What problem motivates this decision?
+
+## Decision
+We will <chosen approach> because <reasoning>.
+
+## Alternatives Considered
+- <Alternative>: <why not chosen>
+
+## Consequences
+- Positive: <what improves>
+- Negative: <trade-offs accepted>
+"
+```
+
+The decision history lives in `git log -- docs/ARCHITECTURE.md`.
+
 ## Git Workflow for ADR PRs
 
 ```bash

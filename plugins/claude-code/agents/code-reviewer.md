@@ -5,6 +5,8 @@ model: inherit
 skills:
   - user-input-protocol
   - memory-protocol
+  - code-review
+  - domain-modeling
 tools:
   - Read
   - Bash

@@ -2,6 +2,8 @@
 name: model-checker
 description: Event model validation and consistency checking
 model: inherit
+skills:
+  - event-modeling
 tools:
   - Read
   - Glob

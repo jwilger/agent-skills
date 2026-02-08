@@ -1,7 +1,7 @@
 {
   "name": "agent-skills-sdlc",
   "version": "1.0.0",
-  "description": "Enforcement plugin for Agent Skills SDLC workflow. Adds mechanical guardrails (hooks, agents, commands) on top of portable skills.",
+  "description": "Enforcement plugin for Agent Skills SDLC workflow. Adds mechanical guardrails (hooks, agents, skills) on top of portable skills.",
   "author": {
     "name": "John Wilger",
     "email": "john@johnwilger.com"
@@ -17,20 +17,20 @@
     "enforcement"
   ],
   "outputStyles": "./output-styles/",
-  "commands": [
-    "./commands/shared/orchestration.md",
-    "./commands/setup.md",
-    "./commands/start.md",
-    "./commands/work.md",
-    "./commands/pr.md",
-    "./commands/complete.md",
-    "./commands/review.md",
-    "./commands/design.md",
-    "./commands/plan.md",
-    "./commands/adr.md",
-    "./commands/remember.md",
-    "./commands/recall.md",
-    "./commands/domain-audit.md"
+  "skills": [
+    "./skills/shared/orchestration.md",
+    "./skills/setup.md",
+    "./skills/start.md",
+    "./skills/work.md",
+    "./skills/pr.md",
+    "./skills/complete.md",
+    "./skills/review.md",
+    "./skills/model.md",
+    "./skills/decompose.md",
+    "./skills/adr.md",
+    "./skills/remember.md",
+    "./skills/recall.md",
+    "./skills/domain-audit.md"
   ],
   "agents": [
     "./agents/red.md",
@@ -42,9 +42,9 @@
     "./agents/architect.md",
     "./agents/ux.md",
     "./agents/discovery.md",
-    "./agents/workflow-designer.md",
+    "./agents/workflow-modeler.md",
     "./agents/model-checker.md",
-    "./agents/design-facilitator.md",
+    "./agents/architecture-facilitator.md",
     "./agents/gwt.md",
     "./agents/adr.md",
     "./agents/file-updater.md"

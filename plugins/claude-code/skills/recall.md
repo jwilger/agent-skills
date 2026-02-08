@@ -1,5 +1,6 @@
 ---
 description: INVOKE before ANY task to check for existing solutions in auto memory
+user-invocable: true
 argument-hint: <what-to-recall>
 model: haiku
 allowed-tools:
