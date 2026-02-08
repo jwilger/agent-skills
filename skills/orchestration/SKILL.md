@@ -1,0 +1,163 @@
+---
+name: orchestration
+description: >-
+  Multi-agent orchestration patterns: delegation, context passing, workflow
+  gates, and role-based coordination. Activate when coordinating multiple
+  specialized roles, delegating file edits, or managing TDD cycle handoffs.
+  The orchestrator never writes files directly.
+license: CC0-1.0
+compatibility: >-
+  Works on any harness. On harnesses with subagents (Claude Code, OpenCode),
+  use parallel delegation. On harnesses without, play roles sequentially.
+metadata:
+  author: jwilger
+  version: "1.0"
+  requires: [tdd-cycle]
+  context: [test-files, domain-types, source-files, task-state]
+  phase: build
+  standalone: false
+---
+
+# Orchestration
+
+**Value:** Communication and respect -- the orchestrator ensures every
+specialized role receives complete context and every concern is heard before
+work proceeds.
+
+## Purpose
+
+Teaches the main conversation to coordinate work through specialized roles
+without performing specialized work itself. Solves the problem of an LLM
+trying to do everything at once, which leads to skipped reviews, inconsistent
+quality, and tangled responsibilities.
+
+## Practices
+
+### Never Write Files Directly
+
+The orchestrator decides WHAT to do and WHO should do it. It never uses
+Write or Edit tools on project files. All file modifications flow through
+specialized roles.
+
+**Role selection:**
+
+| File type | Role | Scope |
+|-----------|------|-------|
+| Test files | Test Writer | `*_test.*`, `*.test.*`, `tests/`, `spec/` |
+| Production code | Implementer | `src/`, `lib/`, `app/` |
+| Type definitions | Domain Modeler | Structs, enums, interfaces, traits |
+| Architecture docs | Architect | `ARCHITECTURE.md`, ADRs |
+| Config, docs, scripts | File Updater | Everything not specialized |
+
+On harnesses with subagents, delegate to separate agent instances. On
+harnesses without, shift into the appropriate role explicitly: "I am now
+acting as the Test Writer role" -- then shift back to orchestrator when done.
+
+**Do not:**
+- Make "quick fixes" directly ("just one line")
+- Edit files while "in orchestrator mode"
+- Skip delegation because "it is trivial"
+
+### Provide Complete Context Every Time
+
+Roles have zero memory of the main conversation. Every delegation must
+include all information needed to complete the task.
+
+**Required context template:**
+```
+TASK: What to accomplish
+FILES: Specific file paths to read or modify
+CURRENT STATE: What exists, what is passing/failing
+REQUIREMENTS: What "done" looks like
+CONSTRAINTS: Domain types to use, patterns to follow
+ERROR: Exact error message (if applicable)
+```
+
+**Do not:**
+- Say "as discussed earlier" or "continue from where we left off"
+- Summarize errors instead of providing exact text
+- Assume a role knows project conventions without stating them
+
+### Enforce Workflow Gates
+
+Work proceeds through gates. A gate is a precondition that must be satisfied
+before the next step begins. Gates prevent skipping steps.
+
+**TDD cycle gates:**
+1. Red complete (test written and failing) -> Domain review of test
+2. Domain review passed -> Green (implement)
+3. Green complete (test passing) -> Domain review of implementation
+4. Domain review passed -> Next test or ship
+
+If a role raises a concern (e.g., domain modeler vetoes a test for primitive
+obsession), the gate does not open until the concern is resolved. The
+orchestrator facilitates resolution:
+
+1. Concern raised -- affected role responds with rationale
+2. Orchestrator summarizes both positions
+3. Seek compromise (max 2 rounds)
+4. No consensus after 2 rounds -- escalate to user
+
+**The domain modeler has veto power** over primitive obsession, invalid state
+representability, and parse-don't-validate violations. This veto can only be
+overridden by the user, not by the orchestrator.
+
+### Use Task Dependencies When Available
+
+On harnesses with task/todo tools, encode workflow gates as task dependencies.
+Create tasks for each step and block downstream tasks on upstream completion.
+
+```
+Task 1: Write failing test [RED]
+Task 2: Review test, create types [DOMAIN] -- blocked by Task 1
+Task 3: Implement to pass test [GREEN] -- blocked by Task 2
+Task 4: Review implementation [DOMAIN] -- blocked by Task 3
+```
+
+On harnesses without task tools, track state explicitly in conversation:
+"RED complete. Test fails with: [error]. Proceeding to DOMAIN review."
+
+### Proxy Role Questions to User
+
+Roles running as subagents cannot ask the user questions directly. When a
+role's output contains questions or indicates it is blocked on a decision:
+
+1. Detect the blocking question
+2. Present it to the user with the role's context
+3. Deliver the user's answer back to the role with full context
+
+## Enforcement Note
+
+This skill provides advisory guidance. It cannot mechanically prevent the
+orchestrator from writing files directly or skipping gates. On harnesses with
+plugin support (Claude Code hooks, OpenCode event hooks), enforcement plugins
+add mechanical guardrails -- PreToolUse hooks block unauthorized file edits,
+SubagentStop hooks require domain review after red and green phases. On
+harnesses without enforcement, follow these practices by convention. If you
+observe violations, point them out.
+
+## Verification
+
+After completing a workflow cycle guided by this skill, verify:
+
+- [ ] Orchestrator did not use Write or Edit tools on project files
+- [ ] Every role delegation included complete context (task, files, state, requirements)
+- [ ] Domain review occurred after both red and green phases
+- [ ] No workflow gates were skipped
+- [ ] Role concerns were addressed before proceeding (not ignored)
+- [ ] User was consulted for any unresolved disagreements
+
+## Dependencies
+
+This skill requires `tdd-cycle` for the red/domain/green/domain workflow it
+orchestrates. For enhanced workflows, it integrates with:
+
+- **domain-modeling:** Domain modeler role applies these principles during review
+- **code-review:** Three-stage review before shipping
+- **task-management:** Encodes workflow gates as task dependencies
+- **user-input-protocol:** Structured format for proxying role questions
+
+Missing a dependency? Install with:
+```
+npx skills add jwilger/agent-skills/domain-modeling
+```
