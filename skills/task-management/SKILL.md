@@ -155,7 +155,8 @@ cannot mechanically prevent an agent from skipping task creation or working on
 blocked items. On harnesses with plugin support, enforcement plugins can require
 task activation before code changes and block work on tasks with unresolved
 dependencies. On harnesses without enforcement, the agent follows these practices
-by convention.
+by convention. For available enforcement plugins, see the
+[Harness Plugin Availability](../../README.md#harness-plugin-availability) table.
 
 ## Verification
 
@@ -181,5 +182,5 @@ This skill works standalone. For enhanced workflows, it integrates with:
 
 Missing a dependency? Install with:
 ```
-npx skills add jwilger/agent-skills/tdd-cycle
+npx skills add jwilger/agent-skills --skill tdd-cycle
 ```

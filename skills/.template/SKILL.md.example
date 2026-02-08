@@ -66,7 +66,8 @@ behavior but cannot mechanically prevent violations. On harnesses with plugin
 support (Claude Code hooks, OpenCode event hooks), enforcement plugins can add
 mechanical guardrails. On harnesses without enforcement, the agent follows
 these practices by convention. If you observe the agent violating a practice,
-point it out.
+point it out. For available enforcement plugins, see the
+[Harness Plugin Availability](../../README.md#harness-plugin-availability) table.
 
 ## Verification
 
@@ -89,5 +90,5 @@ This skill works standalone. For enhanced workflows, it integrates with:
 
 Missing a dependency? Install with:
 ```
-npx skills add jwilger/agent-skills/other-skill-name
+npx skills add jwilger/agent-skills --skill other-skill-name
 ```

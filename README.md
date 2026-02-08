@@ -8,18 +8,18 @@ or editor you use.
 
 ## Quick Start
 
-Install the full skill set:
+Install all skills:
 
 ```bash
-npx skills add jwilger/agent-skills
+npx skills add jwilger/agent-skills --all
 ```
 
 Or install individual skills:
 
 ```bash
-npx skills add jwilger/agent-skills/tdd-cycle
-npx skills add jwilger/agent-skills/domain-modeling
-npx skills add jwilger/agent-skills/code-review
+npx skills add jwilger/agent-skills --skill tdd-cycle
+npx skills add jwilger/agent-skills --skill domain-modeling
+npx skills add jwilger/agent-skills --skill code-review
 ```
 
 ## Skill Inventory
@@ -111,7 +111,7 @@ material lives in `references/` directories, loaded on demand.
 
 Skills declare dependencies in frontmatter (`metadata.requires`). When a
 skill activates and finds a dependency missing, it recommends installation
-with the specific `npx skills add` command. Dependencies are
+with the specific `npx skills add --skill` command. Dependencies are
 recommendations, not hard requirements -- every skill degrades gracefully
 when used alone.
 
@@ -135,28 +135,28 @@ enforcement on harnesses that support them.
 
 ## Installing Individual Skills
 
-Each skill is a directory under `skills/`. Install by path:
+Each skill is a directory under `skills/`. Install individually with `--skill`:
 
 ```bash
 # Core process skills
-npx skills add jwilger/agent-skills/tdd-cycle
-npx skills add jwilger/agent-skills/domain-modeling
-npx skills add jwilger/agent-skills/code-review
-npx skills add jwilger/agent-skills/architecture-decisions
-npx skills add jwilger/agent-skills/event-modeling
+npx skills add jwilger/agent-skills --skill tdd-cycle
+npx skills add jwilger/agent-skills --skill domain-modeling
+npx skills add jwilger/agent-skills --skill code-review
+npx skills add jwilger/agent-skills --skill architecture-decisions
+npx skills add jwilger/agent-skills --skill event-modeling
 
 # Orchestration skills
-npx skills add jwilger/agent-skills/orchestration
-npx skills add jwilger/agent-skills/task-management
+npx skills add jwilger/agent-skills --skill orchestration
+npx skills add jwilger/agent-skills --skill task-management
 
 # Utility skills
-npx skills add jwilger/agent-skills/debugging-protocol
-npx skills add jwilger/agent-skills/user-input-protocol
-npx skills add jwilger/agent-skills/memory-protocol
+npx skills add jwilger/agent-skills --skill debugging-protocol
+npx skills add jwilger/agent-skills --skill user-input-protocol
+npx skills add jwilger/agent-skills --skill memory-protocol
 
 # Advanced skills
-npx skills add jwilger/agent-skills/mutation-testing
-npx skills add jwilger/agent-skills/atomic-design
+npx skills add jwilger/agent-skills --skill mutation-testing
+npx skills add jwilger/agent-skills --skill atomic-design
 ```
 
 ## Contributing

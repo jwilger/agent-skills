@@ -154,7 +154,8 @@ violations. On harnesses with plugin support (Claude Code hooks, OpenCode
 event hooks), enforcement plugins add file-type restrictions and mandatory
 domain review gates. On other harnesses, the agent follows these practices
 by convention. If you observe the agent editing production code during RED
-or skipping domain review, point it out.
+or skipping domain review, point it out. For available enforcement
+plugins, see the [Harness Plugin Availability](../../README.md#harness-plugin-availability) table.
 
 ## Verification
 
@@ -185,5 +186,5 @@ This skill works standalone. For enhanced workflows, it integrates with:
 
 Missing a dependency? Install with:
 ```
-npx skills add jwilger/agent-skills/domain-modeling
+npx skills add jwilger/agent-skills --skill domain-modeling
 ```

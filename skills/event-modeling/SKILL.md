@@ -137,6 +137,8 @@ modeling methodology but cannot mechanically prevent skipping steps or
 producing incomplete models. On harnesses with plugin support, enforcement
 plugins can add workflow gates. On other harnesses, the agent follows these
 practices by convention. If you observe steps being skipped, point it out.
+For available enforcement plugins, see the
+[Harness Plugin Availability](../../README.md#harness-plugin-availability) table.
 
 ## Verification
 
@@ -169,5 +171,5 @@ This skill works standalone. For enhanced workflows, it integrates with:
 
 Missing a dependency? Install with:
 ```
-npx skills add jwilger/agent-skills/domain-modeling
+npx skills add jwilger/agent-skills --skill domain-modeling
 ```

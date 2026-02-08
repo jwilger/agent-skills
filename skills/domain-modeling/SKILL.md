@@ -170,7 +170,8 @@ mechanically prevent an agent from using primitives or creating invalid state
 representations. On harnesses with plugin support, enforcement plugins can
 add file-type restrictions (domain agent edits only type definitions) and
 mandatory review gates. On other harnesses, these principles are followed
-by convention and verified through code review.
+by convention and verified through code review. For available enforcement
+plugins, see the [Harness Plugin Availability](../../README.md#harness-plugin-availability) table.
 
 ## Verification
 
@@ -199,5 +200,5 @@ This skill works standalone. For enhanced workflows, it integrates with:
 
 Missing a dependency? Install with:
 ```
-npx skills add jwilger/agent-skills/tdd-cycle
+npx skills add jwilger/agent-skills --skill tdd-cycle
 ```

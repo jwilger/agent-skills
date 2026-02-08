@@ -76,18 +76,18 @@ Both Cursor and Windsurf support Agent Skills. For deeper methodology
 guidance beyond what the rules file provides, install skills directly:
 
 ```bash
-npx skills add jwilger/agent-skills/tdd-cycle
-npx skills add jwilger/agent-skills/domain-modeling
-npx skills add jwilger/agent-skills/code-review
-npx skills add jwilger/agent-skills/architecture-decisions
-npx skills add jwilger/agent-skills/debugging-protocol
-npx skills add jwilger/agent-skills/user-input-protocol
+npx skills add jwilger/agent-skills --skill tdd-cycle
+npx skills add jwilger/agent-skills --skill domain-modeling
+npx skills add jwilger/agent-skills --skill code-review
+npx skills add jwilger/agent-skills --skill architecture-decisions
+npx skills add jwilger/agent-skills --skill debugging-protocol
+npx skills add jwilger/agent-skills --skill user-input-protocol
 ```
 
 Or install all skills at once:
 
 ```bash
-npx skills add jwilger/agent-skills/bootstrap
+npx skills add jwilger/agent-skills --all
 ```
 
 Then run the bootstrap skill to get recommendations tailored to your project.

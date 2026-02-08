@@ -156,6 +156,8 @@ and use structured checkpoints. On harnesses with plugin support, enforcement
 hooks can detect when an agent makes assumptions without pausing. On harnesses
 without enforcement, the agent follows these practices by convention. If you
 observe the agent making decisions it should have asked about, point it out.
+For available enforcement plugins, see the
+[Harness Plugin Availability](../../README.md#harness-plugin-availability) table.
 
 ## Verification
 
@@ -178,5 +180,5 @@ This skill works standalone. For enhanced workflows, it integrates with:
 
 Missing a dependency? Install with:
 ```
-npx skills add jwilger/agent-skills/orchestration
+npx skills add jwilger/agent-skills --skill orchestration
 ```

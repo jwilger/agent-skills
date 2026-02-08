@@ -128,7 +128,9 @@ memory directories (Claude Code auto memory), storage is straightforward.
 On harnesses without persistent filesystems, adapt the pattern to whatever
 persistence mechanism is available (project files, comments, or external
 tools). The recall-before-act and store-after-discovery patterns are
-universal even if the storage mechanism varies.
+universal even if the storage mechanism varies. For available enforcement
+plugins, see the
+[Harness Plugin Availability](../../README.md#harness-plugin-availability) table.
 
 ## Verification
 
@@ -151,5 +153,5 @@ This skill works standalone. For enhanced workflows, it integrates with:
 
 Missing a dependency? Install with:
 ```
-npx skills add jwilger/agent-skills/debugging-protocol
+npx skills add jwilger/agent-skills --skill debugging-protocol
 ```

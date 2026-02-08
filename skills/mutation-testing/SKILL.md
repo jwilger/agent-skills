@@ -132,6 +132,8 @@ prevent PR creation with surviving mutants. On harnesses with plugin
 support, enforcement plugins can gate PR creation on mutation score. On
 other harnesses, the agent follows this practice by convention. If you
 observe the agent skipping mutation testing before a PR, point it out.
+For available enforcement plugins, see the
+[Harness Plugin Availability](../../README.md#harness-plugin-availability) table.
 
 ## Verification
 
@@ -157,5 +159,5 @@ It integrates with:
 
 Missing a dependency? Install with:
 ```
-npx skills add jwilger/agent-skills/tdd-cycle
+npx skills add jwilger/agent-skills --skill tdd-cycle
 ```

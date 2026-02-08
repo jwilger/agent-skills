@@ -134,7 +134,9 @@ This skill provides advisory guidance. It instructs the agent to record
 decisions before implementation but cannot mechanically prevent implementation
 without a decision record. On harnesses with plugin support, enforcement hooks
 can block implementation PRs that lack corresponding ADR references. On other
-harnesses, the agent follows these practices by convention.
+harnesses, the agent follows these practices by convention. For available
+enforcement plugins, see the
+[Harness Plugin Availability](../../README.md#harness-plugin-availability) table.
 
 ## Verification
 
@@ -161,5 +163,5 @@ This skill works standalone. For enhanced workflows, it integrates with:
 
 Missing a dependency? Install with:
 ```
-npx skills add jwilger/agent-skills/event-modeling
+npx skills add jwilger/agent-skills --skill event-modeling
 ```
