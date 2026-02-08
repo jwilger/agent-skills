@@ -1,5 +1,6 @@
 ---
 description: INVOKE once per project to configure SDLC workflow
+user-invocable: true
 allowed-tools:
   - Bash
   - Read
@@ -31,7 +32,7 @@ Initialize or update the SDLC workflow for this project. Configures:
 
 ## Methodology
 
-This command implements the bootstrap process described in
+This skill implements the bootstrap process described in
 `skills/bootstrap/SKILL.md`. It configures the harness-specific enforcement
 layer on top of the portable skills.
 
@@ -78,4 +79,4 @@ Stage setup files, create branch if PR workflow enabled, commit, push, create PR
 Show summary of what was configured and next steps:
 - `/start` to begin work
 - `/work` to pick up a task
-- `/design` for event modeling
+- `/model` for event modeling

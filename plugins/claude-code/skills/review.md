@@ -1,5 +1,6 @@
 ---
 description: INVOKE when PR has review comments to address
+user-invocable: true
 context: fork
 allowed-tools:
   - Bash

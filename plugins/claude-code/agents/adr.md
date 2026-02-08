@@ -2,6 +2,8 @@
 name: adr
 description: Architecture Decision Record creation and management
 model: inherit
+skills:
+  - architecture-decisions
 tools:
   - Read
   - Write

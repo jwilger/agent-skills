@@ -38,6 +38,38 @@ framework.
 
 Use the detected test runner for all "run the test" steps below.
 
+### Start from the Outside In
+
+The TDD cycle begins at the outermost testable layer of the application.
+Before writing unit tests, write a BDD-style acceptance test that describes
+how the application as a whole should behave for a given scenario. If the
+project uses event modeling (see the `event-modeling` skill), GWT scenarios
+become these outermost tests directly.
+
+1. Write an acceptance test for the next scenario. Use the test framework's
+   mechanism for pending or ignored tests so it does not block the suite:
+   ```
+   #[ignore = "acceptance: place order with valid cart"]
+   ```
+   ```python
+   @pytest.mark.skip(reason="acceptance: place order with valid cart")
+   ```
+   ```typescript
+   it.skip("places an order with a valid cart", () => { ... });
+   ```
+2. Run the suite to confirm it is recognized and skipped.
+3. Drill down: identify the first unit of behavior the acceptance test
+   needs. Write a unit test for that unit and enter the four-step cycle
+   below.
+4. After the unit tests pass, remove the pending/ignore marker from the
+   acceptance test. Run it.
+5. If the acceptance test passes, the scenario is complete. If it fails,
+   identify the next missing unit and repeat from step 3.
+
+This outside-in rhythm ensures every unit test exists because an acceptance
+test demanded it. No speculative unit tests, no untested integration gaps.
+The outer loop provides the feedback that keeps the inner loop honest.
+
 ### The Four-Step Cycle
 
 Every feature is built by repeating: RED, DOMAIN, GREEN, DOMAIN.

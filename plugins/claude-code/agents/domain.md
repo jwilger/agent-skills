@@ -6,6 +6,8 @@ memory: project
 skills:
   - user-input-protocol
   - memory-protocol
+  - domain-modeling
+  - tdd-cycle
 tools:
   - Read
   - Write

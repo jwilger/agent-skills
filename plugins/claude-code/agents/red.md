@@ -5,6 +5,8 @@ model: inherit
 skills:
   - user-input-protocol
   - memory-protocol
+  - tdd-cycle
+  - domain-modeling
 tools:
   - Read
   - Write

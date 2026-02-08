@@ -1,5 +1,6 @@
 ---
 description: INVOKE to start or continue work on a task. Shows ready items, creates branch
+user-invocable: true
 allowed-tools:
   - Bash
   - Read
@@ -55,4 +56,4 @@ development. Each worktree gets its own branch and working directory.
 - No config -> `/setup`
 - No .dots/ -> `/setup`
 - Dirty git state -> show cleanup options
-- No ready tasks -> suggest `/plan` or `dot add`
+- No ready tasks -> suggest `/decompose` or `dot add`

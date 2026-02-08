@@ -4,6 +4,7 @@ description: Domain discovery for event modeling
 model: inherit
 skills:
   - user-input-protocol
+  - event-modeling
 tools:
   - Read
   - Write

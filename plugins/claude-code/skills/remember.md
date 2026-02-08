@@ -1,5 +1,6 @@
 ---
 description: INVOKE after solving problems or learning conventions. Stores in auto memory
+user-invocable: true
 argument-hint: <what-to-remember>
 model: haiku
 allowed-tools:

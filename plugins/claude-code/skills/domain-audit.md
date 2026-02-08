@@ -1,6 +1,6 @@
 ---
 description: INVOKE to review domain types for primitive obsession and safety gaps
-invocation: user
+user-invocable: true
 ---
 
 # Domain Audit
@@ -42,4 +42,4 @@ RATIONALE: <one sentence>
 ## Integration with TDD Cycle
 
 This runs automatically in lightweight form after RED and GREEN phases via the
-domain agent. The `/domain-audit` command is for deeper, on-demand analysis.
+domain agent. The `/domain-audit` skill is for deeper, on-demand analysis.

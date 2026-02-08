@@ -1,5 +1,5 @@
 ---
-description: Orchestrator delegates to agents, never writes directly. Loaded for ALL commands.
+description: Orchestrator delegates to agents, never writes directly. Loaded for ALL skills.
 user-invocable: false
 ---
 
@@ -47,14 +47,32 @@ green is blocked.
 
 ## Fresh Context Protocol
 
-Agents have ZERO context from the conversation. Every delegation MUST include:
+When launching a NEW agent, it has ZERO context from the conversation. Every
+new delegation MUST include:
 - File paths
 - Current test name and error messages
 - Acceptance criteria
 - Relevant domain types
 - Current TDD phase
 
-NEVER say "as discussed earlier" or "continue from where we left off."
+NEVER say "as discussed earlier" or "continue from where we left off" in a
+new agent invocation.
+
+## Resume Protocol
+
+On harnesses that support agent resume (e.g., Claude Code), a stopped agent
+can be resumed with its prior context intact. Use resume instead of
+re-launching when:
+
+1. An agent needs information it cannot obtain (e.g., user input, output
+   from another agent). The agent should STOP and report what it needs.
+2. The orchestrator gathers the needed information (asks the user, runs
+   another agent, etc.).
+3. The orchestrator RESUMES the stopped agent with the answer. The agent
+   retains its prior context -- do NOT re-supply the full delegation context.
+
+The Fresh Context Protocol applies only to NEW agent invocations, not resumed
+ones. Resuming preserves expensive context and avoids redundant work.
 
 ## Task Dependency Protocol
 

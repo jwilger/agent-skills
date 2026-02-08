@@ -1,5 +1,6 @@
 ---
 description: INVOKE when ready to create PR. Runs three-stage code review and mutation testing
+user-invocable: true
 allowed-tools:
   - Bash
   - Read

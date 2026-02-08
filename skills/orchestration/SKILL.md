@@ -126,6 +126,34 @@ role's output contains questions or indicates it is blocked on a decision:
 2. Present it to the user with the role's context
 3. Deliver the user's answer back to the role with full context
 
+### Resume Agents Instead of Re-Delegating
+
+On harnesses that support agent resume (e.g., Claude Code), prefer resuming
+a stopped agent over starting a new one. When an agent stops because it
+needs user input or is blocked on a decision:
+
+1. Capture the agent's question and blocking context
+2. Present the question to the user (using user-input-protocol if available)
+3. Resume the agent with the user's answer
+
+The resumed agent retains its prior conversation and working state. Do NOT
+re-send the full context template -- the agent already has it. Only provide
+the new information (the user's answer, clarification, or unblocking data).
+
+This is more efficient than fire-and-forget delegation because the agent
+keeps accumulated context -- file contents it read, intermediate reasoning,
+partial progress. Re-delegating would discard all of that and start cold.
+
+**When to resume vs. re-delegate:**
+- **Resume** when the agent has accumulated significant context and just
+  needs one piece of information to continue.
+- **Re-delegate** when the agent's task has fundamentally changed, when
+  the agent finished its task and a new one is starting, or when the
+  harness does not support resume.
+
+**Note:** The "Provide Complete Context Every Time" practice applies to
+NEW delegations only. Resumed agents already have their context.
+
 ## Enforcement Note
 
 This skill provides advisory guidance. It cannot mechanically prevent the
@@ -146,6 +174,7 @@ After completing a workflow cycle guided by this skill, verify:
 - [ ] No workflow gates were skipped
 - [ ] Role concerns were addressed before proceeding (not ignored)
 - [ ] User was consulted for any unresolved disagreements
+- [ ] Agents needing user input were resumed (not re-delegated) when the harness supports it
 
 ## Dependencies
 

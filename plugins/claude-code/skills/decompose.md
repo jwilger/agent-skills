@@ -1,5 +1,6 @@
 ---
 description: INVOKE when event model slices are ready. Creates dot tasks from slices
+user-invocable: true
 argument-hint: [workflow-name]
 allowed-tools:
   - Bash
@@ -16,21 +17,22 @@ hooks:
       hooks:
         - type: prompt
           prompt: |
-            PLAN PREREQUISITES CHECK
+            DECOMPOSE PREREQUISITES CHECK
 
             Verify:
             1. .claude/sdlc.yaml exists
             2. docs/ARCHITECTURE.md exists
             3. At least one workflow with slices exists
 
-            If ARCHITECTURE.md missing, direct to /design arch.
+            If ARCHITECTURE.md missing, direct to /model arch.
 
             Respond with: {"ok": true}
 ---
 
-# Plan
+# Decompose
 
-Create dot tasks from event model slices. Bridges design phase to actionable work.
+Create dot tasks from event model slices. Bridges the modeling phase to
+actionable work.
 
 ## Methodology
 
@@ -49,16 +51,16 @@ Follows `skills/event-modeling/SKILL.md` for slice structure.
 ## Steps
 
 1. Load config and verify prerequisites (config, architecture, slices)
-2. Find workflows to plan (from argument or all unplanned)
+2. Find workflows to decompose (from argument or all unplanned)
 3. For each workflow: create epic task (`dot add "Epic: <name>" -p 1`)
 4. For each slice: create story task as child (`dot add "<name>" -P <epic-id> -p 2`)
 5. Verify hierarchy with `dot tree <epic-id>`
-6. Store planning results in auto memory via `/remember`
+6. Store results in auto memory via `/remember`
 7. Display results with task IDs and next steps
 
 ## Arguments
 
-`$ARGUMENTS` - Optional workflow name. If omitted, plans all unplanned workflows.
+`$ARGUMENTS` - Optional workflow name. If omitted, decomposes all unplanned workflows.
 
 ## Optional: Three-Perspective Review
 

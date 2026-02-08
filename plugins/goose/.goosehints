@@ -23,8 +23,8 @@ they are made of (UserName not NonEmptyString).
 ## Architecture
 
 Check for docs/ARCHITECTURE.md before making structural changes. If it
-exists, follow documented decisions. Record new architecture decisions
-in docs/adr/ using the ADR format.
+exists, follow documented decisions. Record new architecture decisions as ADRs (see architecture-decisions
+skill for format).
 
 ## Code Review
 

@@ -1,5 +1,6 @@
 ---
 description: INVOKE when making architecture decisions. Updates ARCHITECTURE.md and creates ADR PRs
+user-invocable: true
 argument-hint: [action] [topic]
 agent: adr
 allowed-tools:
