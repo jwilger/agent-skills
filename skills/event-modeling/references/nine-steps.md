@@ -24,6 +24,34 @@ Events must be past tense, business language, facts. Example:
 
 Keep asking: "What else? What am I missing?"
 
+### Domain Facts vs. Runtime Context
+
+Events must record **domain facts** — statements that are true regardless of
+which machine, process, or environment replays them. Runtime context does not
+belong in event data.
+
+```
+# Bad — runtime context leaks into the event:
+ProjectInitialized {
+  project_id: "abc-123",
+  working_directory: "/home/dev/projects/myapp",   # machine-specific
+  pid: 48291,                                       # process-specific
+  hostname: "dev-laptop.local"                      # environment-specific
+}
+
+# Good — domain facts only:
+ProjectInitialized {
+  project_id: "abc-123",
+  project_name: "myapp",
+  initialized_by: "user-456",
+  template: "web-app"
+}
+```
+
+**Test:** "Would this field have the same value if the event were replayed on
+a different machine?" If no, it is runtime context and does not belong in the
+event.
+
 ## Step 3: Order Events Chronologically
 
 Arrange brainstormed events into the timeline -- the "plot" of the workflow.
@@ -108,6 +136,41 @@ current_phase: string
 active_journeys: [{journey_id, phase, started_at}, ...]
 ```
 
+### Command Independence
+
+Commands derive their inputs from user-provided data and the event stream.
+Read models serve views and automations — they do NOT feed commands. If a
+command needs to know whether something already happened, it checks the
+event stream directly, not a read model.
+
+- "Does the command rely on a read model to decide what to do?" → Wrong.
+  The command should check the event stream for prior events.
+- "Is an idempotency guard querying a read model?" → Wrong. Check the
+  event stream for a duplicate event.
+
+### No Read Models for Infrastructure Preconditions
+
+Read models represent meaningful domain projections — not infrastructure
+checks. If a precondition is purely about infrastructure state (does a
+directory exist? is a service running?), it does not need its own read model.
+
+```
+# Bad — infrastructure check modeled as a read model:
+ReadModel: RepositoryExistence
+  exists: boolean    ← RepositoryInitialized
+
+# Good — command checks the precondition directly:
+Command: InitializeProject
+  Precondition: directory exists (infrastructure, not domain state)
+  Produces: ProjectInitialized
+```
+
+Infrastructure preconditions are either:
+1. Implicit in the command's execution context (the OS provides them)
+2. Checked as part of the command handler's implementation
+
+They do not need a domain read model.
+
 ## Step 7: Find Automations
 
 Look for automatic responses to events that involve decision-making:
@@ -143,6 +206,20 @@ Note only names and general purposes. No technical details (APIs, webhooks,
 protocols). Example: "Stripe provides payment confirmation" -- not
 "Stripe webhook sends POST to /api/webhooks/stripe".
 
+### Data Flow Rules for Diagrams
+
+When creating workflow diagrams, data flows follow these rules:
+- **Actor/UI → Command**: User inputs flow into commands
+- **Command → Event**: Commands produce events
+- **Event → Read Model**: Events feed read model projections
+- **Read Model → Actor/UI**: Read models serve views
+- **Event → Automation Read Model → Process → Command**: Automations
+  consult read models, but the resulting command still checks the event
+  stream for its own validation
+
+There must be NO `ReadModel → Command` edges in any diagram. If you find
+one, the command is incorrectly depending on a read model.
+
 ### Infrastructure vs. Domain Translations
 
 Ask: "Is this integration specific to THIS workflow, or would every
@@ -171,6 +248,30 @@ Also not slices: cross-cutting infrastructure (e.g., "Persist Events to
 Database") that would appear identically in every workflow. Infrastructure
 is not business behavior — document it in the domain overview, not as
 workflow slices.
+
+### Slice Independence
+
+Slices that share an event schema are **independent** — connected by the
+event contract, not by execution order. The event schema is the shared
+contract between a command slice that produces events and a view slice that
+consumes them.
+
+```
+# Bad — artificial dependency chain:
+Slice 1: "Initialize Project" (must complete before Slice 2)
+Slice 2: "Show Project Dashboard" (depends on Slice 1 running first)
+
+# Good — independent slices sharing an event schema:
+Slice 1: "Initialize Project" → produces ProjectInitialized event
+Slice 2: "Project Dashboard" → projects from ProjectInitialized event
+  (testable with synthetic ProjectInitialized fixtures, no Slice 1 needed)
+```
+
+- **Command slices** test by asserting on produced events (given prior
+  events, when command executes, then these events are produced)
+- **View slices** test with synthetic event fixtures (given these events,
+  the projection shows this state)
+- Neither slice needs the other to be implemented or running
 
 ## Output Structure
 
