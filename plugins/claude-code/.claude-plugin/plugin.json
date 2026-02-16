@@ -1,6 +1,6 @@
 {
   "name": "sdlc",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "description": "Enforcement plugin for Agent Skills SDLC workflow. Adds mechanical guardrails (hooks, agents, skills) on top of portable skills.",
   "author": {
     "name": "John Wilger",
