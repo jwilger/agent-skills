@@ -188,7 +188,7 @@ After completing event modeling work, verify:
 - [ ] Automations have all four components (event, read model, conditional logic, command)
 - [ ] Read model fields use collection types when domain supports concurrent instances
 - [ ] No cross-cutting infrastructure modeled as Translation slices
-- [ ] GWT scenarios exist for each slice with concrete data
+- [ ] GWT scenarios exist for each slice (inline in `docs/event_model/workflows/<name>/slices/*.md`) with concrete data
 - [ ] GWT error scenarios test business rules only, not data validation
 - [ ] Slices sharing an event schema are independently testable (no
       artificial dependency chains)
