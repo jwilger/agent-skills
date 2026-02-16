@@ -35,6 +35,17 @@ is mandatory third-party integrations (note name and purpose only).
 - `design-system` -- create design system using Atomic Design
 - (no args) -- resume or start discovery
 
+## Artifact Locations
+
+| Subcommand | Artifact | Path |
+|------------|----------|------|
+| discover | Domain overview | `docs/event_model/domain/overview.md` |
+| workflow | Workflow overview | `docs/event_model/workflows/<name>/overview.md` |
+| workflow | Workflow slices | `docs/event_model/workflows/<name>/slices/*.md` |
+| gwt | GWT scenarios | Inline in slice files above |
+| arch | Architecture doc | `docs/ARCHITECTURE.md` |
+| arch | ADR PRs | GitHub PRs on `adr/<slug>` branches |
+
 ## Agent Delegation
 
 | Subcommand | Agents Used |
@@ -57,7 +68,7 @@ After GWT scenarios, model-checker validates again.
 
 ## Architecture Process
 
-Prerequisites: domain discovery + at least one workflow with GWT.
+Prerequisites: `docs/event_model/domain/overview.md` exists AND at least one workflow with GWT scenarios (check for `## Scenario` headings in `docs/event_model/workflows/*/slices/*.md`).
 Architecture-facilitator works through decisions ONE AT A TIME.
 Each decision creates an independent ADR branch and PR.
 

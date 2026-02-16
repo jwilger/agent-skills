@@ -80,3 +80,12 @@ Show summary of what was configured and next steps:
 - `/start` to begin work
 - `/work` to pick up a task
 - `/model` for event modeling
+
+## Artifacts Created
+
+| Artifact | Path |
+|----------|------|
+| SDLC configuration | `.claude/sdlc.yaml` |
+| Settings reference | `.claude/settings.json` |
+| Workflow quick-reference | `CLAUDE.md` (managed markers) |
+| Dot tasks directory | `.dots/` (created by dot CLI init) |

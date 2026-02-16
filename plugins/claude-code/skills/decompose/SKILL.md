@@ -22,7 +22,7 @@ hooks:
             Verify:
             1. .claude/sdlc.yaml exists
             2. docs/ARCHITECTURE.md exists
-            3. At least one workflow with slices exists
+            3. At least one workflow with slices exists (glob `docs/event_model/workflows/*/slices/*.md` returns matches)
 
             If ARCHITECTURE.md missing, direct to /model arch.
 
