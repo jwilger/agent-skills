@@ -63,6 +63,11 @@ the model.
 3. Include relevant data: what happened, when, who/what caused it
 4. Find the right granularity -- not `DataUpdated` (too broad) and not
    `FieldXChanged` (too narrow)
+5. Commands depend on user inputs and the event stream, not read models.
+   Read models serve views and automations only.
+6. Events record domain facts (true on any machine). Runtime context
+   (file paths, hostnames, PIDs, working directories) does not belong
+   in event data.
 
 ### The Four Patterns
 
@@ -74,6 +79,15 @@ vertical slice.
 2. **State View:** Events -> Read Model. How the system answers queries.
    When the domain supports concurrent instances, use collection types
    in read model fields, not singular values.
+   Commands derive their inputs from user-provided data and the event
+   stream — never from read models. No `ReadModel → Command` edges
+   should appear in diagrams. If a command needs to check whether
+   something already happened (e.g., idempotency), it checks the event
+   stream, not a read model.
+   Read models represent meaningful domain projections. Infrastructure
+   preconditions ("does directory exist?", "is service running?") that
+   are implicit in the command's execution context do not need their own
+   read model.
 3. **Automation:** Event -> Read Model (todo list) -> Process -> Command
    -> Event. Background work triggered by events. Requires all four
    components: triggering event, read model consulted, conditional
@@ -103,6 +117,13 @@ type system). If the type system can make the invalid state unrepresentable,
 it is not a GWT scenario.
 
 See `references/gwt-template.md` for the full scenario format and examples.
+
+### Slice Independence
+
+Slices sharing an event schema are independent. The event schema is the
+shared contract. Command slices test by asserting on produced events; view
+slices test with synthetic event fixtures. Neither needs the other to be
+implemented first. No artificial dependency chains between slices.
 
 ### Model Validation
 
@@ -169,6 +190,8 @@ After completing event modeling work, verify:
 - [ ] No cross-cutting infrastructure modeled as Translation slices
 - [ ] GWT scenarios exist for each slice with concrete data
 - [ ] GWT error scenarios test business rules only, not data validation
+- [ ] Slices sharing an event schema are independently testable (no
+      artificial dependency chains)
 - [ ] No gaps remain in the model after validation
 
 If any criterion is not met, revisit the relevant practice before proceeding.

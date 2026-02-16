@@ -66,6 +66,33 @@ When designing read models (Step 6) and wireframes, ask:
 
 If the domain supports concurrent instances (e.g., multiple journeys in different phases), use collection types in read models, not singular values. Wireframes should show lists, not single-item views.
 
+### Command Independence from Read Models
+
+Commands derive their inputs from user-provided data and the event stream — never from read models. Read models serve views and automations only.
+
+When designing workflow diagrams (Step 8), ensure no `ReadModel → Command` edges exist. If a command needs to check whether something already happened (e.g., idempotency guard), it checks the event stream directly, not a read model.
+
+### Domain Facts vs. Runtime Context in Events
+
+Events must record **domain facts** — statements true regardless of which machine, process, or environment replays them. Runtime context (file paths, hostnames, PIDs, working directories) does not belong in event data.
+
+**Test**: "Would this field have the same value if the event were replayed on a different machine?" If no, it is runtime context and must be excluded from the event.
+
+### No Read Models for Infrastructure Preconditions
+
+Read models represent meaningful domain projections. Infrastructure checks ("does directory exist?", "is service running?") that are purely about the execution environment do not need their own read model.
+
+Infrastructure preconditions are either implicit in the command's execution context or checked as part of the command handler's implementation — they do not warrant a domain read model.
+
+### Slice Independence
+
+Slices sharing an event schema are **independent** — connected by the event contract, not by execution order. The event schema is the shared contract between a command slice (produces events) and a view slice (projects from events).
+
+- Command slices test by asserting on produced events
+- View slices test with synthetic event fixtures
+- Neither needs the other to be implemented or running
+- No artificial dependency chains between slices
+
 ## Return Format
 
 Produce a structured workflow specification with all 9 steps documented,

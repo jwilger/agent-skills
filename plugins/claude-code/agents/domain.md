@@ -84,9 +84,13 @@ and ensure your type definitions respect documented domain boundaries and conven
 ## After RED Phase
 
 1. **Review the test** for primitive obsession and invalid-state risks
-2. **Create minimal type definitions** to satisfy compilation
-3. Use `unimplemented!()` for function bodies (NEVER implement logic)
-4. Run type check and paste output
+2. **Check event types for runtime state** — if the test references event
+   types, verify their fields contain domain facts only (no file paths,
+   hostnames, PIDs, or working directories). Raise a domain concern if
+   runtime context appears in event data.
+3. **Create minimal type definitions** to satisfy compilation
+4. Use `unimplemented!()` for function bodies (NEVER implement logic)
+5. Run type check and paste output
 
 You create ALL type definitions referenced by tests: core domain types, repository
 traits, infrastructure types, error types. There is no "infrastructure exception."
