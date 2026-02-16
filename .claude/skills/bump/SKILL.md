@@ -89,7 +89,7 @@ to proceed if they confirm.
 Run the bump script:
 
 ```bash
-bash plugins/claude-code/skills/bump/bump.sh <current_version> <new_version>
+bash .claude/skills/bump/bump.sh <current_version> <new_version>
 ```
 
 If the script fails (non-zero exit), **stop immediately** and report the error.
