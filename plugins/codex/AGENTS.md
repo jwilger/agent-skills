@@ -55,6 +55,67 @@ Before considering work complete, verify:
 3. **Domain integrity:** No primitive obsession, domain types used correctly,
    invariants enforced by types.
 
+## Parallel Code Review
+
+The sequential Code Review Checklist above remains the default review approach.
+As an alternative, Codex supports spawning three parallel reviewer agents that
+each focus on a single review stage simultaneously, reducing total review time.
+
+### Reviewer Personas
+
+Three reviewer personas are provided in `agents/reviewers/`:
+
+- **`spec-reviewer.md`** -- Stage 1: Spec Compliance. Checks that every
+  acceptance criterion has corresponding code and tests.
+- **`quality-reviewer.md`** -- Stage 2: Code Quality. Checks naming, error
+  handling, dead code, test coverage, and security.
+- **`domain-reviewer.md`** -- Stage 3: Domain Integrity. Checks primitive
+  obsession, compile-time enforcement, boundary violations, and type safety.
+
+All three are read-only -- they examine code but do not modify it.
+
+### Protocol
+
+To run a parallel code review, use the spawn/wait/close pattern:
+
+```
+# 1. Spawn all three reviewers in parallel
+spawn_agent("spec-reviewer", persona="agents/reviewers/spec-reviewer.md",
+    task="Review the changes for spec compliance against: [task description]")
+spawn_agent("quality-reviewer", persona="agents/reviewers/quality-reviewer.md",
+    task="Review the changed files for code quality issues")
+spawn_agent("domain-reviewer", persona="agents/reviewers/domain-reviewer.md",
+    task="Review the changed files for domain integrity violations")
+
+# 2. Wait for all three to complete
+wait("spec-reviewer")
+wait("quality-reviewer")
+wait("domain-reviewer")
+
+# 3. Read results from each reviewer and synthesize
+# Combine the three stage results into a single review summary:
+#   REVIEW SUMMARY
+#   Stage 1 (Spec Compliance): PASS/FAIL
+#   Stage 2 (Code Quality): PASS/FAIL
+#   Stage 3 (Domain Integrity): PASS/FAIL
+#   Overall: APPROVED / CHANGES REQUIRED
+
+# 4. Close the agents
+close_agent("spec-reviewer")
+close_agent("quality-reviewer")
+close_agent("domain-reviewer")
+```
+
+If any stage returns FAIL, address the required actions before considering work
+complete.
+
+### When to Use Parallel Review
+
+- **Use parallel review** when the changeset is large or when review time is a
+  bottleneck. All three stages run simultaneously instead of sequentially.
+- **Use the sequential checklist** for small changes where spawning three agents
+  would add unnecessary overhead.
+
 ## Testing Commands
 
 Detect the project's test runner and use it:

@@ -129,11 +129,104 @@ This plugin provides enforcement but not guarantees:
 - The `stop` hook sends a reminder but cannot force the agent to comply.
 - Phase state is in-memory and resets when OpenCode restarts. Use
   `sdlc_set_phase` to re-establish phase after restart.
-- The plugin does not spawn subagents for domain or code review -- it
-  provides the tools and gates, and the agent performs the review inline.
+- The plugin provides tools and gates for inline review. For parallel
+  review with three focused subagents, see the Parallel Code Review
+  section below.
 
 For the strongest enforcement, use the skills and this plugin together.
 The skills teach correct behavior; the plugin catches violations.
+
+## Parallel Code Review
+
+OpenCode supports parallel review via subagents. Instead of running the
+three-stage code review sequentially (via the `sdlc_code_review` tool),
+you can configure three independent reviewer subagents that run in
+parallel, each focused on a single review stage. This is opt-in -- users
+add the subagent configurations to their project's `opencode.json`.
+
+The sequential `sdlc_code_review` tool remains available as the default
+review mechanism. Parallel review is an alternative for teams that want
+faster feedback from specialized reviewers.
+
+### Subagent Configuration
+
+Add these agent definitions to your project's `opencode.json`. Each
+reviewer is read-only (no `write` or `edit` permissions) and receives a
+prompt referencing the portable `code-review` and `domain-modeling`
+skills from `jwilger/agent-skills`.
+
+```json
+{
+  "agent": {
+    "spec-reviewer": {
+      "description": "Stage 1: Spec compliance review. Verifies tests match requirements and coverage is adequate.",
+      "mode": "subagent",
+      "model": "anthropic/claude-sonnet-4-20250514",
+      "prompt": "You are a spec compliance reviewer. Focus on whether tests accurately reflect requirements, whether edge cases are covered, and whether the test-to-implementation mapping is correct. Reference the code-review skill for the full review protocol. Report findings as a structured list with severity levels.",
+      "tools": {
+        "write": false,
+        "edit": false
+      }
+    },
+    "quality-reviewer": {
+      "description": "Stage 2: Code quality review. Checks style, performance, and maintainability.",
+      "mode": "subagent",
+      "model": "anthropic/claude-sonnet-4-20250514",
+      "prompt": "You are a code quality reviewer. Focus on naming conventions, function complexity, error handling, performance pitfalls, and adherence to project style. Reference the code-review skill for the full review protocol. Report findings as a structured list with severity levels.",
+      "tools": {
+        "write": false,
+        "edit": false
+      }
+    },
+    "domain-reviewer": {
+      "description": "Stage 3: Domain integrity review. Validates domain model consistency and ubiquitous language.",
+      "mode": "subagent",
+      "model": "anthropic/claude-sonnet-4-20250514",
+      "prompt": "You are a domain integrity reviewer. Focus on whether changes respect bounded context boundaries, maintain ubiquitous language, and preserve domain invariants. Reference the domain-modeling skill for domain review criteria. Report findings as a structured list with severity levels.",
+      "tools": {
+        "write": false,
+        "edit": false
+      }
+    }
+  }
+}
+```
+
+### Review Command
+
+To spawn all three reviewers in parallel, add a `/review` command to
+your `opencode.json` that forces subtask execution:
+
+```json
+{
+  "commands": {
+    "review": {
+      "description": "Run parallel three-stage code review",
+      "steps": [
+        {
+          "agent": "spec-reviewer",
+          "subtask": true,
+          "input": "Review the current changes for spec compliance."
+        },
+        {
+          "agent": "quality-reviewer",
+          "subtask": true,
+          "input": "Review the current changes for code quality."
+        },
+        {
+          "agent": "domain-reviewer",
+          "subtask": true,
+          "input": "Review the current changes for domain integrity."
+        }
+      ]
+    }
+  }
+}
+```
+
+Each reviewer runs as an independent subtask with its own context window.
+Results are collected and presented to the main agent when all three
+complete.
 
 ## Compatibility
 
