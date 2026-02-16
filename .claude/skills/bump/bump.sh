@@ -9,8 +9,8 @@ fi
 OLD_VERSION="$1"
 NEW_VERSION="$2"
 
-# Calculate repo root: this script lives at plugins/claude-code/skills/bump/
-REPO_ROOT="$(cd "$(dirname "$0")/../../../.." && pwd)"
+# Calculate repo root: this script lives at .claude/skills/bump/
+REPO_ROOT="$(cd "$(dirname "$0")/../../.." && pwd)"
 
 echo "Bumping version: ${OLD_VERSION} -> ${NEW_VERSION}"
 echo "Repo root: ${REPO_ROOT}"
