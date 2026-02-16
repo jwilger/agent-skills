@@ -17,21 +17,7 @@
     "enforcement"
   ],
   "outputStyles": "./output-styles/",
-  "skills": [
-    "./skills/shared/orchestration.md",
-    "./skills/setup.md",
-    "./skills/start.md",
-    "./skills/work.md",
-    "./skills/pr.md",
-    "./skills/complete.md",
-    "./skills/review.md",
-    "./skills/model.md",
-    "./skills/decompose.md",
-    "./skills/adr.md",
-    "./skills/remember.md",
-    "./skills/recall.md",
-    "./skills/domain-audit.md"
-  ],
+  "skills": "./skills/",
   "agents": [
     "./agents/red.md",
     "./agents/green.md",
