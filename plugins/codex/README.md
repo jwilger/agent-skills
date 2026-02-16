@@ -54,6 +54,10 @@ cp agents/openai.yaml /path/to/your/project/agents/openai.yaml
   before considering work complete.
 - **Architecture awareness:** Codex consults `ARCHITECTURE.md` before making
   structural changes.
+- **Parallel code review:** Three reviewer agent personas (spec compliance,
+  code quality, domain integrity) can be spawned in parallel using Codex's
+  `spawn_agent`/`wait`/`close_agent` commands, reducing review time for large
+  changesets. See `agents/reviewers/` for the persona files.
 
 ## What You Do Not Get
 
@@ -68,8 +72,11 @@ agent may occasionally:
 If you observe these behaviors, point them out. The instructions tell Codex
 to follow the workflow, but it is advisory, not enforced.
 
-For mechanical enforcement, use the Claude Code plugin which provides
-PreToolUse hooks, SubagentStop hooks, and subagent delegation.
+Codex does support multi-agent workflows via `spawn_agent`, and the parallel
+code review feature uses this capability. However, there are no hooks or
+enforcement plugins to mechanically gate merges on review completion. For
+mechanical enforcement, use the Claude Code plugin which provides PreToolUse
+hooks, SubagentStop hooks, and subagent delegation.
 
 ## Subdirectory AGENTS.md
 

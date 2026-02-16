@@ -116,6 +116,10 @@ for CI/automation.
   you are in across sessions. The recipe restarts the workflow each time.
   For multi-session features, use the recipe's prompt field to describe
   where you left off.
+- **Sequential review only.** The code-review recipe runs three stages
+  sequentially with a single agent. For parallel review with three focused
+  agents running simultaneously, see the Claude Code, Codex, or OpenCode
+  plugins which support subagent-based parallel review.
 
 ## Scheduling
 

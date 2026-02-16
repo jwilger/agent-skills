@@ -106,6 +106,11 @@ mechanical prevention of:
 - Skipping domain review between red and green
 - Making architecture changes without checking ADRs
 - Choosing silently when it should ask for input
+- Running three-stage code review in parallel with focused reviewer agents
+
+Code review in these editors runs sequentially. For parallel review with three
+focused agents (spec compliance, code quality, domain integrity) running
+simultaneously, see the Claude Code, Codex, or OpenCode plugins.
 
 If you observe the AI violating a rule, point it out in chat. The AI will
 correct course. For mechanical enforcement, use the Claude Code plugin
