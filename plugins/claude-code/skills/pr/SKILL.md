@@ -5,6 +5,8 @@ allowed-tools:
   - Bash
   - Read
   - Task
+  - TeamCreate
+  - SendMessage
 hooks:
   PreToolUse:
     - matcher: Read
@@ -34,10 +36,18 @@ Follows `skills/task-management/SKILL.md` for task closure.
 
 1. Load configuration from `.claude/sdlc.yaml`
 2. Detect current task from branch name
-3. Run three-stage code review via code-reviewer agent:
-   - Stage 1: Spec compliance (acceptance criteria met?)
-   - Stage 2: Code quality (clean, maintainable?)
-   - Stage 3: Domain integrity (via domain agent -- compile-time audit)
+3. Run three-stage code review:
+   - Check `.claude/sdlc.yaml` for `parallel_review: true`
+   - If parallel_review enabled:
+     a. Create an agent team (TeamCreate) for code review
+     b. Create 3 review tasks (one per stage: spec compliance, code quality, domain integrity)
+     c. Spawn spec-reviewer, quality-reviewer, domain-reviewer as teammates
+     d. Assign one task to each reviewer
+     e. Reviewers work in parallel; they may SendMessage each other about overlapping concerns
+     f. Collect all three results and synthesize into unified review summary
+     g. Shut down the review team after all stages complete
+   - If parallel_review disabled (default):
+     a. Run existing sequential three-stage code-reviewer agent (unchanged behavior)
 4. Run mutation testing via mutation agent (target: 100% kill rate)
 5. Close task (`dot off <task-id>`) and commit `.dots/` changes
 6. Check parent task -- if all children done, offer to close parent

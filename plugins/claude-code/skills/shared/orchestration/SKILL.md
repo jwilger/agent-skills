@@ -76,11 +76,22 @@ ones. Resuming preserves expensive context and avoids redundant work.
 
 ## Task Dependency Protocol
 
-Use task dependencies to encode workflow gates mechanically:
+Hooks enforce the TDD cycle mechanically (SubagentStop hooks prevent wrong
+file types). Task dependencies provide **supplementary visibility** -- they
+let the orchestrator and teammates see what is blocked and what is ready.
+They do NOT replace hook enforcement; they complement it.
+
+When starting a TDD cycle, create tasks with `TaskCreate` and wire up
+blocking relationships using `addBlockedBy`:
+
 1. RED task
-2. DOMAIN-after-RED task (blocked by 1)
-3. GREEN task (blocked by 2)
-4. DOMAIN-after-GREEN task (blocked by 3)
+2. DOMAIN-after-RED task (blocked by 1) -- `addBlockedBy: ["<red-task-id>"]`
+3. GREEN task (blocked by 2) -- `addBlockedBy: ["<domain-after-red-task-id>"]`
+4. DOMAIN-after-GREEN task (blocked by 3) -- `addBlockedBy: ["<green-task-id>"]`
+
+This makes the workflow state visible at a glance via `TaskList`: pending
+tasks with non-empty `blockedBy` cannot be claimed, so teammates
+immediately see what is ready to work on and what is still waiting.
 
 ## Agent Debate Protocol
 
@@ -100,3 +111,38 @@ Before creating PRs, run three-stage code review:
 3. Domain Integrity (types used correctly? compile-time enforcement opportunities?)
 
 See code-reviewer agent for details.
+
+## Team-Based Review Coordination
+
+When the project's `.claude/sdlc.yaml` includes `parallel_review: true`, use
+a review team to run all three review stages in parallel instead of
+sequentially.
+
+### Parallel Review Lifecycle
+
+1. **Create the review team.** Use `TeamCreate` with a descriptive name
+   (e.g., `code-review-<feature>`).
+2. **Create three review tasks.** One task per review stage:
+   - Spec Compliance review
+   - Code Quality review
+   - Domain Integrity review
+3. **Spawn focused reviewer agents as teammates:**
+   - `spec-reviewer` -- checks acceptance criteria coverage
+   - `quality-reviewer` -- checks code cleanliness, maintainability, tests
+   - `domain-reviewer` -- checks type usage, compile-time enforcement,
+     parse-don't-validate adherence
+4. **Assign tasks to reviewers.** Use `TaskUpdate` with `owner` to assign
+   each task to the corresponding reviewer agent.
+5. **Reviewers work in parallel.** They may send messages to each other
+   about overlapping concerns (e.g., a domain issue that also affects
+   code quality).
+6. **Synthesize results.** Once all three reviewers complete their tasks,
+   the orchestrator combines their findings into a unified review summary
+   for the user.
+7. **Shut down the review team.** Send `shutdown_request` to each reviewer,
+   then use `TeamDelete` to clean up.
+
+### Sequential Review (Default)
+
+When `parallel_review` is not set or is `false`, use the existing sequential
+`code-reviewer` agent, which runs all three review stages in a single pass.
