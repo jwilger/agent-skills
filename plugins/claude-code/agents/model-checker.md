@@ -28,6 +28,9 @@ Validate the event model:
 4. Validate state transitions are consistent
 5. Check for missing error scenarios
 6. Verify bounded context boundaries are clean
+7. Flag cross-cutting infrastructure modeled as slices: if the same Translation slice appears in multiple workflows or describes generic persistence/transport rather than domain-specific external data, it is likely infrastructure, not a workflow slice
+8. Verify automation completeness: every Automation slice must have all four components (triggering event, read model consulted, conditional process logic, resulting command). If an "automation" has no read model and no conditional logic, flag it as likely a command that co-produces multiple events
+9. Check read models for concurrency blindness: flag singular fields (e.g., `current_phase`, `active_order`) when the domain may support multiple concurrent instances — these should use collection or aggregate types
 
 ## Return Format
 

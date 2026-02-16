@@ -58,6 +58,12 @@ For each user interaction point, create an ASCII wireframe showing:
 Every wireframe field must trace to an event field (displays) or a command
 input (inputs). If you cannot trace a field, something is missing.
 
+### Concurrency Check
+
+If the domain supports concurrent instances (e.g., multiple orders, multiple
+journeys), wireframes should show lists or tables, not single-item views.
+Ask: "Can there be more than one of these in progress at the same time?"
+
 ## Step 5: Identify Commands
 
 For each event, determine the trigger:
@@ -89,13 +95,40 @@ OrderSummary:
 
 If a field has no source event, the model is incomplete.
 
+### Concurrency Check
+
+For each read model field, ask: "Can there be more than one of these active
+at the same time?" If the domain supports concurrent instances, use collection
+types, not singular values:
+```
+# Singular (only valid if business rule enforces one-at-a-time):
+current_phase: string
+
+# Collection (when concurrent instances exist):
+active_journeys: [{journey_id, phase, started_at}, ...]
+```
+
 ## Step 7: Find Automations
 
-Look for automatic responses to events:
+Look for automatic responses to events that involve decision-making:
 - "Does anything happen automatically after this event?"
 - "What business rules trigger other processes?"
+- "Does the system need to check anything before acting?"
 
-Pattern: Event -> View (todo list) -> Process -> Command -> Event
+Pattern: Event -> Read Model (todo list) -> Process -> Command -> Event
+
+**All four components are required for a true Automation:**
+1. A triggering event
+2. A read model (the "todo list") the process consults
+3. Conditional logic that decides whether and how to act
+4. A resulting command that produces new events
+
+If there is no read model and no conditional logic — if the events are
+always unconditionally co-produced — it is NOT an Automation. Model it as
+a single Command slice with multiple output events.
+
+**Test**: Ask "Can this automatic response ever be skipped or vary based on
+system state?" If no, it is co-production, not automation.
 
 Every automation must have a clear termination condition. Watch for infinite
 loops.
@@ -109,6 +142,15 @@ Identify external system interactions using the Translation pattern:
 Note only names and general purposes. No technical details (APIs, webhooks,
 protocols). Example: "Stripe provides payment confirmation" -- not
 "Stripe webhook sends POST to /api/webhooks/stripe".
+
+### Infrastructure vs. Domain Translations
+
+Ask: "Is this integration specific to THIS workflow, or would every
+workflow need it?"
+
+If every workflow needs it, it is cross-cutting infrastructure (persistence,
+messaging, logging) — NOT a Translation slice. Note it as an infrastructure
+dependency, not as a slice.
 
 ## Step 9: Decompose into Vertical Slices
 
@@ -124,6 +166,11 @@ testable in isolation, small enough for 1-2 days of work.
 
 Bad slices: "Set up database" (technical, no user value), "Implement order
 system" (too broad), "Create Order table" (implementation detail).
+
+Also not slices: cross-cutting infrastructure (e.g., "Persist Events to
+Database") that would appear identically in every workflow. Infrastructure
+is not business behavior — document it in the domain overview, not as
+workflow slices.
 
 ## Output Structure
 
@@ -151,7 +198,7 @@ business need to know this?
 intent does this represent?
 
 **Read Models:** What does this actor need to see? What queries do users
-run?
+run? Can there be multiple instances active simultaneously?
 
 **Automations:** Does anything happen automatically? What business rules
 apply? Does this trigger other processes?
