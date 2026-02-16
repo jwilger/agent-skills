@@ -69,12 +69,22 @@ the model.
 Every event-sourced system uses these patterns. Each pattern maps to one
 vertical slice.
 
-1. **State Change:** Command -> Event. The only way to modify state.
+1. **State Change:** Command -> Event. The only way to modify state. A
+   command may produce multiple events as part of a single operation.
 2. **State View:** Events -> Read Model. How the system answers queries.
-3. **Automation:** Event -> Process -> Command -> Event. Background work
-   triggered by events. Must have clear termination conditions.
+   When the domain supports concurrent instances, use collection types
+   in read model fields, not singular values.
+3. **Automation:** Event -> Read Model (todo list) -> Process -> Command
+   -> Event. Background work triggered by events. Requires all four
+   components: triggering event, read model consulted, conditional
+   process logic, and resulting command. If there is no read model and
+   no conditional logic, it is NOT an automation — it is a command
+   producing multiple events. Must have clear termination conditions.
 4. **Translation:** External Data -> Internal Event. Anti-corruption layer
-   for external integrations.
+   for workflow-specific external integrations. Generic infrastructure
+   shared by all workflows (event persistence, message transport) is NOT
+   a Translation — it is cross-cutting infrastructure that belongs
+   outside the event model.
 
 ### GWT Scenarios
 
@@ -122,6 +132,8 @@ purpose.
 - Use concrete, realistic data in all examples and scenarios
 - Design one workflow at a time
 - Ensure information completeness before proceeding
+- Ask "Can there be more than one of these at the same time?" for read model fields
+- Verify automations have all four components before labeling them as such
 
 **Do not:**
 - Skip steps because you think you know enough
@@ -152,6 +164,9 @@ After completing event modeling work, verify:
 - [ ] All events are past tense, business language, immutable facts
 - [ ] Every read model field traces to a source event
 - [ ] Every event has a trigger (command, automation, or translation)
+- [ ] Automations have all four components (event, read model, conditional logic, command)
+- [ ] Read model fields use collection types when domain supports concurrent instances
+- [ ] No cross-cutting infrastructure modeled as Translation slices
 - [ ] GWT scenarios exist for each slice with concrete data
 - [ ] GWT error scenarios test business rules only, not data validation
 - [ ] No gaps remain in the model after validation
