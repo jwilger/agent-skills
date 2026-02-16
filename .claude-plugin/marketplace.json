@@ -1,0 +1,29 @@
+{
+  "name": "agent-skills",
+  "owner": {
+    "name": "John Wilger",
+    "email": "john@johnwilger.com"
+  },
+  "metadata": {
+    "description": "Portable AI agent skills and Claude Code enforcement plugin for professional SDLC workflows",
+    "version": "1.0.0"
+  },
+  "plugins": [
+    {
+      "name": "agent-skills-sdlc",
+      "source": "./plugins/claude-code",
+      "description": "Enforcement plugin for Agent Skills SDLC workflow. Adds mechanical guardrails (hooks, agents, skills) on top of portable skills.",
+      "version": "1.0.0",
+      "keywords": [
+        "sdlc",
+        "tdd",
+        "event-modeling",
+        "adr",
+        "domain-modeling",
+        "code-review",
+        "hooks",
+        "enforcement"
+      ]
+    }
+  ]
+}
