@@ -46,6 +46,8 @@ specialized roles.
 |-----------|------|-------|
 | Test files | Test Writer | `*_test.*`, `*.test.*`, `tests/`, `spec/` |
 | Production code | Implementer | `src/`, `lib/`, `app/` |
+| Module scaffolding | green | lib.rs mod decls, mod.rs, __init__.py, index.ts barrels |
+| Build config deps | file-updater | Cargo.toml deps, package.json deps, pyproject.toml deps |
 | Type definitions | Domain Modeler | Structs, enums, interfaces, traits |
 | Architecture docs | Architect | `ARCHITECTURE.md`, ADRs |
 | Config, docs, scripts | File Updater | Everything not specialized |
@@ -80,6 +82,7 @@ include all information needed to complete the task.
 
 **Required context template:**
 ```
+WORKING_DIRECTORY: <absolute path to project root>
 TASK: What to accomplish
 FILES: Specific file paths to read or modify
 CURRENT STATE: What exists, what is passing/failing
@@ -87,6 +90,11 @@ REQUIREMENTS: What "done" looks like
 CONSTRAINTS: Domain types to use, patterns to follow
 ERROR: Exact error message (if applicable)
 ```
+
+**When worktrees are active:** WORKING_DIRECTORY is MANDATORY and all file paths
+in FILES must be absolute paths rooted in the worktree. Agents spawn in the main
+repository directory, not the worktree. Without absolute paths, agents will read
+and write files in the wrong location.
 
 **Do not:**
 - Say "as discussed earlier" or "continue from where we left off"
@@ -140,6 +148,24 @@ role's output contains questions or indicates it is blocked on a decision:
 1. Detect the blocking question
 2. Present it to the user with the role's context
 3. Deliver the user's answer back to the role with full context
+
+### Recover from Agent Failures (Never Self-Fix)
+
+When a role produces incorrect output — writes to the wrong path, creates
+malformed files, or fails to complete its task — the orchestrator must diagnose
+and re-delegate. The orchestrator MUST NOT fix the problem by writing files
+itself, even when the fix seems trivial.
+
+**Recovery steps:**
+1. **Diagnose** — What went wrong? Incomplete context? Wrong path?
+2. **Clean up** — Remove files in wrong locations (via shell, not direct edit)
+3. **Fix the context** — Correct the delegation that caused the failure
+4. **Re-delegate** — Launch a new invocation with corrected context
+
+**Do not:**
+- Write, Edit, or move files yourself to compensate for role errors
+- "Fix up" a role's partial output by hand
+- Rationalize self-editing as "cleanup" or "trivial"
 
 ### Resume Agents Instead of Re-Delegating
 

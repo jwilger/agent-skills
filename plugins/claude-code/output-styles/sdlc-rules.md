@@ -34,6 +34,8 @@ See `skills/tdd-cycle/SKILL.md` for the full TDD cycle methodology.
 |-----------|-------|-------|
 | Test files | red | `*_test.*`, `*.test.*`, `tests/`, `spec/` |
 | Production code | green | `src/`, `lib/`, `app/` |
+| Module scaffolding | `sdlc:green` | lib.rs mod decls, mod.rs, __init__.py, index.ts barrels |
+| Build config deps | `sdlc:file-updater` | Cargo.toml deps, package.json deps, pyproject.toml deps |
 | Type definitions | domain | Structs, enums, interfaces, traits |
 | Architecture docs | architect, adr, architecture-facilitator | `ARCHITECTURE.md`, ADRs |
 | Event model docs | discovery, workflow-modeler, gwt, model-checker | Event model files |
@@ -46,6 +48,7 @@ See `skills/tdd-cycle/SKILL.md` for the full TDD cycle methodology.
 Agents have zero memory of the main conversation. Every delegation MUST include:
 
 ```
+WORKING_DIRECTORY: <absolute path to project root>
 TASK: What to accomplish
 FILES: Specific file paths to read or modify
 CURRENT STATE: What exists, what is passing/failing
