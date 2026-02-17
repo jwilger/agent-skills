@@ -48,8 +48,50 @@ Follows `skills/memory-protocol/SKILL.md` for context persistence.
 
 ## Worktree Support
 
-If `git.worktrees: true` in config, creates isolated worktrees for parallel
-development. Each worktree gets its own branch and working directory.
+If `git.worktrees.enabled: true` in config, creates isolated worktrees for
+parallel development. Each worktree gets its own branch and working directory.
+
+### Worktree Path Resolution
+
+Resolve the worktree location by combining `git.worktrees.location` from
+`sdlc.yaml` with the project root. If `location` is a relative path (e.g.,
+`.worktrees`), resolve it against the project root to get an absolute path.
+Absolute paths in `location` are used as-is. Append the naming template result
+to get the final worktree path.
+
+### Naming Convention
+
+Worktree directories are named using the template `{mode}-{identifier}`:
+- **mode** is `slice` when `development.mode` is `event-modeling`, or `ticket`
+  when `development.mode` is `traditional`
+- **identifier** comes from the slice name or ticket ID of the task being
+  worked on (e.g., `user-registration`, `GH-1234`)
+
+Example: for a slice called "user-registration" in event-modeling mode with
+the default `.worktrees` location, the worktree is created at:
+`{project_root}/.worktrees/slice-user-registration`
+
+### Creating and Switching to Worktrees
+
+When creating a worktree, use `git worktree add` with the resolved absolute
+path and an appropriate branch name derived from the naming template:
+```
+git worktree add {resolved_path} -b {mode}-{identifier}
+```
+
+If a worktree already exists for the current slice or ticket (the resolved path
+already exists on disk), switch to it rather than recreating it. Always emit
+the full absolute path after creation or switch so users and agents know
+exactly where to work.
+
+### Stale Worktree Cleanup
+
+On startup, check for existing worktrees whose associated tasks are completed
+(no longer active in `dot ls`). For each stale worktree, offer cleanup to the
+user via AskUserQuestion before removing:
+```
+git worktree remove {absolute_path}
+```
 
 ## Error Handling
 
