@@ -20,13 +20,14 @@ All file modifications flow through specialized agents.
 
 ## Agent Selection
 
-| File Type | Agent | Notes |
-|-----------|-------|-------|
-| Test files | red | All test code, assertions, test fixtures |
-| Implementation code | green | Production code that makes tests pass |
-| Domain types/models | domain | Type definitions, domain entities |
-| Architecture docs | adr, architect | ARCHITECTURE.md (via PR) |
-| GWT scenarios | gwt | Given/When/Then acceptance criteria |
+| Phase/Need | Agent | Triggered by |
+|------------|-------|-------------|
+| Write failing test | red | Orchestrator starts a new slice |
+| Type definitions (stubs) | domain | RED test fails to compile due to missing types |
+| Implementation | green | Test compiles but fails on assertion/panic |
+| Type review | domain | GREEN implementation complete |
+| Architecture docs | adr, architect | New boundary or cross-cutting concern |
+| GWT scenarios | gwt | New acceptance criteria needed |
 | Everything else | file-updater | Config, docs, scripts, tooling |
 
 ## TDD Cycle (MANDATORY SEQUENCE)
@@ -38,6 +39,16 @@ RED -> DOMAIN (review test) -> GREEN -> DOMAIN (review impl) -> repeat
 Domain review happens TWICE per cycle. This is unconditional -- there are NO
 valid reasons to skip domain review. Not for "trivial" changes, not for "just
 one line," not for "obviously not a domain concern."
+
+### Anti-pattern: "Type-First TDD"
+
+Creating domain types before any test references them inverts TDD into
+waterfall. Types must flow FROM tests, not precede them. If the orchestrator
+creates a "define types" task that blocks a RED test task, the ordering is
+wrong. NEVER create types before a test references them. In compiled languages
+like Rust, a test referencing non-existent types will not compile. This is
+expected -- a compilation failure IS a test failure. Do not pre-create types
+to avoid compilation failures.
 
 ### The Red-Domain Feedback Loop
 

@@ -140,6 +140,17 @@ Task 4: Review implementation [DOMAIN] -- blocked by Task 3
 On harnesses without task tools, track state explicitly in conversation:
 "RED complete. Test fails with: [error]. Proceeding to DOMAIN review."
 
+### Anti-pattern: "Type-First TDD"
+
+Creating domain types before any test references them inverts TDD into
+waterfall. Types must flow FROM tests, not precede them. If the orchestrator
+creates a "define types" task that blocks a RED test task, the ordering is
+wrong. NEVER create types before a test references them.
+
+In compiled languages like Rust, a test referencing non-existent types will not
+compile. This is expected -- a compilation failure IS a test failure. Do not
+pre-create types to avoid compilation failures.
+
 ### Proxy Role Questions to User
 
 Roles running as subagents cannot ask the user questions directly. When a

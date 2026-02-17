@@ -70,25 +70,84 @@ This outside-in rhythm ensures every unit test exists because an acceptance
 test demanded it. No speculative unit tests, no untested integration gaps.
 The outer loop provides the feedback that keeps the inner loop honest.
 
+### A Compilation Failure IS a Test Failure
+
+In compiled languages like Rust, a test referencing non-existent types will not
+compile. This is expected -- `cargo test` failing because a type does not exist
+IS the test failing. Do not pre-create types to avoid compilation failures. The
+RED phase produces the failing test; the DOMAIN phase then creates just enough
+type stubs to shift the failure from compilation error to runtime assertion/panic.
+
 ### The Four-Step Cycle
 
 Every feature is built by repeating: RED, DOMAIN, GREEN, DOMAIN.
 
 1. **RED** -- Write one failing test with one assertion. Only edit test files.
-   Run the test. Paste the failure output. Stop.
+   Write the code you wish you had -- reference types and functions that
+   SHOULD exist, even if they do not exist yet. Run the test. Paste the
+   failure output (compilation errors count). Stop.
+   - **Done when:** tests run and FAIL (compilation error OR assertion failure).
 2. **DOMAIN (after red)** -- Review the test for primitive obsession and
    invalid-state risks. Create type definitions with stub bodies
    (`unimplemented!()`, `todo!()`, `raise NotImplementedError`). Do not
    implement logic. Stop.
+   - **Done when:** tests COMPILE but still FAIL (assertion/panic, NOT compilation error).
 3. **GREEN** -- Write the minimal code to make the test pass. Only edit
    production files. Run the test. Paste the passing output. Stop.
+   - **Done when:** tests PASS with minimal implementation.
 4. **DOMAIN (after green)** -- Review the implementation for domain
    violations: anemic models, leaked validation, primitive obsession that
    slipped through. If violations found, raise a concern and propose a
    revision. If clean, the cycle is complete.
+   - **Done when:** types are clean and tests still pass.
 
 After step 4, commit the working state. Then either start the next test or
 tidy the code (structural changes only, separate commit).
+
+### Worked Example (Rust)
+
+**Happy path -- types do not exist yet:**
+
+1. RED writes a test:
+   ```rust
+   let email = EmailAddress::new("test@example.com").unwrap();
+   assert!(email.as_str() == "test@example.com");
+   ```
+   `cargo test` fails: `cannot find type EmailAddress`. Good -- that is a failing test.
+
+2. DOMAIN creates the stub:
+   ```rust
+   pub struct EmailAddress(String);
+   impl EmailAddress {
+       pub fn new(s: &str) -> Result<Self, EmailAddressError> { todo!() }
+       pub fn as_str(&self) -> &str { todo!() }
+   }
+   ```
+   `cargo test` now compiles but panics at `todo!()`. Failure shifted from
+   compilation error to runtime panic.
+
+3. GREEN implements the validation logic. Test passes.
+
+4. DOMAIN reviews the implementation. Types are clean. Cycle complete.
+
+**Pushback path -- domain improves the test:**
+
+1. RED writes:
+   ```rust
+   let user = create_user("test@example.com".to_string());
+   ```
+   Uses raw `String` for email.
+
+2. DOMAIN reviews and pushes back: "Use `EmailAddress` newtype instead of
+   `String` -- catches invalid emails at the type boundary."
+
+3. RED revises:
+   ```rust
+   let email = EmailAddress::new("test@example.com").unwrap();
+   let user = create_user(email);
+   ```
+
+4. DOMAIN creates the `EmailAddress` stub. Cycle continues.
 
 ### Phase Boundaries
 
@@ -113,6 +172,15 @@ verifications, write multiple tests. Shared setup belongs in helper functions.
 In GREEN, write only enough code to make the failing test pass. Do not add
 error handling, flexibility, or features not demanded by the test. Future
 tests will drive future features.
+
+### Anti-pattern: "Type-First TDD"
+
+Creating domain types before any test references them inverts TDD into
+waterfall. Types must flow FROM tests, not precede them. If the orchestrator
+creates a "define types" task that blocks a RED test task, the ordering is
+wrong. NEVER create types before a test references them. The correct flow
+is always: RED writes a test referencing types that do not exist, THEN
+DOMAIN creates those types as stubs.
 
 ### Domain Review Has Veto Power
 
