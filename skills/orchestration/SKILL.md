@@ -96,6 +96,12 @@ in FILES must be absolute paths rooted in the worktree. Agents spawn in the main
 repository directory, not the worktree. Without absolute paths, agents will read
 and write files in the wrong location.
 
+The worktree location is computed by resolving `git.worktrees.location` from
+`sdlc.yaml` against the project root, then appending the naming template result
+(`{mode}-{identifier}`). Use this resolved absolute path as WORKING_DIRECTORY in
+all delegations when worktrees are active. Error messages involving worktree
+operations must always include the full absolute path, never a relative path.
+
 **Do not:**
 - Say "as discussed earlier" or "continue from where we left off"
 - Summarize errors instead of providing exact text

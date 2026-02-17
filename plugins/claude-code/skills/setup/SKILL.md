@@ -58,7 +58,25 @@ Enforce squash-only merging with PR title/body as commit message.
 
 Use AskUserQuestion for each choice:
 - Development mode (event-modeling vs traditional)
-- Git worktrees for parallel development
+- Git worktrees for parallel development. If the user enables worktrees, ask
+  WHERE worktrees should be created, defaulting to `.worktrees/` relative to
+  the project root. Explain that a project-local directory keeps filesystem
+  permissions simple and avoids scattering worktrees across the filesystem.
+  Document that worktree naming is auto-derived from the development mode
+  using the template `{mode}-{identifier}`, where `mode` is `slice` (for
+  event-modeling) or `ticket` (for traditional), and `identifier` comes from
+  the slice name or ticket ID of the task being worked on. Examples:
+  `slice-user-registration`, `ticket-GH-1234`. Show the user that the
+  resulting `git.worktrees` config block in `sdlc.yaml` will look like:
+  ```yaml
+  git:
+    worktrees:
+      enabled: true
+      location: .worktrees        # relative to project root; absolute paths also supported
+      naming: "{mode}-{identifier}"
+  ```
+  Remind the user to add the worktree location directory (e.g., `.worktrees/`)
+  to `.gitignore` so worktree contents are not accidentally committed.
 - dot task prefix
 - TDD verbosity (silent, brief, explain)
 - Languages/frameworks (auto-detect from project files)
