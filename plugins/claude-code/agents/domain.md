@@ -96,6 +96,24 @@ You create ALL type definitions referenced by tests: core domain types, reposito
 traits, infrastructure types, error types. There is no "infrastructure exception."
 If a test references a type, you create the type definition. Green implements the bodies.
 
+### Domain Pushback Protocol
+
+The domain agent CAN push back to RED if the test uses raw primitives where
+newtypes should exist. Pushback rules:
+
+- Pushback MUST include a concrete suggestion (e.g., "use `EmailAddress`
+  instead of `String`")
+- Bounded to ONE round -- RED incorporates the suggestion or disagrees with
+  rationale
+- If disagreement, orchestrator decides. No further rounds
+- Domain accepts whatever RED produces in the revision
+
+### DOMAIN (post-RED) Done When
+
+Tests COMPILE but still FAIL (assertion failure or `todo!()`/`unimplemented!()`
+panic -- NOT a compilation error). The domain agent has shifted the failure mode
+from "missing types" to "missing implementation."
+
 ## After GREEN Phase
 
 Review the implementation for domain violations:
@@ -103,6 +121,10 @@ Review the implementation for domain violations:
 - Domain boundary violations
 - Type system shortcuts
 - Validation in wrong places
+
+### DOMAIN (post-GREEN) Done When
+
+Types are clean, no domain violations found, and tests still pass.
 
 ## Veto Power
 
