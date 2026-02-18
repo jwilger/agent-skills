@@ -248,6 +248,114 @@ The orchestrator must:
 
 A vertical slice is not vertically integrated until every layer is connected end-to-end. Unassigned or forgotten wiring tasks are the primary cause of slices that "work" in isolation but are unreachable from the application's external boundary.
 
+### Ping-Pong Pairing
+
+The orchestrator manages pair programming directly -- no intermediate "pair
+coordinator" agent. The orchestrator IS the pair coordinator. This keeps the
+topology flat (hub-and-spoke) and avoids an unnecessary coordination layer.
+
+#### Pair Selection
+
+Pick 2 software engineers from the team for each pairing session. The
+orchestrator tracks pairing history in `.team/pairing-history.json` and
+must not repeat either of the last 2 pairings. If only 2 engineers exist,
+this constraint is relaxed.
+
+**Pairing history schema** (`.team/pairing-history.json`):
+```json
+{
+  "pairings": [
+    {"driver": "engineer-name", "navigator": "engineer-name", "slice": "slice-id", "date": "ISO-date"}
+  ]
+}
+```
+
+Create this file if it does not exist. Append a new entry each time a
+pairing session begins.
+
+#### Pair Session Context
+
+Each engineer agent is bootstrapped with:
+- Their persona profile (from `.team/`)
+- The scenario being implemented (GWT acceptance criteria)
+- Current codebase context (relevant file paths, test output, domain types)
+- Their assigned role (driver or navigator) and the ping-pong protocol
+
+The orchestrator passes this context when spawning each engineer, following
+the "Provide Complete Context Every Time" practice.
+
+#### Ping-Pong Rhythm
+
+The pair alternates between driver (writes the failing test) and navigator
+(makes it pass or drills down). The rhythm within one vertical slice:
+
+1. **Engineer A (driver)** writes a failing test via `sdlc:red`.
+2. **Both engineers discuss** domain concerns via `sdlc:domain`. The
+   orchestrator facilitates this exchange -- engineers do not message each
+   other directly.
+3. **Engineer B (navigator)** either:
+   - (a) Writes minimal green implementation via `sdlc:green`, OR
+   - (b) Writes a lower-level failing test to clarify the error, if the
+     current failure does not make the next green step obvious.
+
+   **Refactor ownership:** The engineer who writes the green implementation
+   also performs the refactor step, because they have the freshest context on
+   the implementation decision. Do not hand off refactoring to the other
+   engineer.
+
+4. **Roles swap:** B becomes driver, A becomes navigator.
+5. Repeat until the original acceptance test passes.
+6. Remove ignore markers from lower-level tests as they go green.
+
+#### Structured Handoff Messages
+
+When driver and navigator roles swap, the outgoing driver must pass a
+structured handoff to the incoming driver containing:
+
+- **Failing test:** name and file path of the test that needs a green implementation (or the next red test to write)
+- **Intent:** what behavior the test is specifying
+- **Domain context:** any relevant constraints or decisions surfaced during the domain discussion
+- **Current output:** the exact test failure or error message
+
+The orchestrator is responsible for relaying this handoff. This ensures the
+incoming driver has clean context without re-deriving it from scratch.
+
+#### Drill-Down Ownership
+
+When the navigator chooses option (b) -- drilling down instead of going
+green -- the roles swap at that level too:
+
+1. Navigator writes a lower-level failing test (they are now driver at
+   this level).
+2. Original driver writes the green for this lower-level test (they are
+   now navigator at this level).
+3. When this level goes green, pop back up to the previous level and
+   continue with swapped roles.
+
+This preserves the ping-pong alternation at every level of the test
+hierarchy. The person who wrote a failing test never writes its green
+implementation.
+
+#### Clarification Routing
+
+If the pair needs clarification from other team members (PM, domain SME,
+architect, etc.), they request it through the orchestrator. No ad-hoc
+lateral agent spawning. The orchestrator proxies the question using the
+same pattern as "Proxy Role Questions to User."
+
+#### Pairing Verification
+
+After a pairing session, verify:
+
+- [ ] Orchestrator managed pairing directly (no intermediate coordinator agent)
+- [ ] Pair was selected without repeating either of the last 2 pairings
+- [ ] `.team/pairing-history.json` was updated with the new pairing entry
+- [ ] Each engineer received full context (persona, scenario, codebase state, role)
+- [ ] Driver and navigator roles alternated after each red-green cycle
+- [ ] Drill-down levels also alternated roles
+- [ ] All clarification requests routed through the orchestrator
+- [ ] No direct lateral messaging between engineer agents
+
 ## Enforcement Note
 
 This skill provides advisory guidance. It cannot mechanically prevent the

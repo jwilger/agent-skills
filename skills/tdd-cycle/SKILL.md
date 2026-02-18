@@ -271,6 +271,26 @@ a more focused test, and work back up once the lower-level tests pass.
 #[ignore = "working on: test_balance_calculation"]
 ```
 
+### Ping-Pong Pairing Mode
+
+The TDD cycle can operate in **ping-pong pairing mode**, where red and
+green steps alternate between two engineers rather than being performed by
+a single agent. In this mode:
+
+- **Driver** writes the failing test (RED).
+- **Both** participate in domain review (DOMAIN).
+- **Navigator** writes the minimal implementation (GREEN) or drills down
+  with a lower-level test.
+- Roles swap after each red-green cycle.
+
+The five-step discipline (RED, DOMAIN, GREEN, DOMAIN, COMMIT) and all
+phase boundaries remain unchanged. Ping-pong pairing changes WHO performs
+each step, not WHAT each step requires.
+
+For the full pairing protocol -- pair selection, drill-down ownership,
+clarification routing, and orchestrator responsibilities -- see the
+**Ping-Pong Pairing** section in the `orchestration` skill.
+
 ## Enforcement Note
 
 This skill defines mandatory policy for phase boundaries and cycle
