@@ -96,6 +96,16 @@ ERROR: Exact error message (if applicable)
 - Summarize errors instead of providing exact text
 - Assume a role knows project conventions without stating them
 
+### Validate Decomposition Output
+
+After decomposition produces sub-tasks and GWT scenarios for a vertical slice, the orchestrator MUST verify the following before allowing work to proceed:
+
+1. **Application-boundary scenarios exist.** At least one GWT scenario must describe behavior observable at the application's external boundary — the point where a user or external system interacts with the application. Scenarios that only describe internal domain logic are insufficient for a vertical slice.
+
+2. **All necessary architectural layers are accounted for.** The task list must include work items covering every layer the slice traverses — from external interface through application logic, domain, and infrastructure. If the decomposition only produces tasks for a single layer (e.g., domain modeling without corresponding entry-point or persistence tasks), the decomposition is incomplete.
+
+If either check fails, **reject the decomposition and require revision** before any implementation begins. Do not allow agents to start coding against an incomplete slice definition.
+
 ### Enforce Workflow Gates
 
 Work proceeds through gates. A gate is a precondition that must be satisfied
@@ -145,6 +155,17 @@ wrong. NEVER create types before a test references them.
 In compiled languages like Rust, a test referencing non-existent types will not
 compile. This is expected -- a compilation failure IS a test failure. Do not
 pre-create types to avoid compilation failures.
+
+### Verify Outside-In TDD Progression
+
+The orchestrator must verify that the first test written for a vertical slice targets the application boundary — not an internal unit test. This means the initial test exercises the slice's behavior from the perspective of an external caller or user-facing entry point.
+
+Before allowing a slice to proceed toward completion:
+
+- Confirm that the outermost test exists and runs (even if failing initially as part of red-green-refine).
+- If the first test written is an internal unit test with no corresponding boundary-level test, flag this and require the agent to write the boundary test first.
+
+This ensures each slice is built outside-in, preventing the pattern where internal layers are implemented in isolation without ever being wired to the application's entry points.
 
 ### Proxy Role Questions to User
 
@@ -215,6 +236,18 @@ If a role needs help, it reports back to the orchestrator rather than
 spawning its own specialists. The orchestrator decides whether to decompose
 further. This keeps feedback loops short and coordination centralized.
 
+### Assign Wiring Tasks Explicitly
+
+Connecting layers together — wiring domain logic to infrastructure, infrastructure to the application's entry point, and so on — must be treated as explicit, assigned tasks. Do not assume wiring will happen as a side effect of implementing individual layers.
+
+The orchestrator must:
+
+1. Ensure the decomposition includes distinct wiring tasks that connect each architectural layer to its neighbors.
+2. Assign each wiring task to a specific agent.
+3. Verify that all wiring tasks are completed before the slice proceeds to code review.
+
+A vertical slice is not vertically integrated until every layer is connected end-to-end. Unassigned or forgotten wiring tasks are the primary cause of slices that "work" in isolation but are unreachable from the application's external boundary.
+
 ## Enforcement Note
 
 This skill provides advisory guidance. It cannot mechanically prevent the
@@ -238,6 +271,18 @@ After completing a workflow cycle guided by this skill, verify:
 - [ ] User was consulted for any unresolved disagreements
 - [ ] Agents needing user input were resumed (not re-delegated) when the harness supports it
 - [ ] Delegation depth matched harness topology (no nesting beyond what is supported)
+
+## Human Verification Checkpoint
+
+A vertical slice is not merge-ready until a human has personally run the application and verified the slice's behavior. Agents cannot interact with user interfaces or fully simulate end-user experience, so automated checks alone are insufficient.
+
+Before marking a slice as ready for PR merge, the orchestrator must:
+
+1. Include a **human verification checkpoint** in the completion workflow that lists the specific behaviors the human should confirm — derived directly from the slice's GWT scenarios.
+2. Clearly communicate to the human what to verify: that the slice is reachable from the application's entry point and produces the expected user-visible behavior described in the acceptance criteria.
+3. Do not allow the PR to be treated as merge-ready until the human has confirmed verification.
+
+Where automated acceptance tests are feasible (e.g., headless browser tests, CLI output assertions, API integration tests), agents should write them. But automated tests supplement human verification — they do not replace it.
 
 ## Dependencies
 

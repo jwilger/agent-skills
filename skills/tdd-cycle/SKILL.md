@@ -70,6 +70,48 @@ This outside-in rhythm ensures every unit test exists because an acceptance
 test demanded it. No speculative unit tests, no untested integration gaps.
 The outer loop provides the feedback that keeps the inner loop honest.
 
+### Acceptance Tests Target the Application Boundary
+
+An acceptance test for a vertical slice must exercise the application through its **public boundary** — the point where external input enters the system. Depending on the project, this boundary might be an HTTP endpoint, a CLI command handler, a message consumer, a public API method, or any other entry point that a real user or external system would invoke.
+
+A test that calls domain functions or internal modules directly is a **unit test**, not an acceptance test — even if it asserts on user-visible behavior. The distinction matters: acceptance tests verify that all architectural layers are wired together and that input flows through the full stack to produce the expected outcome.
+
+When defining the acceptance test for a slice, ask: "If I removed all wiring between layers, would this test still pass?" If yes, it is not an acceptance test.
+
+### Two-Level TDD for Vertical Slices
+
+When building a vertical slice, the TDD cycle operates at two levels simultaneously:
+
+1. **Outer level — Acceptance test (RED for most of the slice)**
+   - Write the acceptance test first. It targets the application boundary and describes the slice's expected end-to-end behavior.
+   - This test will fail (RED) and **stay red** while you build the inner layers. That is expected and correct.
+
+2. **Inner level — Unit tests (normal red-green-refactor)**
+   - Work inward from the boundary. For each layer or component needed by the slice, write a focused unit test, make it pass, refactor.
+   - Each inner cycle follows the standard red-green-refactor discipline with strict phase boundaries.
+
+3. **Outer test goes GREEN — Slice is wired**
+   - The outer acceptance test passes only when all layers are implemented **and** wired together through the application boundary.
+   - If all inner unit tests pass but the outer acceptance test is still red, the slice is not complete — there is missing wiring or integration.
+
+Do not mark a slice as complete until the outer acceptance test passes. The outer test is the proof that the slice works as a vertical cut through the full stack, not just as isolated domain logic.
+
+### Walking Skeleton First
+
+The first vertical slice in any new project — or in any major new feature area that introduces new architectural layers — must be a **walking skeleton**: the thinnest possible end-to-end path that proves all architectural layers are connected and communicating.
+
+A walking skeleton may use hardcoded values, stubs, or minimal implementations. Its purpose is not to deliver full functionality but to establish the integration path that every subsequent slice will build upon. The acceptance test for a walking skeleton verifies that input entering the application boundary flows through every required layer and produces an observable output — even if that output is trivial.
+
+Build the walking skeleton before any other slice. It de-risks the architecture and gives every subsequent slice a proven wiring path to extend rather than create from scratch.
+
+### When Automated Acceptance Tests Are Not Feasible
+
+Where the application boundary is programmatically testable — CLI output assertions, HTTP response checks, headless browser tests, message queue consumers — write automated acceptance tests. They provide fast, repeatable feedback and should be the default choice.
+
+Where automated testing of the boundary is not feasible (e.g., the slice's observable behavior requires visual inspection or physical interaction), document the specific manual verification steps the human must perform. These steps replace the automated acceptance test as the definition of "outer test passes" for that slice.
+
+In either case, the human is the final verification gate. Automated acceptance tests increase confidence but do not replace human confirmation that the slice works as intended.
+
 ### A Compilation Failure IS a Test Failure
 
 In compiled languages like Rust, a test referencing non-existent types will not
