@@ -26,9 +26,15 @@ instructions: |
   4. DOMAIN REVIEW (after green) — Review the implementation for domain
      violations: anemic models, leaked validation, primitive obsession.
      If violations found, state the issue and propose a fix. If clean,
-     the cycle is complete.
+     proceed to COMMIT.
 
-  After step 4, commit the working state. Then start the next test.
+  5. COMMIT — Mandatory. Run the full test suite to confirm all tests
+     pass. Stage all changes and create a git commit with a message
+     referencing the current scenario. No new RED phase may begin until
+     this commit is made. Refactoring, if warranted, happens in a
+     separate commit after this one.
+
+  After step 5, start the next test.
 
   PHASE BOUNDARIES:
   - RED: only test files
@@ -75,3 +81,4 @@ activities:
   - "Review test for domain modeling quality"
   - "Implement minimal code to make the test pass"
   - "Review implementation for domain violations"
+  - "Run full test suite and commit with scenario reference"

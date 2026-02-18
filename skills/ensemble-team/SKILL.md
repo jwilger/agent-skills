@@ -2,13 +2,14 @@
 name: ensemble-team
 description: >
   Set up a full AI ensemble/mob programming team for any software project. Creates
-  team member profiles (.team/), coordinator instructions (CLAUDE.md), project owner
-  constraints (PROJECT.md), team agreements (TEAM_AGREEMENTS.md), domain glossary,
-  and supporting docs. Use when: (1) starting a new project and wanting a full expert
-  agent team, (2) the user asks to "set up a team", "create a mob team", "set up
-  ensemble programming", or "create agent profiles", (3) converting an existing project
-  to the driver-reviewer mob model, (4) the user wants Claude Code agents to work as a
-  coordinated product team with retrospectives and consensus-based decisions.
+  team member profiles (.team/), coordinator instructions (harness-specific config
+  file), project owner constraints (PROJECT.md), team agreements (TEAM_AGREEMENTS.md),
+  domain glossary, and supporting docs. Use when: (1) starting a new project and
+  wanting a full expert agent team, (2) the user asks to "set up a team", "create a
+  mob team", "set up ensemble programming", or "create agent profiles", (3) converting
+  an existing project to the driver-reviewer mob model, (4) the user wants AI agents
+  to work as a coordinated product team with retrospectives and consensus-based
+  decisions.
 ---
 
 # Ensemble Team Setup
@@ -119,9 +120,11 @@ is actively driving or navigating code.
 
 ### Phase 4: Generate Project Scaffolding
 
-#### CLAUDE.md
+#### Coordinator Instructions (harness config file)
 Read [references/coordinator-template.md](references/coordinator-template.md).
-Fill in roster, build tools, team size. This file is for the coordinator only.
+Fill in roster, build tools, team size. Place in the harness-specific config
+file (e.g., `CLAUDE.md` for Claude Code, `.cursorrules` for Cursor, project
+instructions for other harnesses). This file is for the coordinator only.
 
 #### PROJECT.md
 Read [references/project-template.md](references/project-template.md).
@@ -145,7 +148,7 @@ working agreements. Read
 [references/team-agreements-template.md](references/team-agreements-template.md) for
 the list of problems the team must discuss.
 
-**How it works**: The coordinator spawns the full team, then presents each discussion
+**How it works**: The coordinator activates the full team, then presents each discussion
 topic (from the reference file) one at a time. The team debates, proposes approaches,
 and reaches consensus. The Driver records the agreed-upon norms in
 `TEAM_AGREEMENTS.md`.
@@ -167,25 +170,23 @@ discussion. The team's answers become their agreements — not pre-canned templa
 
 ### Phase 6: Configure Permissions
 
-Create/update `.claude/settings.json`:
-```json
-{
-  "permissions": {
-    "allow": ["Edit", "Write", "Bash(*)"]
-  }
-}
-```
+Grant team agents the permissions they need to do their work (file editing, shell
+access, etc.). How this is configured depends on the harness:
+
+- **Claude Code**: Create/update `.claude/settings.json` with `"allow": ["Edit", "Write", "Bash(*)"]`
+- **Cursor/Windsurf**: Configure tool permissions in the IDE settings
+- **Other harnesses**: Follow the harness documentation for agent permission grants
 
 ### Phase 7: Configure CI
 
-Add `paths-ignore` for `.claude-sessions/` to CI config to prevent session transcript
-commits from triggering CI runs.
+Add `paths-ignore` rules to CI config for any harness-generated session or transcript
+directories (e.g., `.claude-sessions/` for Claude Code) to prevent them from triggering
+CI runs.
 
 ### Phase 8: Summary
 
-Present: files created, how to start the team ("Run Claude Code — the coordinator reads
-CLAUDE.md and spawns the team"), remind about Shift+Tab for delegate mode after spawn,
-suggest telling the coordinator what to build.
+Present: files created, how to start the team (the coordinator reads CLAUDE.md and
+activates the team), suggest telling the coordinator what to build.
 
 ## Retrospective Protocol
 
@@ -219,7 +220,7 @@ Non-negotiable aspects baked in from production experience. Read
 - Glossary compliance (domain types match glossary)
 - Deferred items tracked immediately
 - Reviewer coordination (check others' reviews first)
-- Explicit Driver onboarding in spawn prompts
+- Explicit Driver onboarding in activation prompts
 - Session transcripts excluded from CI triggers
 - AI-approximation disclaimer on every profile
 - Compressed active-context form on every profile

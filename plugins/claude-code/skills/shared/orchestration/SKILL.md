@@ -188,3 +188,20 @@ sequentially.
 
 When `parallel_review` is not set or is `false`, use the existing sequential
 `code-reviewer` agent, which runs all three review stages in a single pass.
+
+## Ping-Pong TDD Pairing
+
+When the ensemble-team workflow is active, the orchestrator manages TDD pairing
+using a persistent 2-person agent team. See `skills/orchestration/SKILL.md`
+(Ping-Pong Pairing section) for the full protocol. Key points for Claude Code:
+
+- The orchestrator creates a pair team via `TeamCreate` (e.g., `pair-<slice-id>`).
+- Both engineers are bootstrapped once and stay alive for the entire TDD cycle --
+  they are NOT respawned on each handoff.
+- Role swaps (driver/navigator) happen via `SendMessage` between the engineers,
+  not through the orchestrator.
+- Each engineer invokes `sdlc:red`, `sdlc:green`, and `sdlc:domain` as sub-agents
+  within their own persistent context. The orchestrator does not mediate individual
+  TDD steps.
+- The orchestrator monitors via task updates and idle notifications, intervening
+  only for external clarification routing or blocking disagreements.

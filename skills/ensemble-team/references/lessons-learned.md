@@ -22,9 +22,9 @@ into every new team setup from day one.
   Spawn prompt must include: "Do not re-request consensus until you have addressed
   all blocking feedback."
 
-### Stale Shutdown Requests
-- **Problem**: Shutdown requests from previous sessions get picked up by new agents
-- **Fix**: Instruct agents in spawn prompt to reject unexpected shutdown requests.
+### Stale Session-End Requests
+- **Problem**: Session-end requests from previous sessions get picked up by new agents
+- **Fix**: Instruct agents in activation prompt to reject unexpected session-end requests.
 
 ## Process Pipeline
 
@@ -53,8 +53,8 @@ into every new team setup from day one.
 
 ### Keep Reviewers Alive Between Tasks
 - Only rotate the Driver. Keep all Reviewers alive to preserve context accumulated
-  from reviewing prior tasks. Shut down only the outgoing Driver and the incoming
-  Driver (who needs new permissions).
+  from reviewing prior tasks. End and re-activate only the outgoing Driver and the
+  incoming Driver (who needs new permissions).
 
 ### Verify Clean Working Tree Before New Tasks
 - Ask the Driver to run `git status` and confirm clean tree. The coordinator must NOT
@@ -65,8 +65,9 @@ into every new team setup from day one.
   explicitly during review to check styling, spacing, and design token compliance.
 
 ### Session Transcripts Trigger CI
-- `.claude-sessions/` commits trigger unnecessary CI runs. Add `paths-ignore` for
-  session transcript directories in CI workflow configuration.
+- Session transcript directories (e.g., `.claude-sessions/` on Claude Code) trigger
+  unnecessary CI runs. Add `paths-ignore` for session transcript directories in CI
+  workflow configuration.
 
 ## Team Communication
 

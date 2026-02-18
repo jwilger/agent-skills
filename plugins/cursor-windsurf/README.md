@@ -96,6 +96,15 @@ Skills provide more detailed methodology than the rules file. When both are
 installed, they complement each other: the rules file provides always-on
 context, and skills provide deep guidance when activated.
 
+## Ensemble Team Workflow
+
+The `ensemble-team` skill from `jwilger/agent-skills` supports team-based
+planning (Robert's Rules consensus), ping-pong TDD pairing, and mob review.
+These workflows require multi-agent coordination (spawning and managing
+concurrent agents), which is available in Claude Code, Codex, and OpenCode.
+Cursor and Windsurf can use all SDLC skills individually, but cannot run
+the team coordination features due to the lack of multi-agent support.
+
 ## Enforcement Limitations
 
 Neither Cursor nor Windsurf supports enforcement hooks. The AI will

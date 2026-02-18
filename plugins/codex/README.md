@@ -58,6 +58,9 @@ cp agents/openai.yaml /path/to/your/project/agents/openai.yaml
   code quality, domain integrity) can be spawned in parallel using Codex's
   `spawn_agent`/`wait`/`close_agent` commands, reducing review time for large
   changesets. See `agents/reviewers/` for the persona files.
+- **Ensemble team workflow:** Projects with a `.team/` directory (created by
+  the `ensemble-team` skill) can use team-based consensus planning, ping-pong
+  TDD pairing, and mob review via Codex's multi-agent support.
 
 ## What You Do Not Get
 

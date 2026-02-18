@@ -82,6 +82,14 @@ After all agent-side checks pass (tests, code review, mutation testing), present
 
 Do not create or push the PR until the human has confirmed the verification checklist. If the human identifies issues, return to the implementation cycle to address them before proceeding.
 
+## Mob Review (Ensemble-Team Enhancement)
+
+When a project team is configured via the ensemble-team workflow, the PR review
+can be conducted as a mob review with the full team using consent-by-default
+Robert's Rules. See `skills/code-review/references/mob-review.md` for the
+complete protocol. The existing parallel review mechanism remains the default;
+mob review is an enhancement available when a project team is active.
+
 ## Error Handling
 
 - Not on feature branch -> warn

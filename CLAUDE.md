@@ -127,7 +127,7 @@ Each team member profile (`.team/<name>.md`) contains two forms:
 - **Full profile**: Loaded when the member is actively driving or navigating code. Includes biography, core philosophy, technical expertise, project-specific guidance, communication style, and code review checklist.
 - **Compressed active-context form** (<500 tokens): Loaded during discussion and review phases. Covers role, top 3-5 principles, key expertise, and characteristic review focus.
 
-The coordinator spawns agents with the appropriate form based on phase. This keeps context budgets manageable without losing persona fidelity.
+The coordinator activates agents with the appropriate form based on phase. This keeps context budgets manageable without losing persona fidelity.
 
 ### Planning Phase
 
@@ -145,19 +145,19 @@ Discussion transcripts are stored in `.team/discussions/` but the human sees onl
 
 ### Build Phase
 
-The orchestrator manages ping-pong TDD pairing directly -- no intermediate coordinator agent. The topology stays flat (hub-and-spoke).
+The orchestrator establishes a persistent pair session for ping-pong TDD pairing. Both engineers stay alive for the entire TDD cycle of a vertical slice, exchanging handoffs via lightweight structured messages rather than being recreated for each step. This avoids the token overhead of repeated context reloading. The topology stays flat (hub-and-spoke) with the orchestrator managing the pair directly -- no intermediate coordinator.
 
 **Pair selection**: The orchestrator picks 2 software engineers, tracking history in `.team/pairing-history.json`. Neither of the last 2 pairings may repeat.
 
 **Ping-pong rhythm** within a vertical slice:
-1. Engineer A (driver) writes a failing test (RED).
-2. Both engineers discuss domain concerns (DOMAIN). The orchestrator facilitates.
-3. Engineer B (navigator) either implements minimal green (GREEN) or drills down with a lower-level failing test.
+1. Engineer A (driver) writes a failing test (RED) and hands off to Engineer B with the result.
+2. Both engineers discuss domain concerns (DOMAIN). The orchestrator facilitates via structured messages.
+3. Engineer B (navigator) either implements minimal green (GREEN) or drills down with a lower-level failing test, then hands off to Engineer A.
 4. Roles swap. Repeat until the acceptance test passes.
 
 Each red-green cycle follows the full five-step TDD discipline: RED, DOMAIN, GREEN, DOMAIN, COMMIT. Phase boundaries are strict -- each phase edits only its own file types. Commits are mandatory after every completed cycle; no new RED phase begins until the commit exists.
 
-The orchestrator enforces workflow gates between phases and has veto escalation paths. See `skills/orchestration/SKILL.md` and `skills/tdd-cycle/SKILL.md`.
+The orchestrator ends the pair session when the vertical slice is complete. The orchestrator enforces workflow gates between phases and has veto escalation paths. See `skills/orchestration/SKILL.md` and `skills/tdd-cycle/SKILL.md`.
 
 ### PR/Review Phase
 
