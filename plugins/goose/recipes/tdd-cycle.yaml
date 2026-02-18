@@ -1,4 +1,4 @@
-version: "2.0.0"
+version: "2.1.0"
 title: "TDD Cycle: {{ feature_name }}"
 description: >-
   Red/domain/green/domain TDD cycle for implementing a feature using strict
