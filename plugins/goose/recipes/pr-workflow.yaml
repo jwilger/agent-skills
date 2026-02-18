@@ -1,4 +1,4 @@
-version: "2.1.0"
+version: "2.1.1"
 title: "PR Workflow: {{ branch_name }}"
 description: >-
   Create a pull request with quality gates: test verification, code review,
