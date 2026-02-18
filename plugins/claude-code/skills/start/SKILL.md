@@ -49,3 +49,21 @@ Routes to the correct workflow phase based on project state.
 
 Each check reads project state (files, git branch, dot tasks) and routes
 accordingly. Version mismatch warning shown but does not block work.
+
+## Ensemble Team Detection
+
+After running the detection sequence, check for ensemble team presence:
+
+1. **Check `.team/` directory**: Glob for `.team/*.md` profile files.
+2. **Check config**: Read `ensemble_team` section from `.claude/sdlc.yaml`.
+
+If both exist (profiles in `.team/` AND `ensemble_team.preset` is not `"none"`),
+display a notice in the project state summary:
+
+> **Ensemble team active** — [preset] preset, [N] members.
+> `/work` will use ping-pong pairing mode. `/sdlc:pr` will use mob review.
+
+This notice helps the agent (and the user) know that:
+- The orchestration layer should activate pair mode during `/work` sessions
+- PR reviews should use the full team mob review protocol instead of solo review
+- Team profiles are available in `.team/` for loading during discussions
