@@ -54,7 +54,7 @@ specialized roles.
 
 How roles map to agents depends on the harness delegation topology:
 
-- **Hub-and-spoke (flat):** The orchestrator spawns leaf-node specialists
+- **Hub-and-spoke (flat):** The orchestrator activates leaf-node specialists
   directly. Specialists cannot sub-delegate. All coordination flows through
   the orchestrator. Common on Claude Code, Amp, and OpenAI Agents SDK.
 - **Shallow hierarchy:** The orchestrator delegates to specialists who may
@@ -63,7 +63,7 @@ How roles map to agents depends on the harness delegation topology:
   Goose, and CrewAI.
 - **Sequential role-switching:** The orchestrator plays each role itself:
   "I am now acting as the Test Writer role" -- then shifts back when done.
-  Use on single-agent harnesses or when the orchestrator cannot spawn.
+  Use on single-agent harnesses or when the orchestrator cannot delegate.
 
 When in doubt, prefer hub-and-spoke. Flat delegation gives the orchestrator
 unmediated feedback from every role and keeps coordination simple. Roles are
@@ -169,8 +169,9 @@ This ensures each slice is built outside-in, preventing the pattern where intern
 
 ### Proxy Role Questions to User
 
-Roles running as subagents cannot ask the user questions directly. When a
-role's output contains questions or indicates it is blocked on a decision:
+Roles running as delegated agents cannot ask the user questions directly.
+When a role's output contains questions or indicates it is blocked on a
+decision:
 
 1. Detect the blocking question
 2. Present it to the user with the role's context
@@ -229,11 +230,11 @@ that allow deep nesting, prefer shallow topologies:
 
 - **3-4 active agents** is the empirical sweet spot per workflow cycle
 - Deeper trees add coordination cost with diminishing quality returns
-- Subagents duplicating parent work is a sign of excessive depth
+- Delegated agents duplicating parent work is a sign of excessive depth
 - Context gets summarized (lossy) at each delegation boundary
 
 If a role needs help, it reports back to the orchestrator rather than
-spawning its own specialists. The orchestrator decides whether to decompose
+activating its own specialists. The orchestrator decides whether to decompose
 further. This keeps feedback loops short and coordination centralized.
 
 ### Assign Wiring Tasks Explicitly
@@ -250,9 +251,13 @@ A vertical slice is not vertically integrated until every layer is connected end
 
 ### Ping-Pong Pairing
 
-The orchestrator manages pair programming directly -- no intermediate "pair
-coordinator" agent. The orchestrator IS the pair coordinator. This keeps the
-topology flat (hub-and-spoke) and avoids an unnecessary coordination layer.
+The orchestrator manages pair programming using a persistent pair session.
+Both engineers are activated once and persist for the duration of the
+pairing session. Handoffs happen via lightweight structured messages
+between the engineers, not by the orchestrator recreating agents. The
+orchestrator monitors the pair and routes clarification requests to external
+roles or the user. This keeps the topology flat (hub-and-spoke with
+persistent spokes) and avoids an unnecessary coordination layer.
 
 #### Pair Selection
 
@@ -273,28 +278,71 @@ this constraint is relaxed.
 Create this file if it does not exist. Append a new entry each time a
 pairing session begins.
 
-#### Pair Session Context
+#### Pair Session Lifecycle
 
-Each engineer agent is bootstrapped with:
-- Their persona profile (from `.team/`)
-- The scenario being implemented (GWT acceptance criteria)
-- Current codebase context (relevant file paths, test output, domain types)
-- Their assigned role (driver or navigator) and the ping-pong protocol
+1. **Establish the pair session.** The orchestrator creates a persistent
+   pair session for the vertical slice (e.g., named `pair-<slice-id>`).
+   How this maps to harness primitives varies: on multi-agent harnesses
+   this may be a named team or agent group; on single-agent harnesses the
+   orchestrator tracks the pair state in conversation context.
 
-The orchestrator passes this context when spawning each engineer, following
-the "Provide Complete Context Every Time" practice.
+2. **Activate both engineers once.** Each engineer is given full initial
+   context at the start of the session:
+   - Their persona profile (from `.team/`)
+   - The scenario being implemented (GWT acceptance criteria)
+   - Current codebase context (relevant file paths, test output, domain types)
+   - Their assigned starting role (driver or navigator) and the ping-pong protocol
+   - Instructions to perform `red`, `green`, and `domain` steps within
+     their own context (not via the orchestrator)
+
+   The orchestrator provides this context when activating each engineer,
+   following the "Provide Complete Context Every Time" practice. After
+   activation, engineers retain their accumulated context across the
+   entire session -- they are NOT recreated on each handoff.
+
+3. **Engineers work and hand off directly.** Engineers send structured
+   handoff messages to each other when roles swap. The orchestrator does
+   not relay these handoffs. See "Structured Handoff Messages" below.
+
+4. **Orchestrator monitors.** The orchestrator observes the pair's progress
+   via task updates and status notifications. It intervenes only to:
+   - Route clarification requests to external roles or the user
+   - Resolve blocking disagreements between the pair
+   - Verify workflow gates are respected
+
+5. **End the session when done.** When the acceptance test passes and the
+   slice is complete, the orchestrator ends the pair session and releases
+   both engineers.
+
+#### Phase Step Invocation
+
+Engineers perform the `red`, `green`, and `domain` phase steps within
+their own persistent context. This means:
+
+- The driver performs the RED step to write a failing test within their
+  own context.
+- The navigator performs the GREEN step to write a passing implementation
+  within their own context.
+- Either engineer performs the DOMAIN review within their own context,
+  then shares the outcome with their partner via a handoff message.
+
+Engineers do NOT ask the orchestrator to run these steps on their behalf.
+The orchestrator's role is monitoring and external routing, not mediating
+every TDD step.
 
 #### Ping-Pong Rhythm
 
 The pair alternates between driver (writes the failing test) and navigator
 (makes it pass or drills down). The rhythm within one vertical slice:
 
-1. **Engineer A (driver)** writes a failing test via `sdlc:red`.
-2. **Both engineers discuss** domain concerns via `sdlc:domain`. The
-   orchestrator facilitates this exchange -- engineers do not message each
-   other directly.
+1. **Engineer A (driver)** writes a failing test by performing the RED
+   step within their own context.
+2. **Both engineers discuss** domain concerns. Each performs the DOMAIN
+   review within their own context and they exchange findings via
+   structured handoff messages.
 3. **Engineer B (navigator)** either:
-   - (a) Writes minimal green implementation via `sdlc:green`, OR
+   - (a) Writes minimal green implementation by performing the GREEN
+     step within their own context, OR
    - (b) Writes a lower-level failing test to clarify the error, if the
      current failure does not make the next green step obvious.
 
@@ -303,22 +351,25 @@ The pair alternates between driver (writes the failing test) and navigator
    the implementation decision. Do not hand off refactoring to the other
    engineer.
 
-4. **Roles swap:** B becomes driver, A becomes navigator.
+4. **Roles swap:** B sends a structured handoff message to A. B becomes
+   driver, A becomes navigator.
 5. Repeat until the original acceptance test passes.
 6. Remove ignore markers from lower-level tests as they go green.
 
 #### Structured Handoff Messages
 
-When driver and navigator roles swap, the outgoing driver must pass a
+When driver and navigator roles swap, the outgoing driver sends a
 structured handoff to the incoming driver containing:
 
 - **Failing test:** name and file path of the test that needs a green implementation (or the next red test to write)
 - **Intent:** what behavior the test is specifying
 - **Domain context:** any relevant constraints or decisions surfaced during the domain discussion
 - **Current output:** the exact test failure or error message
+- **New role assignment:** which engineer is now driver and which is navigator
 
-The orchestrator is responsible for relaying this handoff. This ensures the
-incoming driver has clean context without re-deriving it from scratch.
+Because both engineers persist across the session, the incoming driver
+retains all prior context from earlier cycles. The handoff message provides
+the delta, not a full re-bootstrap.
 
 #### Drill-Down Ownership
 
@@ -326,9 +377,10 @@ When the navigator chooses option (b) -- drilling down instead of going
 green -- the roles swap at that level too:
 
 1. Navigator writes a lower-level failing test (they are now driver at
-   this level).
+   this level) by performing the RED step within their own context.
 2. Original driver writes the green for this lower-level test (they are
-   now navigator at this level).
+   now navigator at this level) by performing the GREEN step within their
+   own context.
 3. When this level goes green, pop back up to the previous level and
    continue with swapped roles.
 
@@ -339,33 +391,38 @@ implementation.
 #### Clarification Routing
 
 If the pair needs clarification from other team members (PM, domain SME,
-architect, etc.), they request it through the orchestrator. No ad-hoc
-lateral agent spawning. The orchestrator proxies the question using the
-same pattern as "Proxy Role Questions to User."
+architect, etc.), they send the request to the orchestrator. The
+orchestrator proxies the question to the appropriate role or the user, then
+sends the answer back to the requesting engineer. No ad-hoc lateral
+delegation outside the pair session.
 
 #### Pairing Verification
 
 After a pairing session, verify:
 
-- [ ] Orchestrator managed pairing directly (no intermediate coordinator agent)
+- [ ] Orchestrator established a persistent pair session for the vertical slice
+- [ ] Both engineers were activated once with full context (persona, scenario, codebase state, role)
+- [ ] Engineers were NOT recreated on each role swap
+- [ ] Engineers performed red, green, and domain steps within their own context
+- [ ] Handoffs between engineers used structured messages (not orchestrator relay)
+- [ ] Handoff messages included failing test, intent, domain context, current output, and new role assignment
 - [ ] Pair was selected without repeating either of the last 2 pairings
 - [ ] `.team/pairing-history.json` was updated with the new pairing entry
-- [ ] Each engineer received full context (persona, scenario, codebase state, role)
 - [ ] Driver and navigator roles alternated after each red-green cycle
 - [ ] Drill-down levels also alternated roles
-- [ ] All clarification requests routed through the orchestrator
-- [ ] No direct lateral messaging between engineer agents
+- [ ] All external clarification requests routed through the orchestrator
+- [ ] Pair session was ended after acceptance test passed
 
 ## Enforcement Note
 
 This skill provides advisory guidance. It cannot mechanically prevent the
 orchestrator from writing files directly or skipping gates. On harnesses with
-plugin support (Claude Code hooks, OpenCode event hooks), enforcement plugins
-add mechanical guardrails -- PreToolUse hooks block unauthorized file edits,
-SubagentStop hooks require domain review after red and green phases. On
-harnesses without enforcement, follow these practices by convention. If you
-observe violations, point them out. For available enforcement plugins, see
-the [Harness Plugin Availability](../../README.md#harness-plugin-availability) table.
+plugin support (e.g., Claude Code hooks, OpenCode event hooks), enforcement
+plugins add mechanical guardrails -- pre-tool-use hooks block unauthorized
+file edits, post-delegation hooks require domain review after red and green
+phases. On harnesses without plugin support, follow these practices by
+convention. If you observe violations, point them out. For available
+enforcement plugins, see the [Harness Plugin Availability](../../README.md#harness-plugin-availability) table.
 
 ## Verification
 

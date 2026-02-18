@@ -228,6 +228,13 @@ Each reviewer runs as an independent subtask with its own context window.
 Results are collected and presented to the main agent when all three
 complete.
 
+## Ensemble Team Workflow
+
+Projects with a `.team/` directory (created by the `ensemble-team` skill from
+`jwilger/agent-skills`) can use team-based consensus planning, ping-pong TDD
+pairing, and mob review. OpenCode's subagent support provides the multi-agent
+coordination these workflows require.
+
 ## Compatibility
 
 - **OpenCode:** Requires the `@opencode-ai/plugin` type package

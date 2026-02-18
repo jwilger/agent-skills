@@ -16,7 +16,11 @@ All code changes follow the red/domain/green/domain cycle:
    features. Run the test. Verify it passes. Stop.
 4. **Domain review:** Review the implementation for domain violations --
    anemic models, leaked domain logic, missing invariants. Stop.
-5. Repeat from step 1 for the next behavior.
+5. **Commit:** Run the full test suite. Stage all changes and create a git
+   commit referencing the current scenario. No new RED phase may begin until
+   this commit is made. Refactoring happens in a separate commit after this one.
+
+Then repeat from step 1 for the next behavior.
 
 Do not skip domain review steps. Even for "trivial" changes, pause and check
 for primitive obsession and invalid state representability.
@@ -133,11 +137,20 @@ Never assume a test will pass or fail -- run it and observe.
 ## Conventions
 
 - One assertion per test. Multiple behaviors need multiple tests.
-- Commit after each completed red/green cycle, not mid-cycle.
+- Commit after each completed cycle (step 5 is mandatory), not mid-cycle.
 - When encountering errors, search project memory or docs before debugging
   from scratch.
 - When blocked on a design decision, state the options and trade-offs rather
   than choosing silently.
+
+## Ensemble Team Workflow
+
+If this project has a `.team/` directory with expert profiles configured via the
+`ensemble-team` skill from `jwilger/agent-skills`, Codex supports team-based
+planning using Robert's Rules consensus, ping-pong TDD pairing (where red and
+green steps alternate between two agents), and mob review where the full team
+evaluates changes before merge. Codex's `spawn_agent` capability provides the
+multi-agent coordination these workflows require.
 
 ## Installed Skills
 

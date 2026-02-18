@@ -295,10 +295,11 @@ clarification routing, and orchestrator responsibilities -- see the
 
 This skill defines mandatory policy for phase boundaries and cycle
 discipline, but a skill file alone cannot mechanically prevent violations;
-mechanical enforcement requires hooks or orchestrator gates. On harnesses with plugin support (Claude Code hooks, OpenCode
-event hooks), enforcement plugins add file-type restrictions and mandatory
-domain review gates. On other harnesses, the agent follows these practices
-by convention. If you observe the agent editing production code during RED
+mechanical enforcement requires hooks or orchestrator gates. On harnesses with
+plugin support (e.g., Claude Code hooks, OpenCode event hooks), enforcement
+plugins add file-type restrictions and mandatory domain review gates. On
+harnesses without plugin support, the agent follows these practices by
+convention. If you observe the agent editing production code during RED
 or skipping domain review, point it out. For available enforcement
 plugins, see the [Harness Plugin Availability](../../README.md#harness-plugin-availability) table.
 

@@ -83,3 +83,9 @@ After every file edit, run the relevant verification command and paste the outpu
 Run the command. Paste the output.
 
 See `skills/tdd-cycle/SKILL.md` for verification requirements.
+
+## Ensemble-Team Workflow
+
+For team-based development with tiered presets (solo, pair, mob), the
+ensemble-team workflow provides persistent agent teams, ping-pong TDD pairing,
+and mob review. See `skills/orchestration/SKILL.md` for details.
