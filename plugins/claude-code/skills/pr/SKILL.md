@@ -61,6 +61,27 @@ Follows `skills/task-management/SKILL.md` for task closure.
 - SUGGESTIONS: Proceed to mutation testing
 - COMPILE-TIME FLAGS: Strongly recommended, not blocking
 
+## Human Verification Gate
+
+A vertical slice is not merge-ready until the human has personally verified its behavior. This is a structured checkpoint, not an automated enforcement.
+
+### Pre-PR Human Verification Reminder
+
+After all agent-side checks pass (tests, code review, mutation testing), present the human with:
+
+1. **A clear statement**: "This slice requires your verification before the PR can merge. Agents cannot run the application and interact with it as a user would — this is your responsibility."
+
+2. **A specific verification checklist** derived from the slice's application-boundary GWT scenarios. Each item should be concrete and actionable:
+   - "Run the application and verify that [specific behavior from GWT scenario] is observable"
+   - "Confirm that [specific boundary condition] produces [expected outcome]"
+   - "Verify that [specific user-facing interaction] works as described in the acceptance criteria"
+
+3. **Explicit status separation**:
+   - **Agent verified**: All tests pass, code compiles, code review passed, layer wiring confirmed in diff, automated acceptance tests pass (where applicable)
+   - **Human verified**: Awaiting your confirmation that the slice's behavior is correct when interacting with the running application
+
+Do not create or push the PR until the human has confirmed the verification checklist. If the human identifies issues, return to the implementation cycle to address them before proceeding.
+
 ## Error Handling
 
 - Not on feature branch -> warn

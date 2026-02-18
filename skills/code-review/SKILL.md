@@ -53,6 +53,18 @@ requirements as OVER-BUILT.
 
 If any criterion is FAIL, stop. Return to implementation before continuing.
 
+### Vertical Slice Layer Coverage
+
+For tasks that implement a vertical slice (adding user-observable behavior), perform the following checks in order:
+
+1. **Entry-point wiring check (diff-based):** Examine whether the changeset includes modifications to the application's entry point or its wiring/routing layer. If the slice claims to add new user-observable behavior but the diff does not touch any wiring or entry-point code, the review **fails** unless the author explicitly documents why existing wiring already routes to the new behavior.
+
+2. **End-to-end traceability:** Verify that a path can be traced from the application's external entry point, through any infrastructure or integration layer, to the new domain logic, and back to observable output. If any segment of this path is missing from the changeset and not already present in the codebase, flag the gap.
+
+3. **Boundary-level test coverage:** Confirm that at least one test exercises the new behavior through the application's external boundary (e.g., an HTTP request, a CLI invocation, a message on a queue) rather than calling internal functions directly. Where the application architecture makes automated boundary tests feasible, their absence is a review concern.
+
+4. **Test-level smell check:** If every test in the changeset is a unit test of isolated internal functions with no integration or acceptance-level test, flag this as a concern. The slice may be implementing domain logic without proving it is reachable through the running application.
+
 **Stage 2: Code Quality.** Is the code clear, maintainable, and well-tested?
 
 Review each changed file for:

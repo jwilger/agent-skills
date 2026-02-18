@@ -100,6 +100,17 @@ vertical slice.
    a Translation — it is cross-cutting infrastructure that belongs
    outside the event model.
 
+### Required Layers Per Slice Pattern
+
+Each slice pattern implies a minimum set of architectural layers. A slice is not complete until all required layers are implemented and wired together.
+
+- **State View**: infrastructure (read events/data from store) + domain (projection/query logic) + presentation (render or return result to caller) + application wiring (connect layers end-to-end)
+- **State Change**: presentation (accept user input or external request) + domain (command validation and business rules) + infrastructure (persist resulting events/data) + application wiring (connect layers end-to-end)
+- **Automation**: infrastructure (detect triggering condition — timer, external event, threshold) + domain (policy/decision logic) + infrastructure (execute resulting action — send message, write data, call service) + application wiring (connect trigger to policy to action)
+- **Translation**: infrastructure (receive from external system) + domain (mapping/transformation logic) + infrastructure (deliver to target system) + application wiring (connect inbound adapter to mapper to outbound adapter)
+
+When decomposing a slice, verify that your acceptance criteria and task breakdown cover every required layer. A slice that only implements domain logic without presentation or infrastructure is incomplete — it is a component, not a vertical slice.
+
 ### GWT Scenarios
 
 After workflow design, generate Given/When/Then scenarios for each slice.
@@ -117,6 +128,22 @@ type system). If the type system can make the invalid state unrepresentable,
 it is not a GWT scenario.
 
 See `references/gwt-template.md` for the full scenario format and examples.
+
+### Application-Boundary Acceptance Scenarios
+
+Every vertical slice MUST include at least one GWT scenario defined at the application boundary:
+
+- **Given**: The system is in a known state (prior events, seed data, configuration)
+- **When**: A user (or external caller) interacts through the application's external interface — the specific interface depends on the project (HTTP endpoint, CLI command, message queue consumer, UI action, etc.)
+- **Then**: The result is observable at that same boundary — a response, output, rendered state change, emitted event, etc.
+
+A GWT scenario that can be satisfied entirely by calling an internal function in a unit test describes a unit-level specification, not a slice acceptance criterion. Slice acceptance criteria must exercise the path from external input to observable output.
+
+### Acceptance Test Strategy
+
+Where the application boundary is programmatically testable — HTTP endpoints, CLI output parsing, headless browser automation, message queue assertions, API contract tests, etc. — write automated acceptance tests that exercise the full GWT scenario from external input to observable output. These tests provide fast feedback and serve as living documentation of slice behavior.
+
+Where automated boundary testing is not feasible (complex GUI interactions, hardware-dependent behavior, visual/aesthetic verification), document what the human should manually verify: the specific steps to perform and the expected observable result. This manual verification checklist becomes part of the slice's definition of done.
 
 ### Slice Independence
 
