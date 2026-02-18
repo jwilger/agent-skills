@@ -99,3 +99,91 @@ The facilitator maintains a brief decision log for each motion:
    - Swyx's ecosystem-level frameworks and evaluation thinking
    - Beck's methodology discipline and values-driven design
    - Yegge's platform thinking and historical context
+
+---
+
+## Ensemble Team Workflow (for consumer projects)
+
+The `ensemble-team` skill creates a project-specific AI team for any software project that installs agent-skills. This section documents how that workflow operates end-to-end. For full details, see `skills/ensemble-team/SKILL.md` and its `references/` directory.
+
+### Team Setup
+
+The `ensemble-team` skill bootstraps a complete team structure with three tiered presets:
+
+| Preset | Size | Composition |
+|--------|------|-------------|
+| **Full** | ~9 | PM, UI/UX Designer, Accessibility Specialist, Domain SME, QA Analyst, 4 Software Engineers |
+| **Lean** | ~5-6 | PM, Domain SME, Dev Practice Lead, 2-3 Engineers, 1 flex role |
+| **Solo-plus** | ~3 | Domain SME, Dev Practice Lead, 1 Engineer |
+
+Presets are starting points. The team formation session (Phase 5) adjusts composition based on project needs. Conditional roles (Security, Data/ML, API Specialist, etc.) can augment any preset. See `skills/ensemble-team/references/role-catalog.md` for role selection criteria.
+
+Each team member is a real-world expert, researched via web search -- not picked from a memorized list. Profiles include an AI-approximation disclaimer and an AI self-awareness clause.
+
+### Team Bootstrapping
+
+Each team member profile (`.team/<name>.md`) contains two forms:
+
+- **Full profile**: Loaded when the member is actively driving or navigating code. Includes biography, core philosophy, technical expertise, project-specific guidance, communication style, and code review checklist.
+- **Compressed active-context form** (<500 tokens): Loaded during discussion and review phases. Covers role, top 3-5 principles, key expertise, and characteristic review focus.
+
+The coordinator spawns agents with the appropriate form based on phase. This keeps context budgets manageable without losing persona fidelity.
+
+### Planning Phase
+
+The team uses a consent-by-default Robert's Rules protocol for all decisions. The coordinator classifies each decision by category:
+
+| Category | Max Rounds | Quorum |
+|----------|------------|--------|
+| **Trivial** (naming, formatting) | 1 | 5 of N (consent-by-default) |
+| **Standard** (architecture, API design) | 3 | 6 of N |
+| **Critical** (breaking changes, security) | 5 | N of N (full quorum) |
+
+**Motions** require a second, are debated in structured rounds, and resolve via consent check. Members may **consent**, **stand aside** (disagree but will not block -- recorded for posterity), or **object** (must propose an alternative). Stand-aside means deference, not disapproval. If the round limit is reached without consensus, the human breaks the tie.
+
+Discussion transcripts are stored in `.team/discussions/` but the human sees only one-line decision summaries by default. Full detail is available on request. See `skills/ensemble-team/references/progressive-disclosure.md`.
+
+### Build Phase
+
+The orchestrator manages ping-pong TDD pairing directly -- no intermediate coordinator agent. The topology stays flat (hub-and-spoke).
+
+**Pair selection**: The orchestrator picks 2 software engineers, tracking history in `.team/pairing-history.json`. Neither of the last 2 pairings may repeat.
+
+**Ping-pong rhythm** within a vertical slice:
+1. Engineer A (driver) writes a failing test (RED).
+2. Both engineers discuss domain concerns (DOMAIN). The orchestrator facilitates.
+3. Engineer B (navigator) either implements minimal green (GREEN) or drills down with a lower-level failing test.
+4. Roles swap. Repeat until the acceptance test passes.
+
+Each red-green cycle follows the full five-step TDD discipline: RED, DOMAIN, GREEN, DOMAIN, COMMIT. Phase boundaries are strict -- each phase edits only its own file types. Commits are mandatory after every completed cycle; no new RED phase begins until the commit exists.
+
+The orchestrator enforces workflow gates between phases and has veto escalation paths. See `skills/orchestration/SKILL.md` and `skills/tdd-cycle/SKILL.md`.
+
+### PR/Review Phase
+
+After a pair completes their TDD cycle, the full team performs a **mob review** integrating the three-stage code review:
+
+| Stage | Focus | Led By |
+|-------|-------|--------|
+| 1 -- Spec Compliance | Does the code do what was asked? | PM and Domain SME |
+| 2 -- Code Quality | Is it clear, tested, maintainable? | Engineers NOT in the original pair |
+| 3 -- Domain Integrity | Are domain boundaries respected? | Domain SME with input from all |
+
+Stages run sequentially; a failure in an earlier stage blocks later stages. Feedback items are classified by the same decision categories as planning (trivial/standard/critical). Team members use compressed persona forms during review. The original pair addresses feedback via their existing ping-pong process.
+
+See `skills/code-review/references/mob-review.md`.
+
+### Retrospective
+
+Retrospectives trigger after each shipped PR (merged to integration branch), not on arbitrary time intervals. The team reflects on what worked, what did not, and proposes process improvements.
+
+Key constraints:
+- Output is **suggestions only** -- explicit human approval required before adoption.
+- The team does NOT self-modify its own agreements, profiles, or process documents.
+- Mini-retros after each CI build are lightweight checkpoints and do not require human approval.
+
+### Evaluation
+
+The `ensemble-team` skill includes an evaluation framework for measuring whether the team structure produces better outcomes than simpler configurations. It covers baseline comparison (mutation score, domain model richness, defect rate, cycle time), persona fidelity scoring, and decision quality tracking with pattern flags for echo-chambering, persistent stand-asides, and excessive escalation.
+
+See `skills/ensemble-team/references/evaluation-framework.md`.

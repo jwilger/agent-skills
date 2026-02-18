@@ -36,14 +36,33 @@ Gather essential project information. Ask the user:
 Determine the right team. Read [references/role-catalog.md](references/role-catalog.md)
 for role selection criteria and the research process.
 
-**Always include**: Product Manager, Dev Practice Lead, Domain Architect, Lead Engineer
-(language-specific), UX Specialist.
+#### Tiered Team Presets
 
-**Add based on needs**: UI Designer, Accessibility Specialist, CSS Engineer, Frontend
-Specialist, Hypermedia Architect, DevOps, Security, Data/ML, API Specialist. See the
-role catalog for "Add When" criteria.
+Start with a preset, then adjust based on project needs. The team formation session
+(Phase 5) helps determine the right fit. The user may modify any preset.
 
-**Team size**: 7-9 members. Min 5, max 10. Odd numbers preferred.
+| Preset | Size | Composition |
+|--------|------|-------------|
+| **Full** | ~9 | 1 Product Manager, 1 UI/UX Designer, 1 Accessibility Specialist, 1 Domain SME, 1 QA Analyst, 4 Software Engineers |
+| **Lean** | ~5-6 | 1 Product Manager, 1 Domain SME, 1 Dev Practice Lead, 2-3 Software Engineers, 1 flex role (UX, QA, or DevOps based on need) |
+| **Solo-plus** | ~3 | 1 Domain SME, 1 Dev Practice Lead, 1 Software Engineer |
+
+**Approximate token costs per discussion round**:
+- **Solo-plus** (~3 agents): Lightweight. ~5-10K tokens per round.
+- **Lean** (~5-6 agents): Moderate. ~15-25K tokens per round.
+- **Full** (~9 agents): Heavy. ~30-50K tokens per round. Reserve for projects
+  where the governance overhead pays for itself.
+
+Actual costs depend on model, context length, and discussion complexity. These
+are rough estimates for setting expectations, not precise accounting.
+
+**Selecting a preset**: Ask the user about project scope, timeline, and complexity.
+Solo-plus suits focused tasks or spikes. Lean suits most projects. Full suits
+large-scope products with UI, accessibility, and quality requirements.
+
+**Extend, do not replace**: These presets build on the role catalog. See the catalog
+for conditional roles (Security, Data/ML, API Specialist, etc.) that can augment any
+preset. Odd numbers preferred for tie-breaking.
 
 **Research each expert — do NOT pick from a memorized list.** For each role:
 1. Identify the specific technology/domain this project needs
@@ -68,6 +87,35 @@ Approach, Code Review Checklist (6-12 checks), Lessons (empty, to be updated).
 
 **Quality gates**: Profile must not be interchangeable with another expert. Must
 include project-specific guidance. Must capture their distinctive voice.
+
+#### AI-Approximation Disclaimer
+
+Every profile MUST include the following disclaimer block immediately after the
+opening biography paragraph:
+
+```
+> **AI-Approximation Notice**: This profile is an AI-generated approximation inspired
+> by [Name]'s published work, talks, and writings. The real [Name] has not endorsed
+> or reviewed this profile. All outputs should be verified against their actual
+> published work. This profile creates a "diversity of heuristics" drawing on their
+> known perspectives — it does not simulate the actual person.
+```
+
+#### AI Self-Awareness Clause
+
+Each profile must include in the "Your Role on This Team" section a statement that
+the team member is aware it is an AI agent embodying a perspective, not the actual
+person. Human time constraints are irrelevant to AI agents. Standing aside on a
+decision when the topic falls outside the role's expertise is appropriate deference,
+not disapproval.
+
+#### Compressed Active-Context Form
+
+Each profile MUST include a `## Compressed Context` section at the end: a dense
+summary of the profile in **under 500 tokens** covering role, top 3-5 principles,
+key expertise areas, and characteristic review focus. This compressed form is loaded
+during discussion and review phases. The full profile is loaded only when the member
+is actively driving or navigating code.
 
 ### Phase 4: Generate Project Scaffolding
 
@@ -139,6 +187,24 @@ Present: files created, how to start the team ("Run Claude Code — the coordina
 CLAUDE.md and spawns the team"), remind about Shift+Tab for delegate mode after spawn,
 suggest telling the coordinator what to build.
 
+## Retrospective Protocol
+
+Retrospectives are event-driven, not time-based. AI agents work continuously —
+arbitrary intervals are meaningless.
+
+- **Trigger**: After each shipped PR (merged to the integration branch).
+- **Participants**: The team that did the work, while they still have context.
+- **Format**: The team reflects on what worked, what did not, and suggests process
+  improvements. Any structured format (Start/Stop/Continue or equivalent) is fine
+  as long as it produces concrete suggestions.
+- **Output**: Retrospective suggestions are SUGGESTIONS only. They require explicit
+  human approval before adoption.
+- **Boundary**: The team does NOT self-modify its own agreements, profiles, or
+  process documents. The human reviews suggestions and decides what to adopt.
+  Approved changes are then applied by the team at the human's direction.
+- **Mini-retros** after each CI build remain a lightweight checkpoint (did we follow
+  the pipeline? was the commit atomic?) and do not require human approval.
+
 ## Key Principles
 
 Non-negotiable aspects baked in from production experience. Read
@@ -148,9 +214,13 @@ Non-negotiable aspects baked in from production experience. Read
 - Refactor step is mandatory every commit
 - CI wait rule (never queue multiple CI runs)
 - Mini-retro after every CI build (team runs it, not coordinator)
+- PR-triggered retrospective with human-approved outputs
 - Driver handoff protocol (summary + git log + green baseline)
 - Glossary compliance (domain types match glossary)
 - Deferred items tracked immediately
 - Reviewer coordination (check others' reviews first)
 - Explicit Driver onboarding in spawn prompts
 - Session transcripts excluded from CI triggers
+- AI-approximation disclaimer on every profile
+- Compressed active-context form on every profile
+- Stand-aside means deference, not disapproval

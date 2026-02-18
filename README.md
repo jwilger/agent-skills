@@ -2,25 +2,35 @@
 
 Portable [Agent Skills](https://agentskills.io) that encode professional
 software development practices -- TDD, domain modeling, event modeling,
-code review, architecture decisions, and more. These skills teach any
-AI coding agent a disciplined SDLC process, regardless of which harness
-or editor you use.
+code review, architecture decisions, and team-based ensemble workflows.
+These skills teach any AI coding agent a disciplined SDLC process,
+regardless of which harness or editor you use.
+
+**Highlighted capability: Ensemble Team Workflow.** The `ensemble-team`
+skill creates a full AI expert team for your project -- with tiered
+presets (full/lean/solo-plus), consensus-based planning via Robert's
+Rules, ping-pong TDD pairing, mob code review, and built-in
+retrospectives. See the skill inventory below.
 
 ## Quick Start
 
-Install all skills:
+1. Install the core skills to get a working TDD cycle:
+   ```bash
+   npx skills add jwilger/agent-skills --skill tdd-cycle --skill domain-modeling
+   ```
 
-```bash
-npx skills add jwilger/agent-skills --all
-```
+2. For team-based development, add the ensemble workflow:
+   ```bash
+   npx skills add jwilger/agent-skills --skill ensemble-team --skill orchestration
+   ```
 
-Or install individual skills:
+3. Or install everything at once:
+   ```bash
+   npx skills add jwilger/agent-skills --all
+   ```
 
-```bash
-npx skills add jwilger/agent-skills --skill tdd-cycle
-npx skills add jwilger/agent-skills --skill domain-modeling
-npx skills add jwilger/agent-skills --skill code-review
-```
+Start with solo mode and the core skills. Scale to pair or full ensemble as
+your project grows.
 
 ## Skill Inventory
 
@@ -44,7 +54,8 @@ npx skills add jwilger/agent-skills --skill code-review
 
 | Skill | Description | Phase |
 |-------|-------------|-------|
-| `orchestration` | Multi-agent delegation patterns, workflow gates, conflict resolution | build |
+| `ensemble-team` | Full AI team setup with tiered presets (full/lean/solo-plus), ping-pong TDD pairing, mob review, progressive disclosure, and consensus-based planning | setup |
+| `orchestration` | Multi-agent delegation patterns, workflow gates, ping-pong pair coordination, conflict resolution | build |
 | `task-management` | Work breakdown, state tracking, dependency management | build |
 
 ### Tier 3 -- Utility (universal, standalone)
@@ -122,13 +133,13 @@ each other by name but never assume internal structure.
 
 | Harness | Skills | Plugin | Enforcement |
 |---------|--------|--------|-------------|
-| Claude Code | All 13 | Planned | Hooks, subagents, skills |
-| OpenCode | All 13 | Planned | JS/TS modules, event hooks |
-| Codex | All 13 | Planned | AGENTS.md, commands |
-| Cursor / Windsurf | All 13 | Planned | Rules files |
-| Goose | All 13 | Planned | Recipes (YAML) |
-| Amp | All 13 | None | MCP only |
-| Aider | All 13 | None | No plugin system |
+| Claude Code | All 14 | Planned | Hooks, subagents, skills |
+| OpenCode | All 14 | Planned | JS/TS modules, event hooks |
+| Codex | All 14 | Planned | AGENTS.md, commands |
+| Cursor / Windsurf | All 14 | Planned | Rules files |
+| Goose | All 14 | Planned | Recipes (YAML) |
+| Amp | All 14 | None | MCP only |
+| Aider | All 14 | None | No plugin system |
 
 Skills work on every harness in the table. Plugins add ergonomics and
 enforcement on harnesses that support them.
@@ -146,6 +157,7 @@ npx skills add jwilger/agent-skills --skill architecture-decisions
 npx skills add jwilger/agent-skills --skill event-modeling
 
 # Orchestration skills
+npx skills add jwilger/agent-skills --skill ensemble-team
 npx skills add jwilger/agent-skills --skill orchestration
 npx skills add jwilger/agent-skills --skill task-management
 
