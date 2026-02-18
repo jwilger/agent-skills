@@ -63,22 +63,72 @@ Use AskUserQuestion for each choice:
 - Languages/frameworks (auto-detect from project files)
 - Language-specific test patterns
 
-### 5. Create Configuration
+### 5. Team Formation (Optional)
+
+Ask the user: **"Would you like to set up an ensemble AI team for this project?"**
+
+If the user says **no**, skip this step entirely and proceed to Create Configuration.
+
+If the user says **yes**, present the three presets:
+
+| Preset | Size | Best For |
+|--------|------|----------|
+| **Solo-plus** | ~3 members | Lightweight team for focused projects or spikes |
+| **Lean** | ~5-6 members | Balanced team for most projects |
+| **Full** | ~9 members | Complete team for complex, multi-domain projects |
+
+Once the user selects a preset, invoke the `ensemble-team` skill workflow
+(`skills/ensemble-team/SKILL.md`). This will:
+
+1. **Research real-world experts** for each role based on the project's domain
+   and tech stack (using WebSearch, not memorized lists)
+2. **Create `.team/` profiles** with AI-approximation disclaimers and compressed
+   active-context forms for each team member
+3. **Generate supporting docs**: `PROJECT.md`, `TEAM_AGREEMENTS.md` skeleton,
+   `docs/glossary.md`, `docs/deferred-items.md`, `docs/future-ideas.md`
+4. **Run the team formation session** where the team reaches consensus on their
+   own working agreements (Phase 5 of the ensemble-team skill)
+
+The ensemble-team skill handles all phases end-to-end. The setup skill resumes
+after the team formation is complete.
+
+### 6. Create Configuration
 
 Write `.claude/sdlc.yaml` with all gathered settings. Write `.claude/settings.json`
 with output style reference. Generate `CLAUDE.md` with workflow quick-reference
 (using managed markers for safe updates).
 
-### 6. Commit and Push
+If an ensemble team was configured in Step 5, additionally:
+
+- Add `ensemble_team` section to `.claude/sdlc.yaml`:
+  ```yaml
+  ensemble_team:
+    preset: "solo-plus"  # or "lean" or "full"
+    members:
+      - name: <member-name>
+        role: <role>
+        profile: .team/<member-name>.md
+      # ... one entry per team member
+  ```
+- Include ensemble team coordinator instructions in the generated `CLAUDE.md`
+  (within managed markers). These instructions tell the orchestrator to activate
+  ping-pong pairing mode during `/work` and mob review during `/sdlc:pr`.
+- If no team was configured, set `ensemble_team: { preset: "none" }` (or omit
+  the section entirely).
+
+### 7. Commit and Push
 
 Stage setup files, create branch if PR workflow enabled, commit, push, create PR.
 
-### 7. Display Success
+### 8. Display Success
 
 Show summary of what was configured and next steps:
 - `/start` to begin work
 - `/work` to pick up a task
 - `/model` for event modeling
+- If an ensemble team was configured, mention the team preset and member count,
+  and note that `/work` will use ping-pong pairing and `/sdlc:pr` will use
+  mob review.
 
 ## Artifacts Created
 
@@ -88,3 +138,9 @@ Show summary of what was configured and next steps:
 | Settings reference | `.claude/settings.json` |
 | Workflow quick-reference | `CLAUDE.md` (managed markers) |
 | Dot tasks directory | `.dots/` (created by dot CLI init) |
+| Team profiles (if configured) | `.team/*.md` |
+| Project description (if team) | `PROJECT.md` |
+| Team agreements (if team) | `TEAM_AGREEMENTS.md` |
+| Domain glossary (if team) | `docs/glossary.md` |
+| Deferred items (if team) | `docs/deferred-items.md` |
+| Future ideas (if team) | `docs/future-ideas.md` |

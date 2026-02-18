@@ -8,6 +8,30 @@ user-invocable: false
 The main conversation is an **orchestrator only**. It coordinates work but
 never writes code directly.
 
+## Ensemble Team Check
+
+Before beginning any orchestration, check for ensemble team configuration:
+
+1. **Glob** for `.team/*.md` — are there team member profiles?
+2. **Read** `ensemble_team` from `.claude/sdlc.yaml` — is `preset` set to
+   something other than `"none"`?
+
+If both conditions are met, the ensemble team is active. Switch to **ping-pong
+pairing mode** instead of solo orchestration:
+
+- **Create a persistent pair team** via `TeamCreate` (e.g., `pair-<slice-id>`)
+  at the start of the work session. Do NOT create a new team per TDD cycle.
+- **Select two engineers** from the `.team/` profiles. Load their compressed
+  active-context forms for bootstrapping.
+- **Use the Ping-Pong TDD Pairing protocol** (defined later in this file) for
+  all TDD work. The pair handles driver/navigator swaps internally via
+  `SendMessage`.
+- **Use mob review** for PR reviews: spawn the full team (compressed contexts)
+  instead of a single code-reviewer agent.
+
+If the ensemble team is NOT active, proceed with the standard solo orchestration
+described below.
+
 ## Methodology
 
 Follow `skills/orchestration/SKILL.md` for the full orchestration methodology.
