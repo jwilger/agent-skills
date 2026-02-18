@@ -14,17 +14,24 @@ See `skills/orchestration/SKILL.md` for the full orchestration methodology.
 
 ## TDD Cycle Enforcement
 
-Every feature is built by repeating: RED -> DOMAIN -> GREEN -> DOMAIN.
+Every feature is built by repeating: RED -> DOMAIN -> GREEN -> DOMAIN -> COMMIT.
 
 | After this phase | Next MANDATORY step | Agent to launch |
 |------------------|---------------------|-----------------|
 | RED (test written) | Domain review of test | domain |
 | DOMAIN (after red) | Implement to pass test | green |
 | GREEN (test passing) | Domain review of implementation | domain |
-| DOMAIN (after green) | Next test or refactor | red or commit |
+| DOMAIN (after green) | Commit the passing slice | commit |
+| COMMIT | Next test or refactor (separate commit) | red or refactor |
 
 **Never skip domain review.** The domain agent has veto power over designs that
 violate domain modeling principles.
+
+**Never skip the COMMIT after a green-domain cycle.** Committing after each
+passing slice is MANDATORY, not advisory. The commit message MUST reference the
+GWT scenario that drove the slice. No new RED phase may begin until the commit
+is made. This boundary carries the same weight as RED→DOMAIN or GREEN→DOMAIN —
+it is a phase gate, not a suggestion.
 
 See `skills/tdd-cycle/SKILL.md` for the full TDD cycle methodology.
 
