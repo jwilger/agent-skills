@@ -1,10 +1,11 @@
 ---
 name: tdd-cycle
 description: >-
-  Red-green-domain TDD cycle with strict phase boundaries and domain review
-  checkpoints. Activate when writing tests, implementing features, or doing
-  test-driven development. Teaches one-test-at-a-time discipline with
-  mandatory domain modeling review after each phase.
+  Red-green-domain-commit TDD cycle with strict phase boundaries, domain
+  review checkpoints, and mandatory commit gates. Activate when writing
+  tests, implementing features, or doing test-driven development. Teaches
+  one-test-at-a-time discipline with mandatory domain modeling review after
+  each phase and a hard commit gate before the next RED phase.
 license: CC0-1.0
 compatibility: Requires git and a test runner (jest, pytest, cargo test, go test, etc.)
 metadata:
@@ -24,11 +25,11 @@ confirms progress or exposes drift.
 
 ## Purpose
 
-Teaches the red-green-domain cycle: write one failing test, review it for
-domain integrity, implement minimally, review the implementation. This
-four-step rhythm prevents primitive obsession, over-engineering, and
-untested complexity from accumulating. Works with any language and test
-framework.
+Teaches the red-green-domain-commit cycle: write one failing test, review
+it for domain integrity, implement minimally, review the implementation,
+commit. This five-step rhythm prevents primitive obsession,
+over-engineering, and untested complexity from accumulating. Works with
+any language and test framework.
 
 ## Practices
 
@@ -59,7 +60,7 @@ become these outermost tests directly.
    ```
 2. Run the suite to confirm it is recognized and skipped.
 3. Drill down: identify the first unit of behavior the acceptance test
-   needs. Write a unit test for that unit and enter the four-step cycle
+   needs. Write a unit test for that unit and enter the five-step cycle
    below.
 4. After the unit tests pass, remove the pending/ignore marker from the
    acceptance test. Run it.
@@ -86,9 +87,9 @@ When building a vertical slice, the TDD cycle operates at two levels simultaneou
    - Write the acceptance test first. It targets the application boundary and describes the slice's expected end-to-end behavior.
    - This test will fail (RED) and **stay red** while you build the inner layers. That is expected and correct.
 
-2. **Inner level — Unit tests (normal red-green-refactor)**
-   - Work inward from the boundary. For each layer or component needed by the slice, write a focused unit test, make it pass, refactor.
-   - Each inner cycle follows the standard red-green-refactor discipline with strict phase boundaries.
+2. **Inner level — Unit tests (red-green-domain-commit)**
+   - Work inward from the boundary. For each layer or component needed by the slice, write a focused unit test, make it pass, review, commit.
+   - Each inner cycle follows the full five-step discipline (RED → DOMAIN → GREEN → DOMAIN → COMMIT) with strict phase boundaries. The COMMIT step applies at every level — inner unit-test cycles also commit after each green-domain completion. The minimum guarantee is one commit per GWT scenario, but inner cycles may produce additional commits. This is correct behavior: more commits means more checkpoints and safer incremental progress.
 
 3. **Outer test goes GREEN — Slice is wired**
    - The outer acceptance test passes only when all layers are implemented **and** wired together through the application boundary.
@@ -120,9 +121,9 @@ IS the test failing. Do not pre-create types to avoid compilation failures. The
 RED phase produces the failing test; the DOMAIN phase then creates just enough
 type stubs to shift the failure from compilation error to runtime assertion/panic.
 
-### The Four-Step Cycle
+### The Five-Step Cycle
 
-Every feature is built by repeating: RED, DOMAIN, GREEN, DOMAIN.
+Every feature is built by repeating: RED → DOMAIN → GREEN → DOMAIN → COMMIT.
 
 1. **RED** -- Write one failing test with one assertion. Only edit test files.
    Write the code you wish you had -- reference types and functions that
@@ -140,11 +141,20 @@ Every feature is built by repeating: RED, DOMAIN, GREEN, DOMAIN.
 4. **DOMAIN (after green)** -- Review the implementation for domain
    violations: anemic models, leaked validation, primitive obsession that
    slipped through. If violations found, raise a concern and propose a
-   revision. If clean, the cycle is complete.
+   revision. If clean, proceed to COMMIT.
    - **Done when:** types are clean and tests still pass.
+5. **COMMIT** -- Committing is MANDATORY after every completed green-domain
+   cycle. This is a hard gate: no new RED phase may begin until this commit
+   is made. Run the full test suite one final time to confirm all tests
+   pass. Stage all changes and create a git commit. The commit message MUST
+   reference the GWT scenario being implemented (e.g.,
+   `"GREEN: Given a valid email, When creating a user, Then the user is created"`).
+   If refactoring is warranted, it happens AFTER this commit in a separate
+   commit -- never mixed into this one.
+   - **Done when:** git commit created with all passing tests and a message referencing the current scenario.
 
-After step 4, commit the working state. Then either start the next test or
-tidy the code (structural changes only, separate commit).
+After step 5, either start the next RED phase or tidy the code (structural
+changes only, separate commit).
 
 ### Worked Example (Rust)
 
@@ -170,7 +180,10 @@ tidy the code (structural changes only, separate commit).
 
 3. GREEN implements the validation logic. Test passes.
 
-4. DOMAIN reviews the implementation. Types are clean. Cycle complete.
+4. DOMAIN reviews the implementation. Types are clean. Proceed to COMMIT.
+
+5. COMMIT: all tests pass, commit with message referencing the scenario.
+   Cycle complete.
 
 **Pushback path -- domain improves the test:**
 
@@ -200,6 +213,7 @@ Each phase edits only its own file types. This prevents drift.
 | RED | Test files (`*_test.*`, `*.test.*`, `tests/`, `spec/`) | Production code, type definitions |
 | DOMAIN | Type definitions (structs, enums, interfaces, traits) | Test logic, implementation bodies |
 | GREEN | Implementation bodies, filling stubs | Test files, type signatures |
+| COMMIT | Nothing -- only `git add` and `git commit` | All source files (code is frozen at this point) |
 
 If blocked by a boundary, stop and return to the orchestrator. Never
 circumvent boundaries.
@@ -243,9 +257,10 @@ output.
 
 ### Refactor as Exhale
 
-After a green-domain cycle completes, tidy the code if warranted. Commit
-the working state first, then make structural improvements in a separate
-commit. Never mix behavioral and structural changes.
+After the COMMIT step (step 5) completes the cycle, tidy the code if
+warranted. The working state is already committed. Make structural
+improvements in a separate commit. Never mix behavioral and structural
+changes.
 
 ### Drill-Down Testing
 
@@ -258,9 +273,9 @@ a more focused test, and work back up once the lower-level tests pass.
 
 ## Enforcement Note
 
-This skill provides advisory guidance. It instructs the agent on correct
-phase boundaries and cycle discipline but cannot mechanically prevent
-violations. On harnesses with plugin support (Claude Code hooks, OpenCode
+This skill defines mandatory policy for phase boundaries and cycle
+discipline, but a skill file alone cannot mechanically prevent violations;
+mechanical enforcement requires hooks or orchestrator gates. On harnesses with plugin support (Claude Code hooks, OpenCode
 event hooks), enforcement plugins add file-type restrictions and mandatory
 domain review gates. On other harnesses, the agent follows these practices
 by convention. If you observe the agent editing production code during RED
@@ -278,9 +293,16 @@ After completing a cycle, verify:
 - [ ] GREEN: Implemented minimal code, nothing beyond what the test demands
 - [ ] GREEN: Ran the test and pasted the passing output
 - [ ] DOMAIN (after green): Reviewed implementation for domain violations
-- [ ] Committed working state before starting next test or refactoring
 
-If any criterion is not met, revisit the relevant phase before proceeding.
+**HARD GATE -- COMMIT (must pass before any new RED phase):**
+
+- [ ] COMMIT: All tests pass
+- [ ] COMMIT: Git commit created with message referencing the current GWT scenario
+- [ ] COMMIT: No new RED phase started before this commit was made
+
+If any criterion above the gate is not met, revisit the relevant phase.
+If the COMMIT gate is not met, you MUST commit before proceeding. No
+exceptions. No new test may be written until the commit exists.
 
 ## Dependencies
 

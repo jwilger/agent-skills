@@ -26,6 +26,7 @@ All file modifications flow through specialized agents.
 | Type definitions (stubs) | domain | RED test fails to compile due to missing types |
 | Implementation | green | Test compiles but fails on assertion/panic |
 | Type review | domain | GREEN implementation complete |
+| Commit cycle changes | commit | DOMAIN-after-GREEN complete |
 | Architecture docs | adr, architect | New boundary or cross-cutting concern |
 | GWT scenarios | gwt | New acceptance criteria needed |
 | Everything else | file-updater | Config, docs, scripts, tooling |
@@ -33,12 +34,29 @@ All file modifications flow through specialized agents.
 ## TDD Cycle (MANDATORY SEQUENCE)
 
 ```
-RED -> DOMAIN (review test) -> GREEN -> DOMAIN (review impl) -> repeat
+RED → DOMAIN → GREEN → DOMAIN → COMMIT → repeat
 ```
+
+This is a **5-phase cycle**. Every phase is mandatory, every time.
+
+- **RED**: Write a failing test.
+- **DOMAIN** (after RED): Review the test for domain correctness; produce any
+  required type stubs.
+- **GREEN**: Write the minimum implementation to pass the test.
+- **DOMAIN** (after GREEN): Review the implementation for domain integrity.
+- **COMMIT**: Create a git commit containing all changed files from this cycle.
+  The commit message MUST reference the GWT scenario under test. The
+  orchestrator MUST verify the commit exists (e.g., confirm the agent reports
+  the commit SHA) before dispatching the next RED phase or any REFACTOR phase.
+  This is a **hard gate**, not a suggestion.
 
 Domain review happens TWICE per cycle. This is unconditional -- there are NO
 valid reasons to skip domain review. Not for "trivial" changes, not for "just
 one line," not for "obviously not a domain concern."
+
+The COMMIT phase is equally unconditional. Uncommitted work MUST NOT carry
+across cycle boundaries. Each cycle's changes are atomically committed before
+the next cycle begins.
 
 ### Anti-pattern: "Type-First TDD"
 
@@ -99,6 +117,19 @@ blocking relationships using `addBlockedBy`:
 2. DOMAIN-after-RED task (blocked by 1) -- `addBlockedBy: ["<red-task-id>"]`
 3. GREEN task (blocked by 2) -- `addBlockedBy: ["<domain-after-red-task-id>"]`
 4. DOMAIN-after-GREEN task (blocked by 3) -- `addBlockedBy: ["<green-task-id>"]`
+5. COMMIT task (blocked by 4) -- `addBlockedBy: ["<domain-after-green-task-id>"]`
+
+| Phase | Scope | Done when | Next |
+|-------|-------|-----------|------|
+| RED | Test files only | Test exists and fails (compilation failure counts) | DOMAIN |
+| DOMAIN (after RED) | Type stubs, test revisions | Types compile, test is domain-correct | GREEN |
+| GREEN | Implementation files only | All tests pass | DOMAIN |
+| DOMAIN (after GREEN) | Implementation review | No domain integrity violations | COMMIT |
+| COMMIT | All changed files from this cycle | `git commit` created with message referencing the GWT scenario | RED (next cycle) or REFACTOR (separate commit) |
+
+The orchestrator MUST NOT dispatch the next RED phase until the COMMIT task
+is marked completed. This is a hard gate -- if the commit does not exist,
+the cycle is not finished.
 
 This makes the workflow state visible at a glance via `TaskList`: pending
 tasks with non-empty `blockedBy` cannot be claimed, so teammates
