@@ -16,57 +16,25 @@ echo "Bumping version: ${OLD_VERSION} -> ${NEW_VERSION}"
 echo "Repo root: ${REPO_ROOT}"
 echo ""
 
-# --- JSON files: global replacement of "version": "OLD" -> "version": "NEW" ---
+# --- VERSION file: single source of truth for project version ---
 
-echo "Updating .claude-plugin/marketplace.json ..."
-sed -i "s/\"version\": \"${OLD_VERSION}\"/\"version\": \"${NEW_VERSION}\"/g" \
-  "${REPO_ROOT}/.claude-plugin/marketplace.json"
+VERSION_FILE="${REPO_ROOT}/VERSION"
 
-echo "Updating plugins/claude-code/.claude-plugin/plugin.json ..."
-sed -i "s/\"version\": \"${OLD_VERSION}\"/\"version\": \"${NEW_VERSION}\"/g" \
-  "${REPO_ROOT}/plugins/claude-code/.claude-plugin/plugin.json"
-
-# --- YAML files: replace version on line 1 only ---
-
-YAML_FILES=(
-  "plugins/goose/recipes/pr-workflow.yaml"
-  "plugins/goose/recipes/code-review.yaml"
-  "plugins/goose/recipes/tdd-cycle.yaml"
-  "plugins/goose/recipes/event-modeling.yaml"
-)
-
-for yaml_file in "${YAML_FILES[@]}"; do
-  echo "Updating ${yaml_file} ..."
-  sed -i "1s/version: \"${OLD_VERSION}\"/version: \"${NEW_VERSION}\"/" \
-    "${REPO_ROOT}/${yaml_file}"
-done
+echo "Updating VERSION file ..."
+echo "${NEW_VERSION}" > "${VERSION_FILE}"
 
 # --- Verification ---
 
 echo ""
-echo "=== Verification: grepping for new version ${NEW_VERSION} ==="
+echo "=== Verification ==="
 
-ALL_FILES=(
-  ".claude-plugin/marketplace.json"
-  "plugins/claude-code/.claude-plugin/plugin.json"
-  "${YAML_FILES[@]}"
-)
+ACTUAL=$(cat "${VERSION_FILE}")
+echo "  VERSION file: ${ACTUAL}"
 
-TOTAL=0
-for f in "${ALL_FILES[@]}"; do
-  COUNT=$(grep -c "\"${NEW_VERSION}\"" "${REPO_ROOT}/${f}" 2>/dev/null || \
-          grep -c "\"${NEW_VERSION}\"" "${REPO_ROOT}/${f}" 2>/dev/null || echo "0")
-  echo "  ${f}: ${COUNT} occurrence(s)"
-  TOTAL=$((TOTAL + COUNT))
-done
-
-echo ""
-echo "Total occurrences of ${NEW_VERSION}: ${TOTAL}"
-echo "Expected: 7"
-
-if [[ "${TOTAL}" -ne 7 ]]; then
-  echo "WARNING: Expected 7 occurrences but found ${TOTAL}" >&2
+if [[ "${ACTUAL}" != "${NEW_VERSION}" ]]; then
+  echo "WARNING: VERSION file does not contain expected version" >&2
   exit 1
 fi
 
+echo ""
 echo "Version bump complete."

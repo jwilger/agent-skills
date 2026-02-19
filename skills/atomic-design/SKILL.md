@@ -141,10 +141,8 @@ through class inheritance or deep prop-forwarding chains.
 
 This skill provides advisory guidance on component organization. It cannot
 mechanically prevent an agent from skipping levels or hard-coding design
-values. On harnesses with plugin support, enforcement plugins can lint for
-token usage and validate component hierarchy. On harnesses without enforcement,
-the agent follows these practices by convention. If you observe the agent
-building organisms from raw markup, point it out. For additional context, see `../../README.md#harness-plugin-availability`.
+values. The agent follows these practices by convention. If you observe the
+agent building organisms from raw markup, point it out.
 
 ## Verification
 
@@ -164,12 +162,12 @@ This skill works standalone. For enhanced workflows, it integrates with:
 
 - **domain-modeling:** Read models from the domain define what data components
   receive as props.
-- **tdd-cycle:** Test components in isolation at each level -- atom tests,
+- **tdd:** Test components in isolation at each level -- atom tests,
   molecule tests, organism tests.
 - **event-modeling:** Wireframes from event modeling sessions identify which
   components are needed.
 
 Missing a dependency? Install with:
 ```
-npx skills add jwilger/agent-skills --skill tdd-cycle
+npx skills add jwilger/agent-skills --skill tdd
 ```

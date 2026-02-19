@@ -1,5 +1,0 @@
-interface:
-  display_name: "SDLC Skills"
-  short_description: "Structured SDLC workflow with TDD, domain modeling, and code review"
-  brand_color: "#2563EB"
-  default_prompt: "Follow the SDLC workflow: write a failing test first, review for domain types, implement minimally, review again."

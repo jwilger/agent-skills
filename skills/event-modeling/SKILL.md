@@ -194,10 +194,10 @@ purpose.
 
 This skill provides advisory guidance. It instructs the agent on the event
 modeling methodology but cannot mechanically prevent skipping steps or
-producing incomplete models. On harnesses with plugin support, enforcement
-plugins can add workflow gates. On other harnesses, the agent follows these
-practices by convention. If you observe steps being skipped, point it out.
-For additional context, see `../../README.md#harness-plugin-availability`.
+producing incomplete models. When used with the `tdd` skill, GWT scenarios
+from event modeling become acceptance tests that enforce the model. Without
+it, the agent follows these practices by convention. If you observe steps
+being skipped, point it out.
 
 ## Verification
 
@@ -228,7 +228,7 @@ This skill works standalone. For enhanced workflows, it integrates with:
 
 - **domain-modeling:** Events reveal domain types (Email, Money, OrderStatus)
   that the domain modeling skill refines
-- **tdd-cycle:** Each vertical slice maps to one TDD cycle
+- **tdd:** Each vertical slice maps to one TDD cycle
 - **architecture-decisions:** Event model informs architecture; ADRs should
   not be written during event modeling itself
 - **task-management:** Workflows map to epics, slices map to tasks

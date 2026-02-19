@@ -1,14 +1,14 @@
 ---
 name: bootstrap
 description: >-
-  Zero-config SDLC onboarding. Detects project environment, asks what the
-  developer wants to do, and recommends skills organized by workflow phase.
-  Activate when a user starts a new project, asks "how do I get started,"
-  or has no other SDLC skills installed.
+  Zero-config SDLC onboarding. Detects project environment, harness
+  capabilities, and harness type. Configures TDD mode, generates AGENTS.md,
+  offers optional enforcement hooks, and recommends skills by phase. Single
+  entry point for all harnesses.
 license: CC0-1.0
 metadata:
   author: jwilger
-  version: "1.0"
+  version: "2.0"
   requires: []
   context: []
   phase: understand
@@ -17,21 +17,21 @@ metadata:
 
 # Bootstrap
 
-**Value:** Communication -- help the developer and the agent establish a shared
-understanding of what workflow is appropriate before any work begins.
+**Value:** Communication -- establish shared understanding of environment,
+capabilities, and workflow before any work begins.
 
 ## Purpose
 
-Entry point for developers who have no SDLC skills installed or do not know
-where to start. Detects the project environment, asks two questions, and
-recommends specific skills the developer can install. Never silently installs
-anything.
+Single entry point for configuring the SDLC workflow on any harness. Detects
+the project environment and harness capabilities, configures TDD mode
+(guided or automated), generates harness-appropriate instruction files, and
+recommends skills. Never silently installs or modifies anything.
 
 ## Practices
 
-### Detect the Environment
+### Step 1: Detect the Environment
 
-Before asking questions, gather project context silently:
+Gather project context silently before asking questions:
 
 ```
 !test -f package.json && echo "js" || true
@@ -40,79 +40,95 @@ Before asking questions, gather project context silently:
 !test -f go.mod && echo "go" || true
 !test -f mix.exs && echo "elixir" || true
 !git rev-parse --is-inside-work-tree 2>/dev/null && echo "git" || true
+!ls skills/*/SKILL.md 2>/dev/null | sed 's|skills/||;s|/SKILL.md||' || true
 ```
 
-Use detected languages and tools to tailor recommendations.
+Record: languages detected, git available, skills already installed.
 
-### Ask Two Questions
+### Step 2: Detect Harness Capabilities
+
+Probe for delegation primitives. See `references/capability-detection.md`
+for the full detection procedure.
+
+| Capability | How to detect | Implication |
+|------------|---------------|-------------|
+| Skill chaining | Always available | Guided TDD mode works |
+| Subagents | Task tool present | Serial subagent strategy works |
+| Agent teams | TeamCreate tool present | Ping-pong pairing works |
+
+### Step 3: Detect Harness Type
+
+Identify the harness to generate the correct instruction files:
+
+| Signal | Harness |
+|--------|---------|
+| `CLAUDE.md` convention, Claude Code tools | Claude Code |
+| `AGENTS.md` convention, Codex tools | Codex |
+| `.cursor/rules` directory | Cursor / Windsurf |
+| None of the above | Generic (AGENTS.md only) |
+
+### Step 4: Configure TDD Mode
+
+Recommend based on detected capabilities:
+
+- **Subagents or teams available:** Recommend automated mode (`/tdd`).
+- **No delegation primitives:** Recommend guided mode (`/tdd red`, `/tdd green`, etc.).
+- Let the user override. Record the choice.
+
+If Claude Code is detected and the user wants maximum enforcement, offer
+to install optional hook templates from `skills/tdd/references/hooks/`.
+
+### Step 5: Ask the User
 
 **Question 1: What are you trying to do?**
-
 - "Start a new project" -- recommend Understand + Decide + Build phases
 - "Add a feature or fix a bug" -- recommend Build + Ship phases
-- "Review or ship existing work" -- recommend Ship phase only
-- "Set up team workflow" -- recommend all phases plus orchestration
+- "Set up team workflow" -- recommend all phases plus ensemble team
 
-**Question 2: How much process structure do you want?**
+**Question 2: How much process structure?**
+- "Minimal" -- recommend tdd, domain-modeling
+- "Standard" -- recommend core + ship skills
+- "Full" -- recommend all skills
 
-- "Minimal -- just help me write good code" -- recommend tdd-cycle, debugging-protocol
-- "Standard -- tests, reviews, and architecture" -- recommend core + ship skills
-- "Full -- event modeling, domain-driven, the works" -- recommend all skills
+See `references/skill-recommendations.md` for the full skill list by phase.
 
-### Recommend Skills by Phase
+### Step 6: Generate Instruction Files
 
-Present recommendations grouped by phase. Show install commands. Let the
-developer choose which to install.
+Generate harness-appropriate files. See `references/agents-md.md` for
+AGENTS.md best practices (small routing document, progressive disclosure,
+managed markers) and `references/harness-files.md` for harness-specific
+generation rules.
 
-**Understand** (discovery and requirements):
-- `event-modeling` -- event-driven design, swimlanes, GWT scenarios
+### Step 7: Optional Ensemble Team
 
-**Decide** (architecture and domain):
-- `architecture-decisions` -- lightweight ADR governance
-- `domain-modeling` -- parse-don't-validate, type-driven design
+If the user selected "Set up team workflow" or "Full" process structure,
+offer to invoke the `ensemble-team` skill for AI team formation. Present
+the three presets (solo-plus, lean, full). If accepted, invoke the skill
+and record the preset in configuration.
 
-**Build** (implementation):
-- `tdd-cycle` -- red/green/refactor with domain review checkpoints
-- `debugging-protocol` -- systematic 4-phase debugging
-- `user-input-protocol` -- structured checkpoints when input is needed
+### Step 8: Commit and Display
 
-**Ship** (review and delivery):
-- `code-review` -- three-stage review protocol
-- `mutation-testing` -- test quality verification
-
-**Workflow** (coordination):
-- `orchestration` -- multi-agent delegation patterns
-- `task-management` -- work breakdown and state tracking
-- `memory-protocol` -- cross-session knowledge persistence
-
-**Install command format:**
-```
-npx skills add jwilger/agent-skills --skill <skill-name>
-```
-
-### Let the Developer Decide
-
-After presenting recommendations, wait for the developer to confirm which
-skills to install. Do not install anything without explicit confirmation.
-If the developer wants everything, provide a single combined command.
+Stage generated files, commit with a descriptive message, and display:
+- What was configured (harness, TDD mode, skills recommended)
+- Next steps (`/tdd` to start a TDD cycle, or phase-specific commands)
+- If ensemble team was configured, note the preset and member count
 
 ## Enforcement Note
 
-This skill is purely advisory. It recommends skills but cannot install them.
-The developer must run install commands themselves or confirm installation.
-For additional context, see `../../README.md#harness-plugin-availability`.
+This skill is purely advisory. It generates configuration and instruction
+files but cannot install skills or modify harness settings without user
+confirmation.
 
 ## Verification
 
-After applying this skill, verify:
-
 - [ ] Environment was detected before asking questions
+- [ ] Harness capabilities were probed (not assumed)
 - [ ] No more than 2-3 questions were asked
-- [ ] Recommendations were grouped by phase
-- [ ] Install commands were shown for each recommended skill
-- [ ] Nothing was installed without developer confirmation
+- [ ] TDD mode recommendation matched detected capabilities
+- [ ] Generated files use managed markers for safe re-runs
+- [ ] Nothing was installed without user confirmation
 
 ## Dependencies
 
 This skill works standalone. It recommends but does not require other skills.
-All recommended skills are independently installable.
+It generates configuration that references the `tdd` skill for TDD workflow.

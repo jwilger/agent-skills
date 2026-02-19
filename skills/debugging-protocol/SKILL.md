@@ -126,11 +126,9 @@ Result: 90% of time in external API call. Not a database problem at all.
 ## Enforcement Note
 
 This skill provides advisory guidance. It instructs the agent to investigate
-before fixing but cannot mechanically prevent premature fix attempts. On
-harnesses with plugin support, enforcement plugins can require investigation
-artifacts before allowing code changes. On other harnesses, the agent follows
-these practices by convention. If you observe the agent skipping investigation,
-point it out. For additional context, see `../../README.md#harness-plugin-availability`.
+before fixing but cannot mechanically prevent premature fix attempts. The
+agent follows these practices by convention. If you observe the agent
+skipping investigation, point it out.
 
 ## Verification
 
@@ -153,7 +151,7 @@ If any criterion is not met, revisit the relevant phase.
 
 This skill works standalone with no required dependencies. It integrates with:
 
-- **tdd-cycle:** When a test fails unexpectedly during TDD, this skill guides
+- **tdd:** When a test fails unexpectedly during TDD, this skill guides
   investigation before modifying code
 - **user-input-protocol:** When debugging reaches an ambiguous decision point,
   pause and ask the user rather than guessing
@@ -162,5 +160,5 @@ This skill works standalone with no required dependencies. It integrates with:
 
 Missing a dependency? Install with:
 ```
-npx skills add jwilger/agent-skills --skill tdd-cycle
+npx skills add jwilger/agent-skills --skill tdd
 ```

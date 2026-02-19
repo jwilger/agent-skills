@@ -13,7 +13,7 @@ The skill identifier. Must match the parent directory name.
 - **Type:** string
 - **Constraints:** 1-64 characters, lowercase alphanumeric and hyphens only,
   no leading/trailing/consecutive hyphens
-- **Examples:** `tdd-cycle`, `domain-modeling`, `code-review`
+- **Examples:** `tdd`, `domain-modeling`, `code-review`
 
 ### `description`
 
@@ -23,9 +23,9 @@ keywords that match relevant tasks.
 
 - **Type:** string
 - **Constraints:** 1-1024 characters, non-empty
-- **Good:** "Red-green-domain TDD cycle with strict phase boundaries and
-  domain modeling review checkpoints. Activate when writing tests, implementing
-  features, or doing test-driven development."
+- **Good:** "Adaptive test-driven development cycle. Detects harness
+  capabilities and routes to guided or automated mode. Activate when writing
+  tests, implementing features, or doing test-driven development."
 - **Bad:** "TDD stuff."
 
 ## Optional Fields (Agent Skills Spec)
@@ -63,8 +63,7 @@ support varies by agent implementation.
 ## Project-Specific Fields (in `metadata`)
 
 These fields live inside the `metadata` block and are specific to this
-repository's skill set. They enable cross-skill coordination and harness
-plugin integration.
+repository's skill set. They enable cross-skill coordination.
 
 ### `metadata.author`
 
@@ -92,7 +91,7 @@ the absence and recommend installation (see Dependencies section in body).
   ```yaml
   requires: []                        # standalone
   requires: [debugging-protocol]      # needs one skill
-  requires: [tdd-cycle, domain-modeling]  # needs two skills
+  requires: [tdd, domain-modeling]  # needs two skills
   ```
 - **Rules:**
   - Dependencies must form a DAG (no circular dependencies)
@@ -102,7 +101,7 @@ the absence and recommend installation (see Dependencies section in body).
 ### `metadata.context`
 
 What project context this skill needs to work effectively. Informs
-harness plugins and fleet dispatchers about what to provide.
+harness configuration and fleet dispatchers about what to provide.
 
 - **Type:** list of strings
 - **Default:** `[]`
@@ -156,16 +155,16 @@ from this set.
 
 ```yaml
 ---
-name: tdd-cycle
+name: tdd
 description: >-
-  Red-green-domain TDD cycle with strict phase boundaries and domain
-  modeling review checkpoints. Activate when writing tests, implementing
-  features, or doing test-driven development.
+  Adaptive test-driven development cycle. Detects harness capabilities
+  and routes to guided or automated mode. Invoke with /tdd for automated
+  or /tdd red|domain|green|commit for guided.
 license: CC0-1.0
 metadata:
   author: jwilger
   version: "1.0"
-  requires: [debugging-protocol]
+  requires: []
   context: [test-files, domain-types, source-files]
   phase: build
   standalone: true
@@ -180,8 +179,8 @@ limits to ensure compatibility across harnesses with varying context windows:
 | Tier | Skills | Budget |
 |------|--------|--------|
 | Tier 0 (Bootstrap) | `bootstrap` | 1000 tokens |
-| Tier 1 (Core Process) | `tdd-cycle`, `domain-modeling`, `code-review`, `architecture-decisions`, `event-modeling` | 3000 tokens |
-| Tier 2 (Orchestration) | `orchestration`, `task-management` | 4000 tokens |
+| Tier 1 (Core Process) | `tdd`, `domain-modeling`, `code-review`, `architecture-decisions`, `event-modeling` | 3000 tokens |
+| Tier 2 (Team Workflows) | `ensemble-team`, `task-management` | 4000 tokens |
 | Tier 3 (Utility) | `debugging-protocol`, `user-input-protocol`, `memory-protocol` | 3000 tokens |
 | Advanced | `mutation-testing`, `atomic-design` | 3000 tokens |
 

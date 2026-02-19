@@ -128,7 +128,7 @@ memory directories (Claude Code auto memory), storage is straightforward.
 On harnesses without persistent filesystems, adapt the pattern to whatever
 persistence mechanism is available (project files, comments, or external
 tools). The recall-before-act and store-after-discovery patterns are
-universal even if the storage mechanism varies. For additional context, see `../../README.md#harness-plugin-availability`.
+universal even if the storage mechanism varies.
 
 ## Verification
 
@@ -147,7 +147,7 @@ This skill works standalone. For enhanced workflows, it integrates with:
 
 - **debugging-protocol:** Search memory before starting the 4-phase investigation
 - **user-input-protocol:** Store user answers to avoid re-asking the same questions
-- **tdd-cycle:** Store test patterns and domain modeling insights between sessions
+- **tdd:** Store test patterns and domain modeling insights between sessions
 
 Missing a dependency? Install with:
 ```

@@ -152,11 +152,9 @@ Decisions needed:
 ## Enforcement Note
 
 This skill is advisory. It instructs agents to pause at decision points
-and use structured checkpoints. On harnesses with plugin support, enforcement
-hooks can detect when an agent makes assumptions without pausing. On harnesses
-without enforcement, the agent follows these practices by convention. If you
-observe the agent making decisions it should have asked about, point it out.
-For additional context, see `../../README.md#harness-plugin-availability`.
+and use structured checkpoints. The agent follows these practices by
+convention. If you observe the agent making decisions it should have asked
+about, point it out.
 
 ## Verification
 
@@ -173,11 +171,12 @@ After applying this skill, verify:
 
 This skill works standalone. For enhanced workflows, it integrates with:
 
-- **orchestration:** Main orchestrator detects paused subagents and relays questions to the user
-- **tdd-cycle:** When test requirements are ambiguous, pause and clarify acceptance criteria
+- **tdd:** When test requirements are ambiguous, pause and clarify acceptance
+  criteria. In automated mode, the orchestrator detects paused subagents and
+  relays questions to the user.
 - **debugging-protocol:** When debugging reveals ambiguous root causes, pause and ask
 
 Missing a dependency? Install with:
 ```
-npx skills add jwilger/agent-skills --skill orchestration
+npx skills add jwilger/agent-skills --skill tdd
 ```

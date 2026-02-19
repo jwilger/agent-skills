@@ -22,8 +22,9 @@ with project-specific values.
 
 These are non-negotiable practices for the project:
 
-- **Test-Driven Development**: Every feature is built using strict TDD
-  (Red-Green-Refactor). No production code without a failing test.
+- **Test-Driven Development**: Every feature is built using strict TDD.
+  No production code without a failing test. When the `tdd` skill is
+  installed, the team uses it in automated mode for build-phase work.
 - **Mob/Ensemble Programming**: All production code is written by the mob. No solo
   commits to production code.
 - **Consensus Decision-Making**: The team operates by consensus. No single technical

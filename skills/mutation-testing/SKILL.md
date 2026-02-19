@@ -10,7 +10,7 @@ compatibility: Requires a mutation testing tool (cargo-mutants, Stryker, mutmut,
 metadata:
   author: jwilger
   version: "1.0"
-  requires: [tdd-cycle]
+  requires: [tdd]
   context: [test-files, source-files]
   phase: ship
   standalone: true
@@ -128,11 +128,10 @@ The required mutation kill rate is **100%**. All mutants must be killed.
 
 This skill provides advisory guidance. It instructs the agent to run
 mutation testing and enforce a 100% kill rate, but cannot mechanically
-prevent PR creation with surviving mutants. On harnesses with plugin
-support, enforcement plugins can gate PR creation on mutation score. On
-other harnesses, the agent follows this practice by convention. If you
-observe the agent skipping mutation testing before a PR, point it out.
-For additional context, see `../../README.md#harness-plugin-availability`.
+prevent PR creation with surviving mutants. When used with the `tdd` skill
+in automated mode, the orchestrator can gate PR creation on mutation score.
+In guided mode or standalone, the agent follows this practice by convention.
+If you observe the agent skipping mutation testing before a PR, point it out.
 
 ## Verification
 
@@ -151,12 +150,12 @@ If any criterion is not met, revisit the relevant practice before proceeding.
 This skill works standalone but is most valuable as a pre-PR quality gate.
 It integrates with:
 
-- **tdd-cycle:** TDD produces the tests that mutation testing validates;
+- **tdd:** TDD produces the tests that mutation testing validates;
   surviving mutants indicate the TDD cycle missed a case
 - **code-review:** Mutation results inform code review -- reviewers can
   check that new code has no surviving mutants
 
 Missing a dependency? Install with:
 ```
-npx skills add jwilger/agent-skills --skill tdd-cycle
+npx skills add jwilger/agent-skills --skill tdd
 ```
