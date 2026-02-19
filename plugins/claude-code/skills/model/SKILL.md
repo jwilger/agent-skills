@@ -18,9 +18,9 @@ Model event workflows following Event Modeling methodology.
 
 ## Methodology
 
-Follows `skills/event-modeling/SKILL.md` for the full event modeling methodology.
-Follows `skills/architecture-decisions/SKILL.md` for the `arch` subcommand.
-Follows `skills/atomic-design/SKILL.md` for the `design-system` subcommand.
+You MUST follow `skills/event-modeling/SKILL.md` for the full event modeling methodology.
+You MUST follow `skills/architecture-decisions/SKILL.md` for the `arch` subcommand.
+You MUST follow `skills/atomic-design/SKILL.md` for the `design-system` subcommand.
 
 No architecture or technical decisions during event modeling. The ONLY exception
 is mandatory third-party integrations (note name and purpose only).

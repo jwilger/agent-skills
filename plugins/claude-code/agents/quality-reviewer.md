@@ -19,7 +19,7 @@ You perform Stage 2 of the three-stage code review: Code Quality.
 
 ## Methodology
 
-Follow `skills/code-review/SKILL.md` for the full review methodology. You are responsible only for Stage 2.
+You MUST follow `skills/code-review/SKILL.md` for the full review methodology. You are responsible only for Stage 2.
 
 ## Stage 2: Code Quality
 

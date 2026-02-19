@@ -71,7 +71,7 @@ You are a TDD specialist focused on the GREEN phase -- making tests pass.
 
 ## Methodology
 
-Follow `skills/tdd-cycle/SKILL.md` for the full TDD cycle methodology.
+You MUST follow `skills/tdd-cycle/SKILL.md` for the full TDD cycle methodology.
 
 ## Architecture Alignment
 

@@ -34,8 +34,9 @@ Gather essential project information. Ask the user:
 
 ### Phase 2: Team Composition
 
-Determine the right team. Read [references/role-catalog.md](references/role-catalog.md)
-for role selection criteria and the research process.
+Determine the right team.
+
+**PREREQUISITE**: Read `references/role-catalog.md` before proceeding.
 
 #### Tiered Team Presets
 
@@ -78,8 +79,9 @@ fit THIS project, and what they'd focus on. Let user approve, swap, or remove.
 
 ### Phase 3: Generate Team Profiles
 
-Create `.team/<name>.md` for each member. Read
-[references/profile-template.md](references/profile-template.md) for structure.
+Create `.team/<name>.md` for each member.
+
+**PREREQUISITE**: Read `references/profile-template.md` before proceeding.
 
 Required sections: Opening bio, Role, Core Philosophy (5-8 principles from their
 published work), Technical Expertise (6-12 items), On This Project (concrete
@@ -121,13 +123,17 @@ is actively driving or navigating code.
 ### Phase 4: Generate Project Scaffolding
 
 #### Coordinator Instructions (harness config file)
-Read [references/coordinator-template.md](references/coordinator-template.md).
+
+**PREREQUISITE**: Read `references/coordinator-template.md` before proceeding.
+
 Fill in roster, build tools, team size. Place in the harness-specific config
 file (e.g., `CLAUDE.md` for Claude Code, `.cursorrules` for Cursor, project
 instructions for other harnesses). This file is for the coordinator only.
 
 #### PROJECT.md
-Read [references/project-template.md](references/project-template.md).
+
+**PREREQUISITE**: Read `references/project-template.md` before proceeding.
+
 Fill in tech stack, scope (Must/Should/Could/Out), dev mandates, environment.
 
 #### TEAM_AGREEMENTS.md — Skeleton Only
@@ -144,9 +150,9 @@ agreements. The team writes their own agreements during the formation session (P
 ### Phase 5: Team Formation Session
 
 This is the critical phase. The team debates and reaches consensus on their own
-working agreements. Read
-[references/team-agreements-template.md](references/team-agreements-template.md) for
-the list of problems the team must discuss.
+working agreements.
+
+**PREREQUISITE**: Read `references/team-agreements-template.md` before proceeding.
 
 **How it works**: The coordinator activates the full team, then presents each discussion
 topic (from the reference file) one at a time. The team debates, proposes approaches,
@@ -208,8 +214,9 @@ arbitrary intervals are meaningless.
 
 ## Key Principles
 
-Non-negotiable aspects baked in from production experience. Read
-[references/lessons-learned.md](references/lessons-learned.md) for details.
+Non-negotiable aspects baked in from production experience.
+
+**PREREQUISITE**: Read `references/lessons-learned.md` before proceeding.
 
 - Consensus before push (review locally, then push)
 - Refactor step is mandatory every commit

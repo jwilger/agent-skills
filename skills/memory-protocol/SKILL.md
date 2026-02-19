@@ -128,9 +128,7 @@ memory directories (Claude Code auto memory), storage is straightforward.
 On harnesses without persistent filesystems, adapt the pattern to whatever
 persistence mechanism is available (project files, comments, or external
 tools). The recall-before-act and store-after-discovery patterns are
-universal even if the storage mechanism varies. For available enforcement
-plugins, see the
-[Harness Plugin Availability](../../README.md#harness-plugin-availability) table.
+universal even if the storage mechanism varies. For additional context, see `../../README.md#harness-plugin-availability`.
 
 ## Verification
 

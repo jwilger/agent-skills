@@ -170,8 +170,7 @@ mechanically prevent an agent from using primitives or creating invalid state
 representations. On harnesses with plugin support, enforcement plugins can
 add file-type restrictions (domain agent edits only type definitions) and
 mandatory review gates. On other harnesses, these principles are followed
-by convention and verified through code review. For available enforcement
-plugins, see the [Harness Plugin Availability](../../README.md#harness-plugin-availability) table.
+by convention and verified through code review. For additional context, see `../../README.md#harness-plugin-availability`.
 
 ## Verification
 

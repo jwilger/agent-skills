@@ -28,9 +28,9 @@ Create or update a pull request for the current work.
 
 ## Methodology
 
-Follows `skills/code-review/SKILL.md` for the three-stage review process.
-Follows `skills/mutation-testing/SKILL.md` for test quality verification.
-Follows `skills/task-management/SKILL.md` for task closure.
+You MUST follow `skills/code-review/SKILL.md` for the three-stage review process.
+You MUST follow `skills/mutation-testing/SKILL.md` for test quality verification.
+You MUST follow `skills/task-management/SKILL.md` for task closure.
 
 ## Steps
 
@@ -86,7 +86,7 @@ Do not create or push the PR until the human has confirmed the verification chec
 
 When a project team is configured via the ensemble-team workflow, the PR review
 can be conducted as a mob review with the full team using consent-by-default
-Robert's Rules. See `skills/code-review/references/mob-review.md` for the
+Robert's Rules. You MUST follow `skills/code-review/references/mob-review.md` for the
 complete protocol. The existing parallel review mechanism remains the default;
 mob review is an enhancement available when a project team is active.
 

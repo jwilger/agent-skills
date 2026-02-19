@@ -144,9 +144,7 @@ mechanically prevent an agent from skipping levels or hard-coding design
 values. On harnesses with plugin support, enforcement plugins can lint for
 token usage and validate component hierarchy. On harnesses without enforcement,
 the agent follows these practices by convention. If you observe the agent
-building organisms from raw markup, point it out. For available enforcement
-plugins, see the
-[Harness Plugin Availability](../../README.md#harness-plugin-availability) table.
+building organisms from raw markup, point it out. For additional context, see `../../README.md#harness-plugin-availability`.
 
 ## Verification
 

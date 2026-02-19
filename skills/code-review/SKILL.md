@@ -71,8 +71,8 @@ Review each changed file for:
 
 - **Clarity:** Can you understand what the code does without extra context?
   Are names descriptive? Is the structure obvious?
-- **Domain types:** Are semantic types used where primitives appear? (Refer to
-  domain-modeling skill for primitive obsession detection.)
+- **Domain types:** Are semantic types used where primitives appear? You MUST follow
+  the `domain-modeling` skill for primitive obsession detection.
 - **Error handling:** Are errors handled with typed errors? Are all paths
   covered?
 - **Test quality:** Do tests verify behavior, not implementation? Is coverage
@@ -149,8 +149,7 @@ review procedure but cannot mechanically prevent skipping stages or merging
 without review. On harnesses with plugin support, enforcement plugins can
 gate PR creation on review completion. On other harnesses, the agent follows
 these practices by convention. If you observe stages being skipped, point it
-out. For available enforcement plugins, see the
-[Harness Plugin Availability](../../README.md#harness-plugin-availability) table.
+out. For additional context, see `../../README.md#harness-plugin-availability`.
 
 ## Verification
 

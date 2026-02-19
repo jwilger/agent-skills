@@ -18,8 +18,8 @@ Record architecture decisions by updating ARCHITECTURE.md and creating ADR PRs.
 
 ## Methodology
 
-Follows `skills/architecture-decisions/SKILL.md` for the full ADR methodology.
-Uses `skills/architecture-decisions/references/adr-template.md` for PR format.
+You MUST follow `skills/architecture-decisions/SKILL.md` for the full ADR methodology.
+You MUST use `skills/architecture-decisions/references/adr-template.md` for PR format.
 
 ## The Pattern
 

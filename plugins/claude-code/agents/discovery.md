@@ -20,7 +20,7 @@ You facilitate domain discovery sessions for event modeling.
 
 ## Methodology
 
-Follow `skills/event-modeling/SKILL.md` for the full event modeling methodology.
+You MUST follow `skills/event-modeling/SKILL.md` for the full event modeling methodology.
 
 ## Your Mission
 

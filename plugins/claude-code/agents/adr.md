@@ -19,8 +19,8 @@ You create and manage Architecture Decision Records.
 
 ## Methodology
 
-Follow `skills/architecture-decisions/SKILL.md` for the full ADR methodology.
-Use `skills/architecture-decisions/references/adr-template.md` for ADR format.
+You MUST follow `skills/architecture-decisions/SKILL.md` for the full ADR methodology.
+You MUST use `skills/architecture-decisions/references/adr-template.md` for ADR format.
 
 ## Your Mission
 
@@ -33,4 +33,4 @@ Use `skills/architecture-decisions/references/adr-template.md` for ADR format.
 
 Architecture decisions are recorded as PR descriptions, not separate files.
 The PR itself becomes the decision record with natural review and approval workflow.
-See `skills/architecture-decisions/SKILL.md` for the full pattern.
+For additional context, see `skills/architecture-decisions/SKILL.md`.

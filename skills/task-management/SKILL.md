@@ -155,8 +155,7 @@ cannot mechanically prevent an agent from skipping task creation or working on
 blocked items. On harnesses with plugin support, enforcement plugins can require
 task activation before code changes and block work on tasks with unresolved
 dependencies. On harnesses without enforcement, the agent follows these practices
-by convention. For available enforcement plugins, see the
-[Harness Plugin Availability](../../README.md#harness-plugin-availability) table.
+by convention. For additional context, see `../../README.md#harness-plugin-availability`.
 
 ## Verification
 

@@ -97,7 +97,7 @@ descriptions, not standalone files. This gives decisions a natural lifecycle:
 Each ADR PR:
 1. Branches independently from main (`adr/<slug>`)
 2. Updates `docs/ARCHITECTURE.md` with the current decision
-3. Uses the PR description as the full decision record (see `references/adr-template.md`)
+3. You MUST use `references/adr-template.md` for the PR description as the full decision record
 4. Gets labeled `adr` for discoverability
 
 When GitHub PRs are not available, record the architecture decision in
@@ -134,9 +134,7 @@ This skill provides advisory guidance. It instructs the agent to record
 decisions before implementation but cannot mechanically prevent implementation
 without a decision record. On harnesses with plugin support, enforcement hooks
 can block implementation PRs that lack corresponding ADR references. On other
-harnesses, the agent follows these practices by convention. For available
-enforcement plugins, see the
-[Harness Plugin Availability](../../README.md#harness-plugin-availability) table.
+harnesses, the agent follows these practices by convention. For additional context, see `../../README.md#harness-plugin-availability`.
 
 ## Verification
 

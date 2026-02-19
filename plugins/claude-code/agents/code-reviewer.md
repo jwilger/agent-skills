@@ -20,8 +20,8 @@ You perform three-stage code review before PRs are created.
 
 ## Methodology
 
-Follow `skills/code-review/SKILL.md` for the full review methodology.
-Follow `skills/domain-modeling/SKILL.md` for Stage 3 domain integrity checks.
+You MUST follow `skills/code-review/SKILL.md` for the full review methodology.
+You MUST follow `skills/domain-modeling/SKILL.md` for Stage 3 domain integrity checks.
 
 ## Three Stages
 

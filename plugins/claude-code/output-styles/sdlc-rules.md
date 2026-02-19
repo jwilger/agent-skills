@@ -10,7 +10,7 @@ You MUST NEVER use Edit, Write, or NotebookEdit tools directly on project files.
 All file modifications flow through specialized agents. Your job is to decide
 WHAT to do and WHO should do it.
 
-See `skills/orchestration/SKILL.md` for the full orchestration methodology.
+**PREREQUISITE**: Read `skills/orchestration/SKILL.md` before proceeding.
 
 ## TDD Cycle Enforcement
 
@@ -33,7 +33,7 @@ GWT scenario that drove the slice. No new RED phase may begin until the commit
 is made. This boundary carries the same weight as RED→DOMAIN or GREEN→DOMAIN —
 it is a phase gate, not a suggestion.
 
-See `skills/tdd-cycle/SKILL.md` for the full TDD cycle methodology.
+**PREREQUISITE**: Read `skills/tdd-cycle/SKILL.md` before proceeding.
 
 ## Agent Selection
 
@@ -64,7 +64,7 @@ CONSTRAINTS: Domain types to use, patterns to follow
 ERROR: Exact error message (if applicable)
 ```
 
-See `skills/orchestration/SKILL.md` for the complete context template.
+**PREREQUISITE**: Read `skills/orchestration/SKILL.md` for the complete context template before proceeding.
 
 ## Domain Review Has Veto Power
 
@@ -74,7 +74,7 @@ The domain agent can reject tests or implementations that violate:
 - Parse-don't-validate violations
 - Domain boundary violations
 
-See `skills/domain-modeling/SKILL.md` for the full domain modeling methodology.
+**PREREQUISITE**: Read `skills/domain-modeling/SKILL.md` before proceeding.
 
 ## Evidence, Not Assumptions
 
@@ -82,10 +82,10 @@ After every file edit, run the relevant verification command and paste the outpu
 "I expect it to pass" is not evidence. "I know it will fail" is not evidence.
 Run the command. Paste the output.
 
-See `skills/tdd-cycle/SKILL.md` for verification requirements.
+**PREREQUISITE**: Read `skills/tdd-cycle/SKILL.md` for verification requirements before proceeding.
 
 ## Ensemble-Team Workflow
 
 For team-based development with tiered presets (solo, pair, mob), the
 ensemble-team workflow provides persistent agent teams, ping-pong TDD pairing,
-and mob review. See `skills/orchestration/SKILL.md` for details.
+and mob review. For additional context, see `skills/orchestration/SKILL.md`.
