@@ -86,7 +86,7 @@ Feed these into the post-PR retrospective (referenced from TEAM_AGREEMENTS.md):
 
 | Metric | What it reveals |
 |--------|----------------|
-| Pairing diversity | Number of unique driver/reviewer pairings used. Low diversity suggests role rigidity. |
+| Pairing diversity | Number of unique driver/navigator pairings used. Low diversity suggests role rigidity. |
 | Stand-aside frequency by role | Which roles are consistently outvoted. May indicate a missing perspective or miscast role. |
 | Escalation frequency | How often the team cannot self-resolve. Target: <10% of decisions. |
 | Decision reversal rate | How often adopted motions are later reconsidered. High rate suggests premature consensus. |

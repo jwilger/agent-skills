@@ -1,5 +1,5 @@
 ---
-description: INVOKE to bump the project version. Analyzes git log, determines semver bump type, updates all version files, commits, and tags
+description: INVOKE to bump the project version. Analyzes git log, determines semver bump type, updates VERSION file, commits, and tags
 user-invocable: true
 argument-hint: [major|minor|patch]
 allowed-tools:
@@ -19,8 +19,7 @@ working tree is dirty and **stop immediately**. Do not proceed with a dirty tree
 
 ## Step 2: Read Current Version
 
-Read the file `plugins/claude-code/.claude-plugin/plugin.json` and extract the
-current version from the `"version"` field.
+Read the file `VERSION` in the repository root and extract the current version.
 
 ## Step 3: Find the Latest Git Tag
 
@@ -96,16 +95,10 @@ If the script fails (non-zero exit), **stop immediately** and report the error.
 
 ## Step 9: Stage and Commit
 
-Stage all 6 version files:
+Stage the VERSION file:
 
 ```bash
-git add \
-  .claude-plugin/marketplace.json \
-  plugins/claude-code/.claude-plugin/plugin.json \
-  plugins/goose/recipes/pr-workflow.yaml \
-  plugins/goose/recipes/code-review.yaml \
-  plugins/goose/recipes/tdd-cycle.yaml \
-  plugins/goose/recipes/event-modeling.yaml
+git add VERSION
 ```
 
 Commit with the message:

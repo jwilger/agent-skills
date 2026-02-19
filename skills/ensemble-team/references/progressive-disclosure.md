@@ -57,10 +57,11 @@ requesting it. This is intentional: the human needs full context to break a tie.
 
 ## Build Phase Visibility
 
-During ping-pong pairing (TDD implementation), the human sees only:
+During build-phase work (the team uses the `tdd` skill in automated mode with
+ping-pong pairing when agent teams are available), the human sees only:
 
-- **Pair selection**: Which two members are driving/reviewing, and their roles
-- **Test status**: Pass/fail after each red-green-refactor cycle (one line each)
+- **Pair selection**: Which two members are driving/navigating, and their roles
+- **Test status**: Pass/fail after each RED-DOMAIN-GREEN-DOMAIN-COMMIT cycle (one line each)
 - **Escalation requests**: If the pair or reviewing team needs a human decision
 - **Final outcome**: Tests passing, ready for review, or blocked with reason
 

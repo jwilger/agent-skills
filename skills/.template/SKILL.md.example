@@ -62,12 +62,12 @@ Repeat the pattern. Each practice should be independently understandable.
 _State honestly what this skill can and cannot guarantee._
 
 This skill provides advisory guidance. It instructs the agent on correct
-behavior but cannot mechanically prevent violations. On harnesses with plugin
-support (Claude Code hooks, OpenCode event hooks), enforcement plugins can add
-mechanical guardrails. On harnesses without enforcement, the agent follows
-these practices by convention. If you observe the agent violating a practice,
-point it out. For available enforcement plugins, see the
-[Harness Plugin Availability](../../README.md#harness-plugin-availability) table.
+behavior but cannot mechanically prevent violations. Enforcement is
+proportional to harness capability: on harnesses with delegation primitives,
+skills use structural enforcement (context isolation, handoff schemas). On
+Claude Code, optional hook templates add mechanical guardrails. On harnesses
+without delegation, the agent follows practices by convention. If you observe
+the agent violating a practice, point it out.
 
 ## Verification
 

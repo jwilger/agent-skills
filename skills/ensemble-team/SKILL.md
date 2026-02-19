@@ -10,6 +10,14 @@ description: >
   an existing project to the driver-reviewer mob model, (4) the user wants AI agents
   to work as a coordinated product team with retrospectives and consensus-based
   decisions.
+license: CC0-1.0
+metadata:
+  author: jwilger
+  version: "1.0"
+  requires: []
+  context: []
+  phase: build
+  standalone: true
 ---
 
 # Ensemble Team Setup

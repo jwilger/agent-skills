@@ -167,10 +167,11 @@ silently accept designs that violate these principles.
 
 This skill provides advisory guidance on domain modeling quality. It cannot
 mechanically prevent an agent from using primitives or creating invalid state
-representations. On harnesses with plugin support, enforcement plugins can
-add file-type restrictions (domain agent edits only type definitions) and
-mandatory review gates. On other harnesses, these principles are followed
-by convention and verified through code review. For additional context, see `../../README.md#harness-plugin-availability`.
+representations. When used with the `tdd` skill, domain review is a mandatory
+checkpoint with veto power -- enforcement ranges from advisory (guided mode)
+to structural (automated mode with subagent isolation). Without the `tdd`
+skill, these principles are followed by convention and verified through code
+review.
 
 ## Verification
 
@@ -190,7 +191,7 @@ If any criterion is not met, create or refine the domain type before proceeding.
 
 This skill works standalone. For enhanced workflows, it integrates with:
 
-- **tdd-cycle:** Domain review is a mandatory checkpoint in the TDD cycle.
+- **tdd:** Domain review is a mandatory checkpoint in the TDD cycle.
   This skill provides the principles that review checks for.
 - **code-review:** Domain integrity is stage 3 of the three-stage review.
   This skill defines what to look for.
@@ -199,5 +200,5 @@ This skill works standalone. For enhanced workflows, it integrates with:
 
 Missing a dependency? Install with:
 ```
-npx skills add jwilger/agent-skills --skill tdd-cycle
+npx skills add jwilger/agent-skills --skill tdd
 ```

@@ -146,10 +146,10 @@ These are not blocking concerns but should be noted when relevant.
 
 This skill provides advisory guidance. It instructs the agent on correct
 review procedure but cannot mechanically prevent skipping stages or merging
-without review. On harnesses with plugin support, enforcement plugins can
-gate PR creation on review completion. On other harnesses, the agent follows
-these practices by convention. If you observe stages being skipped, point it
-out. For additional context, see `../../README.md#harness-plugin-availability`.
+without review. When used with the `tdd` skill in automated mode, the
+orchestrator can gate PR creation on review completion. In guided mode or
+standalone, the agent follows these practices by convention. If you observe
+stages being skipped, point it out.
 
 ## Verification
 
@@ -170,7 +170,7 @@ This skill works standalone. For enhanced workflows, it integrates with:
 
 - **domain-modeling:** Provides the primitive obsession and parse-don't-validate
   principles referenced in Stage 2 and Stage 3
-- **tdd-cycle:** Reviews often follow a TDD cycle; this skill validates the
+- **tdd:** Reviews often follow a TDD cycle; this skill validates the
   output of that cycle
 - **mutation-testing:** Can follow code review as an additional quality gate
 

@@ -132,9 +132,9 @@ architecture:
 
 This skill provides advisory guidance. It instructs the agent to record
 decisions before implementation but cannot mechanically prevent implementation
-without a decision record. On harnesses with plugin support, enforcement hooks
-can block implementation PRs that lack corresponding ADR references. On other
-harnesses, the agent follows these practices by convention. For additional context, see `../../README.md#harness-plugin-availability`.
+without a decision record. The agent follows these practices by convention.
+If you observe implementation proceeding without a decision record, point it
+out.
 
 ## Verification
 

@@ -152,10 +152,10 @@ is the same regardless of tool. The tool is interchangeable; the discipline is n
 
 This skill provides advisory guidance on task decomposition and tracking. It
 cannot mechanically prevent an agent from skipping task creation or working on
-blocked items. On harnesses with plugin support, enforcement plugins can require
-task activation before code changes and block work on tasks with unresolved
-dependencies. On harnesses without enforcement, the agent follows these practices
-by convention. For additional context, see `../../README.md#harness-plugin-availability`.
+blocked items. When used with the `tdd` skill in automated mode, the
+orchestrator can enforce task activation before code changes and block work on
+tasks with unresolved dependencies. In other contexts, the agent follows these
+practices by convention.
 
 ## Verification
 
@@ -174,12 +174,12 @@ If any criterion is not met, revisit the relevant practice before proceeding.
 
 This skill works standalone. For enhanced workflows, it integrates with:
 
-- **tdd-cycle:** Each task maps to one or more TDD cycles. Task acceptance criteria
-  become the tests you write in the red phase.
-- **orchestration:** Task dependencies inform how work is delegated across agents.
+- **tdd:** Each task maps to one or more TDD cycles. Task acceptance criteria
+  become the tests you write in the red phase. In automated mode, task
+  dependencies inform how work is delegated across agents.
 - **architecture-decisions:** Major structural tasks should reference relevant ADRs.
 
 Missing a dependency? Install with:
 ```
-npx skills add jwilger/agent-skills --skill tdd-cycle
+npx skills add jwilger/agent-skills --skill tdd
 ```

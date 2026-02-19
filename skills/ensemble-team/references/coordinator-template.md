@@ -61,6 +61,15 @@ These are hard rules. No exceptions.
    activate a separate retro team. The same agents who built the feature hold the retro,
    then continue to the next task or finish up.
 
+## Build Phase: TDD
+
+When the `tdd` skill is installed, the team uses it in automated mode for all
+build-phase work. The `tdd` skill detects available harness capabilities and
+selects the appropriate execution strategy (agent teams with ping-pong pairing,
+serial subagents, or chaining). The coordinator does not manage TDD phases
+directly -- it delegates to the `tdd` skill's orchestration. See the `tdd`
+skill for pair selection, phase boundaries, and handoff protocols.
+
 ## Launching Teammates (Driver-Reviewer Model)
 
 Each task has exactly **one Driver** and **{{reviewer_count}} Reviewers**. The Driver

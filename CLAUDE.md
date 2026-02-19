@@ -145,9 +145,13 @@ Discussion transcripts are stored in `.team/discussions/` but the human sees onl
 
 ### Build Phase
 
-The orchestrator establishes a persistent pair session for ping-pong TDD pairing. Both engineers stay alive for the entire TDD cycle of a vertical slice, exchanging handoffs via lightweight structured messages rather than being recreated for each step. This avoids the token overhead of repeated context reloading. The topology stays flat (hub-and-spoke) with the orchestrator managing the pair directly -- no intermediate coordinator.
+The `tdd` skill drives all implementation work. It detects harness capabilities and selects the best execution strategy automatically:
 
-**Pair selection**: The orchestrator picks 2 software engineers, tracking history in `.team/pairing-history.json`. Neither of the last 2 pairings may repeat.
+- **Agent teams** (if TeamCreate is available): Persistent pair sessions with ping-pong TDD pairing. Both engineers stay alive for the entire vertical slice, exchanging handoffs via structured messages.
+- **Serial subagents** (if Task tool is available): Each phase runs in a focused subagent with constrained scope and structural handoff enforcement.
+- **Chaining** (fallback): The agent plays each role sequentially within a single context.
+
+**Pair selection** (agent teams mode): The orchestrator picks 2 software engineers, tracking history in `.team/pairing-history.json`. Neither of the last 2 pairings may repeat.
 
 **Ping-pong rhythm** within a vertical slice:
 1. Engineer A (driver) writes a failing test (RED) and hands off to Engineer B with the result.
@@ -157,7 +161,7 @@ The orchestrator establishes a persistent pair session for ping-pong TDD pairing
 
 Each red-green cycle follows the full five-step TDD discipline: RED, DOMAIN, GREEN, DOMAIN, COMMIT. Phase boundaries are strict -- each phase edits only its own file types. Commits are mandatory after every completed cycle; no new RED phase begins until the commit exists.
 
-The orchestrator ends the pair session when the vertical slice is complete. The orchestrator enforces workflow gates between phases and has veto escalation paths. See `skills/orchestration/SKILL.md` and `skills/tdd-cycle/SKILL.md`.
+The orchestrator ends the pair session when the vertical slice is complete. See `skills/tdd/SKILL.md` and its `references/` directory for full details.
 
 ### PR/Review Phase
 

@@ -16,12 +16,12 @@ retrospectives. See the skill inventory below.
 
 1. Install the core skills to get a working TDD cycle:
    ```bash
-   npx skills add jwilger/agent-skills --skill tdd-cycle --skill domain-modeling
+   npx skills add jwilger/agent-skills --skill tdd --skill domain-modeling
    ```
 
 2. For team-based development, add the ensemble workflow:
    ```bash
-   npx skills add jwilger/agent-skills --skill ensemble-team --skill orchestration
+   npx skills add jwilger/agent-skills --skill ensemble-team
    ```
 
 3. Or install everything at once:
@@ -38,24 +38,23 @@ your project grows.
 
 | Skill | Description | Phase |
 |-------|-------------|-------|
-| `bootstrap` | Zero-config onboarding, harness detection, skill recommendations | -- |
+| `bootstrap` | Zero-config onboarding, harness/capability detection, AGENTS.md generation, skill recommendations | -- |
 
 ### Tier 1 -- Core Process (universal, standalone)
 
 | Skill | Description | Phase |
 |-------|-------------|-------|
-| `tdd-cycle` | Red-green-domain TDD cycle with phase boundaries and domain review checkpoints | build |
+| `tdd` | Adaptive TDD cycle with guided and automated modes; detects harness capabilities and routes to the best execution strategy | build |
 | `domain-modeling` | Parse-don't-validate, primitive obsession detection, type-driven design | decide |
 | `code-review` | Three-stage review protocol: spec compliance, code quality, domain integrity | ship |
 | `architecture-decisions` | ADR format, governance, and lightweight decision records | decide |
 | `event-modeling` | Discovery, swimlanes, GWT scenarios, model validation | understand |
 
-### Tier 2 -- Orchestration (need some harness support)
+### Tier 2 -- Team Workflows (benefit from harness delegation support)
 
 | Skill | Description | Phase |
 |-------|-------------|-------|
 | `ensemble-team` | Full AI team setup with tiered presets (full/lean/solo-plus), ping-pong TDD pairing, mob review, progressive disclosure, and consensus-based planning | setup |
-| `orchestration` | Multi-agent delegation patterns, workflow gates, ping-pong pair coordination, conflict resolution | build |
 | `task-management` | Work breakdown, state tracking, dependency management | build |
 
 ### Tier 3 -- Utility (universal, standalone)
@@ -75,30 +74,26 @@ your project grows.
 
 ## Architecture
 
-### Three Tiers
-
-This system separates concerns into three layers:
+### Skills-Only with Optional Hardening
 
 **Skills** are portable markdown documents (SKILL.md) that teach an agent
 *what to do*. They conform to the [Agent Skills specification](https://agentskills.io/specification)
-and work on any compatible harness. Skills are advisory -- they instruct
-the agent on correct behavior through clear principles and practices.
+and work on any compatible harness. Skills are the single source of truth
+for all practices.
 
-**Harness Plugins** add *mechanical enforcement* on harnesses that support
-it. Hooks that prevent editing the wrong file during the wrong TDD phase,
-gates that force domain review between red and green, skills that
-wire up multi-step workflows. Plugins make the experience better on
-specific harnesses but are never required.
+**Enforcement is proportional to capability.** Skills adapt to what the
+harness provides. On harnesses with delegation primitives (subagents,
+agent teams), the `tdd` skill uses structural enforcement -- context
+isolation, handoff schemas, and role specialization. On harnesses without
+delegation, the agent follows practices by convention with self-verification
+checklists.
 
-**The Enforcement Gap.** Skills cannot mechanically prevent an agent from
-violating a practice. They can describe the rules clearly and include
-self-verification checklists, but an agent may still rationalize skipping
-steps. This is an honest limitation. On harnesses with plugin support
-(Claude Code hooks, OpenCode event hooks), enforcement plugins close
-this gap. On harnesses without enforcement, the agent follows practices
-by convention. If you observe a violation, point it out. Skills are the
-constitution; plugins are the police. You benefit from both, but the
-constitution works across jurisdictions while the police are local.
+**Optional hardening.** On Claude Code, the bootstrap skill can install
+hook templates (`skills/tdd/references/hooks/`) that add mechanical
+enforcement: pre-tool-use hooks that block unauthorized file edits per
+TDD phase, post-tool-use hooks that require pasted test output, and
+subagent-stop hooks that enforce mandatory domain review. These are
+optional recipes, not a separate plugin layer.
 
 ### Skill Structure
 
@@ -110,11 +105,11 @@ Every skill follows a canonical template (see `skills/.template/`):
 3. **Purpose** -- What the skill teaches (2-3 sentences)
 4. **Practices** -- Concrete, actionable instructions (the main body)
 5. **Enforcement Note** -- Honest statement of what the skill can/cannot
-   guarantee without harness plugins
+   guarantee at each enforcement level
 6. **Verification** -- Self-check checklist with binary, observable criteria
 7. **Dependencies** -- Integration points and install commands for related skills
 
-Token budgets: Core skills stay under 3000 tokens, orchestration skills
+Token budgets: Core skills stay under 3000 tokens, team workflow skills
 under 4000 tokens, bootstrap under 1000 tokens. Detailed reference
 material lives in `references/` directories, loaded on demand.
 
@@ -129,20 +124,21 @@ when used alone.
 The dependency graph is a DAG (no circular dependencies). Skills reference
 each other by name but never assume internal structure.
 
-## Harness Plugin Availability
+## Harness Compatibility
 
-| Harness | Skills | Plugin | Enforcement |
-|---------|--------|--------|-------------|
-| Claude Code | All 14 | Planned | Hooks, subagents, skills |
-| OpenCode | All 14 | Planned | JS/TS modules, event hooks |
-| Codex | All 14 | Planned | AGENTS.md, commands |
-| Cursor / Windsurf | All 14 | Planned | Rules files |
-| Goose | All 14 | Planned | Recipes (YAML) |
-| Amp | All 14 | None | MCP only |
-| Aider | All 14 | None | No plugin system |
+| Harness | Skills | TDD Strategy | Optional Hardening |
+|---------|--------|--------------|--------------------|
+| Claude Code | All | Agent teams, serial subagents, chaining | Hook templates available |
+| Codex | All | Serial subagents, chaining | -- |
+| Cursor / Windsurf | All | Chaining, guided | -- |
+| OpenCode | All | Chaining, guided | -- |
+| Goose | All | Chaining, guided | -- |
+| Amp | All | Guided | -- |
+| Aider | All | Guided | -- |
 
-Skills work on every harness in the table. Plugins add ergonomics and
-enforcement on harnesses that support them.
+Skills work on every harness. The `tdd` skill auto-detects available
+delegation primitives and selects the best execution strategy. Optional
+hook templates provide mechanical enforcement on Claude Code.
 
 ## Installing Individual Skills
 
@@ -150,15 +146,14 @@ Each skill is a directory under `skills/`. Install individually with `--skill`:
 
 ```bash
 # Core process skills
-npx skills add jwilger/agent-skills --skill tdd-cycle
+npx skills add jwilger/agent-skills --skill tdd
 npx skills add jwilger/agent-skills --skill domain-modeling
 npx skills add jwilger/agent-skills --skill code-review
 npx skills add jwilger/agent-skills --skill architecture-decisions
 npx skills add jwilger/agent-skills --skill event-modeling
 
-# Orchestration skills
+# Team workflow skills
 npx skills add jwilger/agent-skills --skill ensemble-team
-npx skills add jwilger/agent-skills --skill orchestration
 npx skills add jwilger/agent-skills --skill task-management
 
 # Utility skills
@@ -180,8 +175,8 @@ npx skills add jwilger/agent-skills --skill atomic-design
 3. Follow the section order: Value, Purpose, Practices, Enforcement Note,
    Verification, Dependencies
 4. Stay within token budgets (Core 3000, Orchestration 4000)
-5. Include an honest Enforcement Note -- do not overstate what the skill
-   can guarantee without harness plugins
+5. Include an honest Enforcement Note -- state what the skill can guarantee
+   at each enforcement level (advisory, structural, mechanical)
 6. Include a Verification section with binary, observable criteria
 7. Keep the SKILL.md body under 500 lines; move detailed examples and
    reference material to `references/`
@@ -201,6 +196,40 @@ When reviewing skills, check for:
 - **Security:** Do shell fragments in SKILL.md limit themselves to
   read-only environment detection? No writes, no network calls, no
   package installation.
+
+## Migrating from v2.x to v3.0
+
+v3.0 consolidates the skill set and removes the plugin layer.
+
+**Skills renamed or merged:**
+- `tdd-cycle` is now `tdd`. The new skill auto-detects harness capabilities
+  and supports both guided mode (`/tdd red`, `/tdd green`) and automated
+  mode (`/tdd`). Uninstall `tdd-cycle` and install `tdd`.
+- `orchestration` is absorbed into `tdd`. Orchestration patterns (serial
+  subagents, agent teams, ping-pong pairing) are now execution strategies
+  within the `tdd` skill. Uninstall `orchestration`.
+
+**Plugins removed:**
+- The `plugins/` directory no longer exists. All enforcement is handled
+  by skills directly (structural enforcement via handoff schemas and
+  context isolation) or by optional hook templates.
+- If you used Claude Code hooks from `plugins/claude-code/hooks/`, the
+  equivalent templates are now at `skills/tdd/references/hooks/claude-code-hooks.json`.
+  Run `bootstrap` to install them.
+- Agent definitions (`plugins/claude-code/agents/`) are replaced by
+  prompt templates in `skills/tdd/references/` (`red-prompt.md`,
+  `domain-prompt.md`, `green-prompt.md`, `commit-prompt.md`).
+
+**Configuration:**
+- `.claude/sdlc.yaml` version is now `"3.0"`. The `bootstrap` skill
+  detects outdated configurations and offers to update them.
+
+**Update commands:**
+```bash
+npx skills remove jwilger/agent-skills --skill tdd-cycle
+npx skills remove jwilger/agent-skills --skill orchestration
+npx skills add jwilger/agent-skills --skill tdd
+```
 
 ## License
 
