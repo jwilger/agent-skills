@@ -1,4 +1,4 @@
-version: "2.3.0"
+version: "2.3.1"
 title: "Code Review: {{ branch_name }}"
 description: >-
   Three-stage code review covering spec compliance, code quality, and
