@@ -49,6 +49,7 @@ your project grows.
 | `code-review` | Three-stage review protocol: spec compliance, code quality, domain integrity | ship |
 | `architecture-decisions` | ADR format, governance, and lightweight decision records | decide |
 | `event-modeling` | Discovery, swimlanes, GWT scenarios, model validation | understand |
+| `ticket-triage` | Evaluate ticket readiness against six criteria with actionable remediation guidance | plan |
 
 ### Tier 2 -- Team Workflows (benefit from harness delegation support)
 
@@ -151,6 +152,7 @@ npx skills add jwilger/agent-skills --skill domain-modeling
 npx skills add jwilger/agent-skills --skill code-review
 npx skills add jwilger/agent-skills --skill architecture-decisions
 npx skills add jwilger/agent-skills --skill event-modeling
+npx skills add jwilger/agent-skills --skill ticket-triage
 
 # Team workflow skills
 npx skills add jwilger/agent-skills --skill ensemble-team

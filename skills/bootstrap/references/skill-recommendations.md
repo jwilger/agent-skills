@@ -19,9 +19,10 @@ npx skills add jwilger/agent-skills --skill event-modeling
 |-------|-------------|
 | `architecture-decisions` | Lightweight ADR governance |
 | `domain-modeling` | Parse-don't-validate, type-driven design |
+| `ticket-triage` | Evaluate ticket readiness with actionable feedback |
 
 ```bash
-npx skills add jwilger/agent-skills --skill architecture-decisions --skill domain-modeling
+npx skills add jwilger/agent-skills --skill architecture-decisions --skill domain-modeling --skill ticket-triage
 ```
 
 ## Build (Implementation)
@@ -70,7 +71,7 @@ npx skills add jwilger/agent-skills --skill tdd --skill domain-modeling
 
 **Standard:**
 ```bash
-npx skills add jwilger/agent-skills --skill tdd --skill domain-modeling --skill code-review --skill architecture-decisions --skill debugging-protocol
+npx skills add jwilger/agent-skills --skill tdd --skill domain-modeling --skill code-review --skill architecture-decisions --skill debugging-protocol --skill ticket-triage
 ```
 
 **Full:**
