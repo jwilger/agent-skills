@@ -19,8 +19,8 @@ Scenarios are pattern-specific -- the GWT structure depends on the slice pattern
 
 ## Methodology
 
-Follow `skills/event-modeling/SKILL.md` for the full event modeling methodology.
-Use `skills/event-modeling/references/gwt-template.md` for scenario format and examples.
+You MUST follow `skills/event-modeling/SKILL.md` for the full event modeling methodology.
+You MUST use `skills/event-modeling/references/gwt-template.md` for scenario format and examples.
 
 ## Your Mission
 

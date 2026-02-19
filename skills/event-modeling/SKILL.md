@@ -43,7 +43,7 @@ which workflows to model. Ask these questions of the user; do not assume
 answers. Output: `docs/event_model/domain/overview.md`.
 
 **Phase 2 -- Workflow Design.** For each workflow, follow the 9-step
-process (see `references/nine-steps.md` for the full methodology). Design
+process. You MUST follow `references/nine-steps.md` for the full methodology. Design
 one workflow at a time. Complete all 9 steps before starting the next
 workflow. Output: `docs/event_model/workflows/<name>/overview.md` plus
 individual slice files in `slices/`.
@@ -127,7 +127,7 @@ policies), not data validation (format/structure checks that belong in the
 type system). If the type system can make the invalid state unrepresentable,
 it is not a GWT scenario.
 
-See `references/gwt-template.md` for the full scenario format and examples.
+You MUST use `references/gwt-template.md` for the full scenario format and examples.
 
 ### Application-Boundary Acceptance Scenarios
 
@@ -197,8 +197,7 @@ modeling methodology but cannot mechanically prevent skipping steps or
 producing incomplete models. On harnesses with plugin support, enforcement
 plugins can add workflow gates. On other harnesses, the agent follows these
 practices by convention. If you observe steps being skipped, point it out.
-For available enforcement plugins, see the
-[Harness Plugin Availability](../../README.md#harness-plugin-availability) table.
+For additional context, see `../../README.md#harness-plugin-availability`.
 
 ## Verification
 

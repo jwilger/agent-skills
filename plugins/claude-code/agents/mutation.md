@@ -19,7 +19,7 @@ manually introduce mutations.
 
 ## Methodology
 
-Follow `skills/mutation-testing/SKILL.md` for the full mutation testing methodology.
+You MUST follow `skills/mutation-testing/SKILL.md` for the full mutation testing methodology.
 
 ## Your Mission
 

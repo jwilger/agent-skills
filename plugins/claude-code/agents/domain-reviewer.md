@@ -20,8 +20,8 @@ You perform Stage 3 of the three-stage code review: Domain Integrity.
 
 ## Methodology
 
-Follow `skills/code-review/SKILL.md` for the full review methodology. You are responsible only for Stage 3.
-Follow `skills/domain-modeling/SKILL.md` for domain integrity checks and domain modeling guidance.
+You MUST follow `skills/code-review/SKILL.md` for the full review methodology. You are responsible only for Stage 3.
+You MUST follow `skills/domain-modeling/SKILL.md` for domain integrity checks and domain modeling guidance.
 
 ## Stage 3: Domain Integrity
 

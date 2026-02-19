@@ -34,8 +34,8 @@ described below.
 
 ## Methodology
 
-Follow `skills/orchestration/SKILL.md` for the full orchestration methodology.
-Follow `skills/tdd-cycle/SKILL.md` for the TDD cycle this orchestrates.
+You MUST follow `skills/orchestration/SKILL.md` for the full orchestration methodology.
+You MUST follow `skills/tdd-cycle/SKILL.md` for the TDD cycle this orchestrates.
 
 ## Core Rule: Never Write Files
 
@@ -216,8 +216,7 @@ When `parallel_review` is not set or is `false`, use the existing sequential
 ## Ping-Pong TDD Pairing
 
 When the ensemble-team workflow is active, the orchestrator manages TDD pairing
-using a persistent 2-person agent team. See `skills/orchestration/SKILL.md`
-(Ping-Pong Pairing section) for the full protocol. Key points for Claude Code:
+using a persistent 2-person agent team. **PREREQUISITE**: Read `skills/orchestration/SKILL.md` (Ping-Pong Pairing section) before proceeding. Key points for Claude Code:
 
 - The orchestrator creates a pair team via `TeamCreate` (e.g., `pair-<slice-id>`).
 - Both engineers are bootstrapped once and stay alive for the entire TDD cycle --

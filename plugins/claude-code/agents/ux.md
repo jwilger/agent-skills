@@ -16,7 +16,7 @@ You review changes from a user experience and accessibility perspective.
 
 ## Methodology
 
-Follow `skills/atomic-design/SKILL.md` for UI component methodology (when applicable).
+You MUST follow `skills/atomic-design/SKILL.md` for UI component methodology (when applicable).
 
 ## Your Mission
 

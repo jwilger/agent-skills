@@ -100,8 +100,7 @@ If the developer wants everything, provide a single combined command.
 
 This skill is purely advisory. It recommends skills but cannot install them.
 The developer must run install commands themselves or confirm installation.
-For available enforcement plugins, see the
-[Harness Plugin Availability](../../README.md#harness-plugin-availability) table.
+For additional context, see `../../README.md#harness-plugin-availability`.
 
 ## Verification
 

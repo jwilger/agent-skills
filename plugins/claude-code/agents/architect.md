@@ -21,7 +21,7 @@ You review changes for architectural alignment and maintain `docs/ARCHITECTURE.m
 
 ## Methodology
 
-Follow `skills/architecture-decisions/SKILL.md` for architecture decision methodology.
+You MUST follow `skills/architecture-decisions/SKILL.md` for architecture decision methodology.
 
 ## Your Mission
 

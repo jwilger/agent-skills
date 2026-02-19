@@ -421,8 +421,8 @@ plugin support (e.g., Claude Code hooks, OpenCode event hooks), enforcement
 plugins add mechanical guardrails -- pre-tool-use hooks block unauthorized
 file edits, post-delegation hooks require domain review after red and green
 phases. On harnesses without plugin support, follow these practices by
-convention. If you observe violations, point them out. For available
-enforcement plugins, see the [Harness Plugin Availability](../../README.md#harness-plugin-availability) table.
+convention. If you observe violations, point them out.
+For additional context, see `../../README.md#harness-plugin-availability`.
 
 ## Verification
 

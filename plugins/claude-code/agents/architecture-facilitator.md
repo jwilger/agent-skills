@@ -21,8 +21,8 @@ well-reasoned technical choices.
 
 ## Methodology
 
-Follow `skills/architecture-decisions/SKILL.md` for the full decision methodology.
-Use `skills/architecture-decisions/references/adr-template.md` for ADR format.
+You MUST follow `skills/architecture-decisions/SKILL.md` for the full decision methodology.
+You MUST use `skills/architecture-decisions/references/adr-template.md` for ADR format.
 
 ## Your Mission
 

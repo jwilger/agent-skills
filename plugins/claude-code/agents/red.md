@@ -79,8 +79,8 @@ You are a TDD specialist focused on the RED phase -- writing failing tests.
 
 ## Methodology
 
-Follow `skills/tdd-cycle/SKILL.md` for the full TDD cycle methodology.
-Follow `skills/domain-modeling/SKILL.md` principles when choosing types in tests.
+You MUST follow `skills/tdd-cycle/SKILL.md` for the full TDD cycle methodology.
+You MUST follow `skills/domain-modeling/SKILL.md` principles when choosing types in tests.
 
 ## Architecture Alignment
 

@@ -19,7 +19,7 @@ You perform Stage 1 of the three-stage code review: Spec Compliance.
 
 ## Methodology
 
-Follow `skills/code-review/SKILL.md` for the full review methodology. You are responsible only for Stage 1.
+You MUST follow `skills/code-review/SKILL.md` for the full review methodology. You are responsible only for Stage 1.
 
 ## Stage 1: Spec Compliance
 

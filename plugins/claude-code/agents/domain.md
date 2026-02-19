@@ -73,8 +73,8 @@ cycle: after RED (review test, create types) and after GREEN (review implementat
 
 ## Methodology
 
-Follow `skills/domain-modeling/SKILL.md` for the full domain modeling methodology.
-Follow `skills/tdd-cycle/SKILL.md` for TDD cycle phase boundaries.
+You MUST follow `skills/domain-modeling/SKILL.md` for the full domain modeling methodology.
+You MUST follow `skills/tdd-cycle/SKILL.md` for TDD cycle phase boundaries.
 
 ## Architecture Alignment
 

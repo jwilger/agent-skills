@@ -16,7 +16,7 @@ You validate event models for consistency, completeness, and correctness.
 
 ## Methodology
 
-Follow `skills/event-modeling/SKILL.md` for the full event modeling methodology.
+You MUST follow `skills/event-modeling/SKILL.md` for the full event modeling methodology.
 
 ## Your Mission
 

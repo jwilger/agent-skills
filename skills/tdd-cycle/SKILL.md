@@ -44,8 +44,8 @@ Use the detected test runner for all "run the test" steps below.
 The TDD cycle begins at the outermost testable layer of the application.
 Before writing unit tests, write a BDD-style acceptance test that describes
 how the application as a whole should behave for a given scenario. If the
-project uses event modeling (see the `event-modeling` skill), GWT scenarios
-become these outermost tests directly.
+project uses event modeling, GWT scenarios become these outermost tests
+directly. You MUST follow the `event-modeling` skill for GWT scenario generation.
 
 1. Write an acceptance test for the next scenario. Use the test framework's
    mechanism for pending or ignored tests so it does not block the suite:
@@ -287,9 +287,7 @@ The five-step discipline (RED, DOMAIN, GREEN, DOMAIN, COMMIT) and all
 phase boundaries remain unchanged. Ping-pong pairing changes WHO performs
 each step, not WHAT each step requires.
 
-For the full pairing protocol -- pair selection, drill-down ownership,
-clarification routing, and orchestrator responsibilities -- see the
-**Ping-Pong Pairing** section in the `orchestration` skill.
+You MUST follow the **Ping-Pong Pairing** section in the `orchestration` skill for pair selection, drill-down ownership, clarification routing, and orchestrator responsibilities.
 
 ## Enforcement Note
 
@@ -300,8 +298,7 @@ plugin support (e.g., Claude Code hooks, OpenCode event hooks), enforcement
 plugins add file-type restrictions and mandatory domain review gates. On
 harnesses without plugin support, the agent follows these practices by
 convention. If you observe the agent editing production code during RED
-or skipping domain review, point it out. For available enforcement
-plugins, see the [Harness Plugin Availability](../../README.md#harness-plugin-availability) table.
+or skipping domain review, point it out. For additional context, see `../../README.md#harness-plugin-availability`.
 
 ## Verification
 
@@ -334,7 +331,7 @@ This skill works standalone. For enhanced workflows, it integrates with:
   strengthen domain review quality.
 - **debugging-protocol:** Use when a test fails unexpectedly and the cause
   is not obvious from the error output.
-- **architecture-decisions:** Consult ADRs before writing tests that touch
+- **architecture-decisions:** You MUST consult ADRs before writing tests that touch
   architectural boundaries.
 
 Missing a dependency? Install with:
