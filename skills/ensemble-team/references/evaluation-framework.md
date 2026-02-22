@@ -93,3 +93,50 @@ Feed these into the post-PR retrospective (referenced from TEAM_AGREEMENTS.md):
 
 Track these per-sprint or per-PR, whichever is the natural work boundary.
 Trends matter more than absolute numbers.
+
+## Factory Mode Metrics
+
+These metrics apply only when the `pipeline` skill is installed and factory mode is
+active. They measure pipeline efficiency and compare quality outcomes against
+supervised mode.
+
+### Pipeline Efficiency
+
+| Metric | How to measure | Where logged |
+|--------|---------------|--------------|
+| Slices completed per session | Count of slices merged in a single pipeline run | `.team/eval-results.md` |
+| Average cycle time per slice | Wall-clock time from first TDD cycle to merge | `.team/eval-results.md` |
+| Rework rate | Rework cycles / total gate evaluations | `.team/eval-results.md` |
+| Gate failure distribution | Count of failures per gate type (test, mutation, review, CI) | `.team/eval-results.md` |
+| Escalation rate | Escalations / total slices processed | `.team/eval-results.md` |
+| Auto-merge success rate | Slices merged without human intervention (at standard/full autonomy) | `.team/eval-results.md` |
+
+### Quality Comparison: Factory vs. Supervised
+
+Compare factory mode runs against supervised mode runs using the same baseline
+metrics (mutation score, domain model richness, defect rate, cycle time). Add:
+
+| Metric | What it reveals |
+|--------|----------------|
+| Human intervention frequency | How often the human is pulled in. Lower is better if quality holds. |
+| Coordination token overhead | Total tokens spent on coordination vs. implementation. Factory mode should reduce this. |
+
+Document both modes in `.team/eval-results.md` with raw numbers and analysis. If
+factory mode does not reduce coordination overhead while maintaining quality parity,
+revisit the autonomy configuration or gate thresholds.
+
+### Pattern Flags for Factory Mode
+
+Check after every 5 pipeline runs:
+
+- **High rework rate on a specific gate** (>50% of slices need rework at the same
+  gate): The gate threshold may be miscalibrated, or the team needs stronger
+  guidance in that area. Review the gate's criteria and adjust.
+- **Escalation clustering**: Multiple escalations on similar issues suggest a
+  systematic gap — a missing team agreement, unclear domain rule, or architectural
+  ambiguity. Address the root cause rather than resolving escalations one by one.
+- **Review rubber-stamping**: Pre-push reviews consistently pass without findings.
+  The review stage may have become ceremonial. Rotate reviewers, increase review
+  scope, or add spot-check audits.
+- **Pair stagnation**: Same pairs are repeatedly assigned despite rotation policy.
+  Check pairing history and ensure the pipeline is respecting `.team/pairing-history.json`.

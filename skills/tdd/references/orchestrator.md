@@ -86,6 +86,34 @@ and require the boundary test first.
   **ping-pong pairing protocol** (see `ping-pong-pairing.md`).
 - Otherwise, delegate to serial subagents using the cycle above.
 
+## Pipeline Integration
+
+When the TDD orchestrator is invoked by the pipeline (not by a coordinator or
+human directly), the following applies:
+
+**Pipeline provides:**
+- `slice_id`: identifies the current vertical slice
+- GWT scenarios (acceptance criteria) for the slice
+- `pair`: {driver, navigator} assignment from the pipeline
+- `rework_context` (optional): if this is a rework cycle, contains previous
+  gate failure details
+
+**Pipeline context metadata:**
+- `pipeline-state`: present when running in pipeline mode
+- `slice_id`, `pair`, `rework_context` as described above
+
+**Orchestrator behavior in pipeline mode:**
+- Runs the standard ping-pong TDD cycle without modification
+- At cycle completion, produces CYCLE_COMPLETE evidence (see
+  `references/cycle-evidence.md`) and returns it to the pipeline for gate
+  evaluation
+- No Robert's Rules consensus occurs during TDD -- the pair implements
+  autonomously
+- If the pair encounters a design question that would normally trigger team
+  discussion, they record it as a domain concern in the evidence and proceed
+  with their best judgment. The concern surfaces during the pre-push
+  full-team review.
+
 ## Recovery
 
 When an agent produces incorrect output, do NOT fix it yourself. Diagnose the

@@ -78,6 +78,10 @@ Recommend based on detected capabilities:
 If Claude Code is detected and the user wants maximum enforcement, offer
 to install optional hook templates from `skills/tdd/references/hooks/`.
 
+### Step 4b: Detect Factory Mode
+
+Check if the `pipeline` skill is installed (`skills/pipeline/SKILL.md` exists). If detected, factory pipeline mode is available and Step 5 includes an additional question.
+
 ### Step 5: Ask the User
 
 **Question 1: What are you trying to do?**
@@ -88,7 +92,14 @@ to install optional hook templates from `skills/tdd/references/hooks/`.
 **Question 2: How much process structure?**
 - "Minimal" -- recommend tdd, domain-modeling
 - "Standard" -- recommend core + ship skills
-- "Full" -- recommend all skills
+- "Full" -- recommend all skills (include factory pipeline skills when pipeline is detected)
+
+**Question 3 (only when pipeline skill is detected): What autonomy level?**
+- "Conservative" (default for new projects) -- human approval at every gate
+- "Standard" (established projects) -- human approval at PR and deploy gates only
+- "Full" (mature projects with comprehensive tests) -- human approval at deploy gate only
+
+When this question is answered, generate `.factory/config.yaml` with the chosen autonomy level and sensible defaults (e.g., max rework cycles, slice timeout, audit trail path).
 
 See `references/skill-recommendations.md` for the full skill list by phase.
 

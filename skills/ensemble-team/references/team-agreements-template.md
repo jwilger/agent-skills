@@ -192,6 +192,31 @@ and work tracking.
 - How do we manage dependencies? (criteria for adding new ones)
 - How do we track work? (issues? task tools? both?)
 
+### 11. What is our autonomy and oversight model? (Factory Mode Only)
+
+**Problem**: When the pipeline manages the build phase autonomously, the team must
+agree upfront on how much latitude the pipeline has and when human oversight is
+required. Without explicit boundaries, the pipeline either interrupts the human too
+often (defeating the purpose of automation) or makes consequential decisions without
+sufficient oversight.
+
+**Context**: This topic applies only when factory mode is active (the `pipeline` skill
+is installed). The autonomy model determines how much the pipeline can do without
+human intervention — from conservative (human reviews every slice) to full (pipeline
+merges autonomously unless a gate fails). The team must calibrate this to their
+comfort level and the project's risk profile.
+
+**Sub-questions**:
+- What autonomy level do we start at? (conservative / standard / full)
+- Which decisions are gate-resolvable — meaning the pipeline can resolve them without
+  human input based on pass/fail criteria alone?
+- Which decisions are judgment-required — meaning they must be batched for human review?
+- What is our rework budget per gate? (default: 3 attempts before escalation)
+- How often does the human review pipeline output? (every slice / every N slices / daily)
+- Under what conditions do we escalate to the human immediately?
+- What quality metric thresholds trigger a change in autonomy level? (e.g., if
+  mutation score drops below X, downgrade from full to standard)
+
 ---
 
 ## Output Format

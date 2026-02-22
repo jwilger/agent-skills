@@ -103,6 +103,29 @@ Recommend: Test the exact boundary -- check_balance with exactly zero
            balance. Current tests only check positive and negative.
 ```
 
+### Structured Output
+
+After mutation testing completes, produce a `MUTATION_RESULT` evidence packet:
+
+```json
+{
+  "tool": "cargo-mutants",
+  "scope": ["src/money.rs", "src/account.rs"],
+  "total_mutants": 42,
+  "killed": 40,
+  "survived": 2,
+  "score": 95.2,
+  "survivors": [
+    {"file": "src/money.rs", "line": 45, "mutation_type": "arithmetic", "description": "replaced + with -"}
+  ],
+  "verdict": "FAIL"
+}
+```
+
+- **Verdict:** `PASS` if score is 100% on changed files, `FAIL` otherwise
+- When running in pipeline mode, store to `.factory/audit-trail/slices/<slice-id>/mutation.json`
+- When running standalone, the output is informational only -- display it and proceed to the quality gate
+
 ### Enforce the Quality Gate
 
 The required mutation kill rate is **100%**. All mutants must be killed.
@@ -123,6 +146,14 @@ The required mutation kill rate is **100%**. All mutants must be killed.
 - Accept surviving mutants without reporting them
 - Run mutations on the entire codebase when only a module changed
 - Recommend tests for data validation that belongs in domain types
+
+### Pipeline Mode
+
+When invoked by the pipeline orchestrator:
+
+- A `FAIL` verdict routes automatically back to the `tdd` skill with the survivor list attached. The pipeline handles this rework routing -- mutation-testing just reports results.
+- Survivor details in the `MUTATION_RESULT` packet must be specific enough (file, line, mutation type, description) for the TDD pair to write targeted tests without re-running the mutation tool to understand what failed.
+- The pipeline may invoke mutation-testing multiple times per slice; each run overwrites the previous `mutation.json` for that slice.
 
 ## Enforcement Note
 
