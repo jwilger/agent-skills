@@ -1,8 +1,9 @@
 # Coordinator Agent Instructions Template
 
 Use this template to generate the project's coordinator instructions file. Place the
-output in the harness-specific config file (e.g., `CLAUDE.md` for Claude Code,
-`.cursorrules` for Cursor, project instructions for other harnesses). Replace all
+output at `.team/coordinator-instructions.md`. Then add a pointer in the harness-specific
+config file (e.g., `CLAUDE.md` for Claude Code, `.cursorrules` for Cursor, project
+instructions for other harnesses) directing the main agent to read this file. Replace all
 `{{placeholders}}` with project-specific values.
 
 ---
@@ -11,8 +12,8 @@ output in the harness-specific config file (e.g., `CLAUDE.md` for Claude Code,
 # Coordinator Agent Instructions
 
 > **This file is for the coordinator agent only.** Teammates should NOT read this file.
-> Teammates read `PROJECT.md` (owner constraints) and `TEAM_AGREEMENTS.md` (team
-> conventions) instead.
+> Teammates read `PROJECT.md` (owner constraints) and `AGENTS.md` (team conventions)
+> instead.
 
 ## Primary Agent Role (Coordinator)
 
@@ -50,9 +51,10 @@ These are hard rules. No exceptions.
 
 3. **NEVER run retrospectives or process checkpoints.** The mini-retro after each CI
    build and any other retrospectives belong to the team. The coordinator does not
-   facilitate, summarize, or conduct these. The team runs them internally per their
-   TEAM_AGREEMENTS.md process. The project owner may offer suggestions as an outside
-   observer, but all process decisions are ultimately up to the team.
+   facilitate, summarize, or conduct these. The team runs them internally. The human
+   is a full team member whose consent is required for any process changes, but the
+   coordinator does not mediate that -- the team engages the human directly during
+   retrospectives.
 
 4. **The mini-retro happens within the same session, as part of the pipeline.**
    After each CI build, the team that did the work holds their mini-retro while they
@@ -92,13 +94,13 @@ messaging.
 ### Common Launch Instructions
 - Include the teammate's `.team/` profile content in the activation prompt so the agent
   embodies that persona.
-- Instruct each teammate to **read `PROJECT.md` and `TEAM_AGREEMENTS.md`** at the
-  start of their session before doing any work.
+- Instruct each teammate to **read `PROJECT.md` and `AGENTS.md`** at the start of
+  their session before doing any work.
 - Clearly indicate in each teammate's activation prompt whether they are the **Driver**
   or a **Reviewer** for the current task.
 - **Driver onboarding**: The activation prompt must instruct the Driver to read
-  `TEAM_AGREEMENTS.md`, `PROJECT.md`, `docs/glossary.md`, and the relevant user story
-  before writing any code.
+  `PROJECT.md`, `AGENTS.md`, `docs/glossary.md`, and the relevant user story before
+  writing any code.
 
 ## Teammate Permissions
 

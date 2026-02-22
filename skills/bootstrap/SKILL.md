@@ -105,10 +105,12 @@ See `references/skill-recommendations.md` for the full skill list by phase.
 
 ### Step 6: Generate Instruction Files
 
-Generate harness-appropriate files. See `references/agents-md.md` for
-AGENTS.md best practices (small routing document, progressive disclosure,
-managed markers) and `references/harness-files.md` for harness-specific
-generation rules.
+Generate harness-appropriate files. For Claude Code, CLAUDE.md uses
+`@AGENTS.md` references instead of symlinks or content embedding to keep
+a single source of truth and avoid duplication. See
+`references/agents-md.md` for AGENTS.md best practices (small routing
+document, progressive disclosure, managed markers) and
+`references/harness-files.md` for harness-specific generation rules.
 
 ### Step 7: Optional Ensemble Team
 

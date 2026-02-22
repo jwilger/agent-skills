@@ -2,14 +2,14 @@
 name: ensemble-team
 description: >
   Set up a full AI ensemble/mob programming team for any software project. Creates
-  team member profiles (.team/), coordinator instructions (harness-specific config
-  file), project owner constraints (PROJECT.md), team agreements (TEAM_AGREEMENTS.md),
-  domain glossary, and supporting docs. Use when: (1) starting a new project and
-  wanting a full expert agent team, (2) the user asks to "set up a team", "create a
-  mob team", "set up ensemble programming", or "create agent profiles", (3) converting
-  an existing project to the driver-reviewer mob model, (4) the user wants AI agents
-  to work as a coordinated product team with retrospectives and consensus-based
-  decisions.
+  team member profiles (.team/), coordinator instructions (.team/coordinator-instructions.md),
+  project owner constraints (PROJECT.md), team conventions (AGENTS.md), architectural
+  decisions (docs/ARCHITECTURE.md), domain glossary, and supporting docs. Use when:
+  (1) starting a new project and wanting a full expert agent team, (2) the user asks
+  to "set up a team", "create a mob team", "set up ensemble programming", or "create
+  agent profiles", (3) converting an existing project to the driver-reviewer mob model,
+  (4) the user wants AI agents to work as a coordinated product team with
+  retrospectives and consensus-based decisions.
 license: CC0-1.0
 metadata:
   author: jwilger
@@ -131,23 +131,32 @@ is actively driving or navigating code.
 
 ### Phase 4: Generate Project Scaffolding
 
-#### Coordinator Instructions (harness config file)
+#### Coordinator Instructions
 
 **PREREQUISITE**: Read `references/coordinator-template.md` before proceeding.
 
-Fill in roster, build tools, team size. Place in the harness-specific config
-file (e.g., `CLAUDE.md` for Claude Code, `.cursorrules` for Cursor, project
-instructions for other harnesses). This file is for the coordinator only.
+Fill in roster, build tools, team size. Generate the coordinator instructions at
+`.team/coordinator-instructions.md`. Then add a pointer in the harness-specific
+config file (e.g., `CLAUDE.md` for Claude Code, `.cursorrules` for Cursor, project
+instructions for other harnesses) directing the main agent to read
+`.team/coordinator-instructions.md`. The coordinator instructions file is for the
+coordinator only.
+
+#### AGENTS.md — Team Structure Section
+
+Insert a "Team Structure" managed section into `AGENTS.md` noting:
+- Team member profiles are located in `.team/`
+- Project owner constraints are defined in `PROJECT.md`
+- Domain glossary is maintained at `docs/glossary.md`
+
+This section provides orientation for all agents. The conventions section of
+`AGENTS.md` will be populated by the team during the formation session (Phase 5).
 
 #### PROJECT.md
 
 **PREREQUISITE**: Read `references/project-template.md` before proceeding.
 
 Fill in tech stack, scope (Must/Should/Could/Out), dev mandates, environment.
-
-#### TEAM_AGREEMENTS.md — Skeleton Only
-Create a **skeleton** `TEAM_AGREEMENTS.md` with section headers but NO pre-filled
-agreements. The team writes their own agreements during the formation session (Phase 5).
 
 #### Supporting docs
 
@@ -158,15 +167,21 @@ agreements. The team writes their own agreements during the formation session (P
 
 ### Phase 5: Team Formation Session
 
-This is the critical phase. The team debates and reaches consensus on their own
-working agreements.
-
-**PREREQUISITE**: Read `references/team-agreements-template.md` before proceeding.
+This is the critical phase. The team debates and reaches consensus on their working
+conventions, architectural decisions, and domain terminology.
 
 **How it works**: The coordinator activates the full team, then presents each discussion
-topic (from the reference file) one at a time. The team debates, proposes approaches,
-and reaches consensus. The Driver records the agreed-upon norms in
-`TEAM_AGREEMENTS.md`.
+topic one at a time. The team debates, proposes approaches,
+and reaches consensus using the Robert's Rules protocol. Outputs go to the appropriate
+location based on the type of decision:
+
+- **Working conventions** (collaboration norms, definition of done, code conventions,
+  communication norms, mob model details, retrospective cadence, tooling conventions)
+  are recorded in the conventions section of `AGENTS.md`.
+- **Architectural decisions** (principles, deployment strategy, state management,
+  testing philosophy) are recorded as ADRs in `docs/ARCHITECTURE.md`.
+- **Domain terminology** (types, actions, errors, naming conventions) updates
+  `docs/glossary.md`.
 
 **The 10 topics** (non-exhaustive — team may add more):
 1. How do we decide what to build?
@@ -181,7 +196,8 @@ and reaches consensus. The Driver records the agreed-upon norms in
 10. What tooling and repository conventions do we follow?
 
 Each topic includes the **problem** it addresses and **sub-questions** to guide
-discussion. The team's answers become their agreements — not pre-canned templates.
+discussion. The team's answers become their conventions and decisions — not pre-canned
+templates.
 
 ### Phase 6: Configure Permissions
 
@@ -200,8 +216,22 @@ CI runs.
 
 ### Phase 8: Summary
 
-Present: files created, how to start the team (the coordinator reads CLAUDE.md and
-activates the team), suggest telling the coordinator what to build.
+Present: files created, how to start the team. The harness config file (e.g.,
+`CLAUDE.md` for Claude Code) references `AGENTS.md` via `@` (or equivalent
+include mechanism), and the coordinator reads `.team/coordinator-instructions.md`
+for its operating instructions. Suggest telling the coordinator what to build.
+
+**Files created**:
+- `.team/<name>.md` — team member profiles
+- `.team/coordinator-instructions.md` — coordinator operating instructions
+- `AGENTS.md` — team structure and conventions (populated during formation session)
+- `PROJECT.md` — project owner constraints
+- `docs/ARCHITECTURE.md` — architectural decision records (populated during formation session)
+- `docs/glossary.md` — domain glossary
+- `docs/deferred-items.md` — deferred items tracker
+- `docs/future-ideas.md` — parking lot for out-of-scope ideas
+- Harness config pointer (e.g., `CLAUDE.md`) — directs coordinator to read
+  `.team/coordinator-instructions.md`
 
 ## Retrospective Protocol
 
@@ -209,17 +239,20 @@ Retrospectives are event-driven, not time-based. AI agents work continuously —
 arbitrary intervals are meaningless.
 
 - **Trigger**: After each shipped PR (merged to the integration branch).
-- **Participants**: The team that did the work, while they still have context.
-- **Format**: The team reflects on what worked, what did not, and suggests process
+- **Participants**: The full team that did the work, while they still have context.
+  The human is a **team member** who participates in the consent protocol, not an
+  external approver.
+- **Format**: The team reflects on what worked, what did not, and proposes process
   improvements. Any structured format (Start/Stop/Continue or equivalent) is fine
-  as long as it produces concrete suggestions.
-- **Output**: Retrospective suggestions are SUGGESTIONS only. They require explicit
-  human approval before adoption.
-- **Boundary**: The team does NOT self-modify its own agreements, profiles, or
-  process documents. The human reviews suggestions and decides what to adopt.
-  Approved changes are then applied by the team at the human's direction.
-- **Mini-retros** after each CI build remain a lightweight checkpoint (did we follow
-  the pipeline? was the commit atomic?) and do not require human approval.
+  as long as it produces concrete proposals.
+- **Output**: Retrospective proposals are changes to `AGENTS.md` conventions or new
+  ADRs in `docs/ARCHITECTURE.md` — the same places formation session outputs go.
+  Process improvement proposals require the same consent protocol as any other team
+  decision, and the human must consent (as a team member) before changes to
+  `AGENTS.md` or new ADRs are adopted.
+- **Mini-retros** after each CI build remain a lightweight observational checkpoint
+  (did we follow the pipeline? was the commit atomic?) and do not require human
+  consent. They are observational, not prescriptive.
 
 ## Key Principles
 
@@ -231,7 +264,7 @@ Non-negotiable aspects baked in from production experience.
 - Refactor step is mandatory every commit
 - CI wait rule (never queue multiple CI runs)
 - Mini-retro after every CI build (team runs it, not coordinator)
-- PR-triggered retrospective with human-approved outputs
+- PR-triggered retrospective with consent-based outputs
 - Driver handoff protocol (summary + git log + green baseline)
 - Glossary compliance (domain types match glossary)
 - Deferred items tracked immediately

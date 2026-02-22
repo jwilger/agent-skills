@@ -11,8 +11,7 @@ with project-specific values.
 {{project_description}}
 
 > **This document contains project owner constraints.** The team must follow these rules.
-> Changes to this document require project owner approval. For team-owned practices and
-> conventions, see `TEAM_AGREEMENTS.md`.
+> Changes to this document require project owner approval.
 
 ## Tech Stack
 

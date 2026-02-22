@@ -8,28 +8,32 @@ that the detected harness reads natively.
 **Primary file:** `CLAUDE.md`
 
 Claude Code reads `CLAUDE.md` from the project root on every session start.
-Generate it as a symlink to AGENTS.md or as a file that includes AGENTS.md
-content plus Claude Code-specific additions.
-
-Recommended approach -- symlink:
-```bash
-ln -sf AGENTS.md CLAUDE.md
-```
-
-If Claude Code-specific content is needed (hook references, tool
-permissions), generate CLAUDE.md with managed markers that include
-the AGENTS.md content plus a Claude Code supplement section:
+Generate it using an `@` reference to AGENTS.md rather than symlinks or
+content embedding. The `@` reference tells Claude Code to load AGENTS.md
+as additional context, keeping CLAUDE.md small and avoiding duplication.
 
 ```markdown
 <!-- BEGIN MANAGED: bootstrap -->
-(AGENTS.md content)
+@AGENTS.md
 
-## Claude Code Supplement
+## Claude Code
 
 - TDD enforcement hooks installed: [yes/no]
-- Task dependency protocol: See `skills/tdd/references/claude-code.md`
 - Resume protocol: Resume stopped agents instead of re-creating
+- Task dependency protocol: See `skills/tdd/references/claude-code.md`
+- When editing CLAUDE.md or AGENTS.md: keep total instructions under 30, use @-references for detailed topics, never duplicate content between files
 <!-- END MANAGED: bootstrap -->
+```
+
+When the `ensemble-team` skill has been run, a second managed section is
+added to CLAUDE.md:
+
+```markdown
+<!-- BEGIN MANAGED: ensemble-team -->
+## Ensemble Team
+
+Read `.team/coordinator-instructions.md` for your coordinator role.
+<!-- END MANAGED: ensemble-team -->
 ```
 
 **Optional hooks:** If the user accepted hook installation during

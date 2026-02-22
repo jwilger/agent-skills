@@ -80,7 +80,7 @@ into every new team setup from day one.
   Brief "+1" for agreement. Don't re-send acknowledged reviews.
 
 ### Driver Onboarding Must Be Explicit
-- New Drivers need to read: TEAM_AGREEMENTS.md, PROJECT.md, docs/glossary.md, and the
+- New Drivers need to read: PROJECT.md, AGENTS.md, docs/glossary.md, and the
   relevant user story BEFORE writing any code.
 
 ## Documentation

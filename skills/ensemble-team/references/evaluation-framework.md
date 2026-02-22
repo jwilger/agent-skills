@@ -82,7 +82,7 @@ decisions in retrospectives to distinguish the two cases.
 
 ## Retrospective Metrics
 
-Feed these into the post-PR retrospective (referenced from TEAM_AGREEMENTS.md):
+Feed these into the post-PR retrospective:
 
 | Metric | What it reveals |
 |--------|----------------|
