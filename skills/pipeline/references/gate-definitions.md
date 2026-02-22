@@ -10,6 +10,8 @@ rework budget. No gate may be skipped or softened.
 
 **Pass criteria (all must be true):**
 - Acceptance test exists and passes
+- Acceptance test exercises the application boundary (`boundary_type` present,
+  `boundary_evidence` describes external interaction)
 - All unit tests pass
 - Domain review approved (no unresolved REVISED or CONCERN_RAISED verdicts)
 - Commit exists for every completed red-green cycle
@@ -21,7 +23,9 @@ rework budget. No gate may be skipped or softened.
   "acceptance_test": {
     "file": "tests/acceptance/slice_name_test.ext",
     "status": "pass",
-    "output_summary": "1 test passed"
+    "output_summary": "1 test passed",
+    "boundary_type": "HTTP",
+    "boundary_evidence": "sends HTTP POST to /api/commands and asserts 201 response"
   },
   "unit_tests": {
     "count": 7,
@@ -41,6 +45,13 @@ rework budget. No gate may be skipped or softened.
   ]
 }
 ```
+
+**Boundary validation rule:** Missing or empty `boundary_type` = gate FAIL.
+A `boundary_type` that describes only internal function calls (e.g., calling
+a handler or service method directly without going through an external
+boundary) = gate FAIL. The `boundary_evidence` field must describe a
+concrete external interaction (HTTP request, CLI invocation, message
+published, browser action, etc.).
 
 **Failure routing:** Back to the TDD pair with the failing test output and
 domain review concerns. The pair resumes from the failing phase (RED if the

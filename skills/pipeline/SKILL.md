@@ -37,13 +37,22 @@ The pipeline reads vertical slices from event model output and maintains their
 state in `.factory/slice-queue.json`. See `references/slice-queue.md` for the
 full queue schema and operations.
 
+Each slice carries a `context` block with enriched metadata for downstream
+pipeline stages: boundary annotations on each GWT scenario (so the gate can
+verify boundary coverage), an event model source path (so the TDD pair can
+consult the original model), related slice IDs for cross-slice dependency
+tracking, domain types referenced by the slice (enabling pre-implementation
+type discovery), and UI components referenced (triggering conditional context
+gathering when the slice touches the interface layer).
+
 **Ordering strategy:** Walking skeleton first (the thinnest end-to-end path),
 then by dependency graph (slices whose predecessors are complete), then by
 priority. The first slice in any project must always be a walking skeleton.
 
 **Slice states:** pending, active, blocked, completed, escalated. Only one
-slice may be active at a time unless running at full autonomy level with no
-file conflicts between slices. See `references/autonomy-levels.md`.
+slice may be active at a time unless running at full autonomy level, where
+parallel slices operate in isolated git worktrees (one worktree per active
+slice at `.factory/worktrees/<slice-id>`). See `references/autonomy-levels.md`.
 
 ### Per-Slice Pipeline
 
@@ -54,10 +63,16 @@ quality gate. A gate failure routes back for rework; it never skips forward.
    tasks with acceptance criteria. Output: task tree in
    `.factory/audit-trail/slices/<slice-id>/decomposition.json`.
 
-2. **Implement** -- Invoke `tdd` to pair-implement the slice. The TDD pair
-   works through red-green-domain-commit cycles without consensus rounds. No
-   team discussion during implementation. Output: passing tests, committed code,
-   cycle evidence in `.factory/audit-trail/slices/<slice-id>/tdd-cycles/`.
+2. **Implement** -- Before dispatching the TDD pair, the pipeline gathers
+   pre-implementation context: architecture docs, glossary, existing domain
+   types matching the slice's referenced types, and event model context from
+   the slice. If the slice touches UI, design system components are included.
+   This context is passed to the TDD orchestrator as `project_references` and
+   `slice_context` so every phase agent operates with full domain awareness.
+   The TDD pair then works through red-green-domain-commit cycles without
+   consensus rounds. No team discussion during implementation. Output: passing
+   tests, committed code, cycle evidence in
+   `.factory/audit-trail/slices/<slice-id>/tdd-cycles/`.
 
 3. **Review** -- Before pushing, invoke `code-review` with the full team for
    three-stage mob review (spec compliance, code quality, domain integrity).
@@ -110,8 +125,11 @@ The pipeline operates at one of three autonomy levels configured in
   gate result, human approves every merge.
 - **Standard:** Auto-rework within budget, batch non-blocking findings, skip
   trivial review items, auto-retry CI on infra failures.
-- **Full:** Auto-merge when all gates pass, parallel slice execution when no
-  file conflicts, pair selection and slice ordering optimization.
+- **Full:** Auto-merge when all gates pass, parallel slice execution using
+  git worktree isolation (each active slice gets its own worktree; conflicts
+  are detected at merge time), pair selection and slice ordering optimization.
+  If `git worktree` is not available, the pipeline falls back to sequential
+  execution and logs a warning.
 
 ### Pipeline Operates Directly
 
@@ -142,6 +160,7 @@ insufficient.
 After completing a slice through the pipeline, verify:
 
 - [ ] Slice was decomposed into leaf tasks with acceptance criteria
+- [ ] Pre-implementation context was gathered and passed to the orchestrator
 - [ ] TDD pair implemented without consensus rounds (no team discussion)
 - [ ] Full-team code review occurred before push (all three stages)
 - [ ] All review findings were addressed before proceeding
@@ -149,6 +168,7 @@ After completing a slice through the pipeline, verify:
 - [ ] CI pipeline passed green
 - [ ] Merge occurred only after all five gates passed
 - [ ] Audit trail entries exist for every stage
+- [ ] Acceptance test exercises the application boundary
 - [ ] Rework cycles (if any) stayed within the 3-cycle budget per gate
 
 ## Dependencies

@@ -171,13 +171,23 @@ acceptance test passes.
 A test that calls internal functions directly is a unit test, not an acceptance
 test -- even if it asserts on user-visible behavior.
 
+**Boundary enforcement by mode:**
+- **Pipeline mode:** The CYCLE_COMPLETE evidence must include `boundary_type`
+  and `boundary_evidence` on the acceptance test. The pipeline's TDD gate
+  rejects evidence where the acceptance test calls internal functions directly.
+- **Automated mode (non-pipeline):** The orchestrator checks boundary scope
+  and re-delegates if the first test is not a boundary test. Advisory -- no
+  gate blocks progression.
+- **Guided mode:** The human is responsible for ensuring boundary-level tests.
+  The skill text instructs correct behavior but cannot enforce it.
+
 ### Cycle-Complete Evidence
 
 At the end of each complete RED-DOMAIN-GREEN-DOMAIN-COMMIT cycle, produce
 a CYCLE_COMPLETE evidence packet containing: slice_id, acceptance_test
-{file, name, output}, unit_tests {count, all_passing, output},
-domain_reviews [{phase, verdict, concerns}], commits [{hash, message}],
-rework_cycles, pair {driver, navigator}.
+{file, name, output, boundary_type, boundary_evidence}, unit_tests
+{count, all_passing, output}, domain_reviews [{phase, verdict, concerns}],
+commits [{hash, message}], rework_cycles, pair {driver, navigator}.
 
 When `pipeline-state` is provided in context metadata, the TDD skill
 operates in **pipeline mode**: it receives a `slice_id` and stores
