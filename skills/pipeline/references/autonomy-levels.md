@@ -83,10 +83,24 @@ pipeline runs.
 retrospective reviews.
 
 **Parallel execution rules:**
-- Two slices may run in parallel only if their decomposed task lists predict
-  no overlapping file modifications
-- If a conflict is detected mid-execution (a file is modified by both slices),
-  the later-started slice is paused until the earlier one completes and merges
+- The pipeline detects worktree support by running `git worktree list`. If
+  the command succeeds, parallel slices use worktree isolation. If it fails
+  (shallow clones, non-git VCS, restricted environments), the pipeline falls
+  back to sequential execution for all slices, regardless of autonomy level,
+  and logs a warning explaining why parallel execution is unavailable.
+- Each parallel slice gets its own git worktree at
+  `.factory/worktrees/<slice-id>`, created from the integration branch when
+  the slice is activated. All work for that slice (TDD, review, mutation
+  testing) happens within the worktree directory. The pipeline passes the
+  worktree path as `WORKING_DIRECTORY` to all downstream skills.
+- On slice completion, the pipeline merges the worktree branch back to the
+  integration branch and removes the worktree. On slice escalation, the
+  worktree is removed and the branch is preserved for human inspection.
+- Conflicts are detected at merge time, not predicted in advance. If a merge
+  conflict occurs, the pipeline attempts an automatic rebase of the slice
+  branch onto the updated integration branch and re-runs CI. If the rebase
+  fails (due to non-trivial conflicts), the pipeline escalates to the human
+  with full context.
 - Parallel slices maintain independent audit trails and gate evidence
 - Each parallel slice has its own rework budget
 

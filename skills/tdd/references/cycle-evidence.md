@@ -21,7 +21,9 @@ reviewed, and what was committed.
   "acceptance_test": {
     "file": "string -- absolute path to the acceptance test file",
     "name": "string -- test function or case name",
-    "output": "string -- test runner stdout (pass/fail + output)"
+    "output": "string -- test runner stdout (pass/fail + output)",
+    "boundary_type": "string -- external boundary exercised (HTTP, CLI, message_queue, websocket, playwright_ui, manual_verification)",
+    "boundary_evidence": "string -- how the test interacts with the boundary (e.g., 'sends HTTP POST to /api/commands and asserts 201 response')"
   },
   "unit_tests": {
     "count": "number -- total unit tests run",
@@ -56,6 +58,23 @@ reviewed, and what was committed.
 The boundary-level test for the vertical slice. This is the outside-in test
 written in the first RED phase of the slice. Its output must show a passing
 result for the cycle to be considered complete.
+
+`boundary_type` identifies which external boundary the acceptance test
+exercises. Valid values: `HTTP`, `CLI`, `message_queue`, `websocket`,
+`playwright_ui`, `manual_verification`. A test that calls internal functions
+directly (e.g., `CommandLogic.handle()`, `service.process()`) is a unit test,
+not an acceptance test -- it disqualifies as the boundary-level test even if
+it asserts on user-visible behavior.
+
+`boundary_evidence` describes how the test interacts with the external
+boundary in concrete terms (e.g., "sends HTTP POST to /api/commands and
+asserts 201 response", "spawns CLI process with `--create` flag and asserts
+exit code 0", "connects to WebSocket at /ws/events and asserts message
+received").
+
+In standalone (non-pipeline) mode, these fields are informational. The TDD
+skill text instructs the agent to fill them, but only the pipeline gate
+structurally rejects missing values.
 
 ### `unit_tests`
 
@@ -119,6 +138,10 @@ a slice is ready to proceed:
 2. **All unit tests pass:** `unit_tests.all_passing` is `true`
 3. **Domain reviews approved:** Every entry in `domain_reviews` has
    `verdict: "approved"` (no unresolved `flagged` verdicts)
+4. **Boundary scope verified:** `acceptance_test.boundary_type` is present
+   and matches the slice's GWT boundary annotation.
+   `acceptance_test.boundary_evidence` describes an external interaction
+   (not a direct call to an internal function).
 
 If any condition is not met, the TDD gate fails and the slice enters a
 rework cycle. The pipeline records the gate failure in the audit trail

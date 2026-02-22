@@ -73,12 +73,20 @@ Coordinator reactivates for the human review phase.
 The coordinator provides the pipeline with:
 
 1. **Slice queue:** Ordered list of vertical slices to build, with slice IDs,
-   acceptance criteria, and priority
+   acceptance criteria, priority, and enriched context (boundary annotations,
+   event model paths, domain types, UI components)
 2. **Factory config:** Path to `.factory/config.yaml` (already validated)
 3. **Team roster:** List of available engineers with their `.team/` profile
    paths and pairing history
 4. **Decision context:** Paths to relevant architecture decisions, domain
    model, and event model documents
+5. **Project references:** Stored in `.factory/config.yaml` under a
+   `project_references` key. These paths are what the pipeline reads to
+   gather pre-implementation context for each slice:
+   - `architecture`: path to architecture document (e.g., `"docs/ARCHITECTURE.md"`)
+   - `glossary`: path to glossary (e.g., `"docs/glossary.md"`)
+   - `design_system_catalog`: path to design system catalog (e.g., `"docs/design-system/"`)
+   - `event_model_root`: path to event model root directory (e.g., `"docs/event-model/"`)
 
 The coordinator confirms the handoff is complete, then becomes inactive.
 

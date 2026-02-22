@@ -70,7 +70,7 @@ your project grows.
 
 | Skill | Description | Phase |
 |-------|-------------|-------|
-| `pipeline` | Three-phase factory pipeline orchestrator: plan → build → review | all |
+| `pipeline` | Three-phase factory pipeline orchestrator: plan → build → review. Boundary-enforced TDD gates, enriched slice context, git worktree isolation | all |
 | `ci-integration` | Quality gate definitions and CI adapter for automated pass/fail decisions | ship |
 | `factory-review` | Structured human review protocol for factory output with audit trail | review |
 
@@ -137,7 +137,7 @@ each other by name but never assume internal structure.
 
 | Harness | Skills | TDD Strategy | Factory Pipeline | Optional Hardening |
 |---------|--------|--------------|------------------|--------------------|
-| Claude Code | All | Agent teams, serial subagents, chaining | Full (parallel slices, persistent pairs) | Hook templates available |
+| Claude Code | All | Agent teams, serial subagents, chaining | Full (parallel slices in git worktrees, persistent pairs) | Hook templates available |
 | Codex | All | Serial subagents, chaining | Supported (serial execution) | -- |
 | Cursor / Windsurf | All | Chaining, guided | Supported (chaining mode) | -- |
 | OpenCode | All | Chaining, guided | Degraded (advisory gates) | -- |
@@ -152,10 +152,33 @@ Claude Code, serial execution on Codex, and advisory-mode gate checking
 on harnesses without delegation primitives. Optional hook templates
 provide mechanical enforcement on Claude Code.
 
-## Factory Pipeline (v4.0)
+## Factory Pipeline (v4.0+)
 
 v4.0 introduces a factory pipeline that automates the build-and-ship
 phases while keeping humans in control of planning and review.
+
+v4.1 adds four improvements to the pipeline:
+
+- **Boundary-level acceptance test enforcement.** The TDD gate now
+  requires acceptance tests to exercise an external boundary (HTTP, CLI,
+  message queue, websocket, Playwright UI, or manual verification).
+  Tests that only call internal functions are rejected. CYCLE_COMPLETE
+  evidence includes `boundary_type` and `boundary_evidence` fields.
+- **Pre-implementation context checklist.** Before dispatching a TDD
+  pair, the pipeline gathers architecture docs, glossary, domain types,
+  and event model context. This is passed as `project_references` and
+  `slice_context` to the TDD orchestrator.
+- **Enriched slice context.** Each slice now carries a `context` block
+  with boundary annotations on GWT scenarios, event model source path,
+  related slices, domain types referenced, and UI components referenced.
+- **Git worktree isolation for parallel slices.** At full autonomy,
+  parallel slices execute in isolated git worktrees at
+  `.factory/worktrees/<slice-id>`. Falls back to sequential execution
+  when `git worktree` is unavailable. Conflicts are detected at merge
+  time rather than predicted up front.
+
+See `skills/pipeline/SKILL.md` and `skills/tdd/SKILL.md` for full
+details.
 
 ### Three-Phase Workflow
 
@@ -253,7 +276,10 @@ identical everywhere -- only the execution mechanism changes.
 **Claude Code** (full capability):
 - Pipeline uses agent teams for TDD pairs (persistent ping-pong sessions)
 - Background agents for CI monitoring
-- Full parallel slice execution at the `full` autonomy level
+- Full parallel slice execution at the `full` autonomy level using git
+  worktree isolation (one worktree per active slice)
+- Pre-implementation context gathering (architecture docs, glossary,
+  domain types, event model) passed to every TDD pair
 - Hook templates available for mechanical enforcement of phase boundaries
 - Recommended: start here if you have a choice of harness
 
@@ -292,7 +318,7 @@ Start conservative and promote as you build confidence:
 |-------|-------------|-------------------------------------|
 | **Conservative** | First 2-3 slices, new domain, new team | Runs gates, reports every result. You approve every merge and every rework attempt. |
 | **Standard** | After verifying gate quality on a few slices | Auto-reworks within budget, batches non-blocking findings, auto-retries infra CI failures. You approve merges. |
-| **Full** | 5+ clean slices at standard, stable CI | Auto-merges when all gates pass, runs slices in parallel (Claude Code only), optimizes pair selection from factory memory. You review batches. |
+| **Full** | 5+ clean slices at standard, stable CI | Auto-merges when all gates pass, runs slices in parallel in git worktrees (Claude Code only), optimizes pair selection from factory memory. You review batches. |
 
 Change the level at any time by editing `.factory/config.yaml`. The change
 takes effect on the next slice. The pipeline never auto-promotes -- level
@@ -376,6 +402,65 @@ When reviewing skills, check for:
   read-only environment detection? No writes, no network calls, no
   package installation.
 
+## Migrating from v4.0 to v4.1
+
+v4.1 strengthens the pipeline with boundary enforcement, enriched slice
+context, pre-implementation context gathering, and git worktree
+isolation. All changes are additive -- existing standalone skill usage is
+unaffected.
+
+**Slice queue changes (required if using the pipeline):**
+
+Slices now require a `context` block with at least one GWT scenario that
+has a `boundary` field. Enqueue validation rejects slices missing this.
+Update existing entries in `.factory/slice-queue.json` to include the
+context block. See `skills/pipeline/references/slice-queue.md` for the
+schema.
+
+**Project references configuration (recommended):**
+
+Add a `project_references` section to `.factory/config.yaml` with paths
+to your architecture doc, glossary, design system catalog, and event
+model root. The pipeline gathers this context before dispatching each
+TDD pair. Without it, the pipeline still runs but pairs start without
+pre-loaded project context.
+
+```yaml
+# .factory/config.yaml (add this section)
+project_references:
+  architecture_doc: docs/architecture.md
+  glossary: docs/glossary.md
+  design_system_catalog: docs/design-system.md
+  event_model_root: docs/event-model/
+```
+
+**CYCLE_COMPLETE evidence schema change:**
+
+In pipeline mode, acceptance tests now require `boundary_type` (one of:
+http, cli, message_queue, websocket, playwright_ui, manual) and
+`boundary_evidence` (description of what boundary is exercised) in the
+CYCLE_COMPLETE evidence packet. The TDD gate rejects evidence where the
+acceptance test calls internal functions directly. See
+`skills/tdd/references/cycle-evidence.md` for the full schema.
+
+**Git worktree isolation (automatic, full autonomy only):**
+
+If running at full autonomy with parallel slices, the pipeline now uses
+git worktrees at `.factory/worktrees/<slice-id>` instead of file-conflict
+prediction. The directory is created automatically. If `git worktree` is
+not available, the pipeline falls back to sequential execution. No
+configuration needed.
+
+**Update commands:**
+
+```bash
+# Update all skills to v4.1
+npx skills add jwilger/agent-skills --all
+
+# Re-run bootstrap to pick up new config options
+# (invoke /bootstrap in your agent session)
+```
+
 ## Migrating from v3.x to v4.0
 
 v4.0 adds the factory pipeline. No existing skills are renamed, removed,
@@ -423,10 +508,11 @@ skill is detected:
 
 ```
 .factory/
-  config.yaml                    # Autonomy levels, gate thresholds
+  config.yaml                    # Autonomy levels, gate thresholds, project references
   slice-queue.json               # Vertical slice queue state
   memory/                        # Operational learnings
   audit-trail/                   # Full evidence trail for every slice
+  worktrees/                     # Git worktrees for parallel slices (full autonomy)
 ```
 
 **If you already have an ensemble team set up:**
