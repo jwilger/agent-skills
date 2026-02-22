@@ -19,6 +19,8 @@ There are no build, lint, or test commands. All changes are to Markdown files. Q
 
 Version is tracked in the `VERSION` file (semver). Use `/bump` to increment.
 
+**Commit and PR hygiene:** Never add AI co-author lines (`Co-Authored-By`), "Generated with", "Created by", or any similar taglines to commit messages or PR descriptions. The use of AI tooling should not be called out in version control metadata.
+
 ## Architecture
 
 ### Skill Tiers

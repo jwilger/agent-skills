@@ -61,6 +61,7 @@ Phase boundary rules (condensed from `tdd/references/phase-boundaries.md`):
 - DO: Run domain review after every RED and GREEN phase
 - DO NOT: Edit production code during the RED phase
 - DO NOT: Skip the COMMIT phase between TDD cycles
+- DO NOT: Add AI co-author lines, "Generated with", "Created by", or similar taglines to commit messages or PR descriptions
 ```
 
 ### 5. Workflow
