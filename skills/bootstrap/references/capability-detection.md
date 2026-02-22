@@ -64,6 +64,24 @@ capabilities.
 **Generic:**
 - Assume chaining only unless the harness documents otherwise.
 
+## CI/CD Detection
+
+Detect presence of CI/CD configuration to inform skill recommendations:
+
+| File or directory | CI system |
+|-------------------|-----------|
+| `.github/workflows/` | GitHub Actions |
+| `.gitlab-ci.yml` | GitLab CI |
+| `Jenkinsfile` | Jenkins |
+| `.circleci/config.yml` | CircleCI |
+| `bitbucket-pipelines.yml` | Bitbucket Pipelines |
+| `.travis.yml` | Travis CI |
+| Any `ci` or `pipeline` directory/file pattern | Generic CI |
+
+**Implications:**
+- When CI is detected, recommend the `ci-integration` skill
+- When CI is detected AND team workflow is selected, recommend the full factory pipeline skill set (`pipeline`, `ci-integration`, `factory-review`)
+
 ## Recording the Result
 
 Store the detected capabilities in the configuration so downstream

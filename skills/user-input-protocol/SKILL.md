@@ -126,6 +126,47 @@ resumption instant.
 **Do not:**
 - "Let me re-analyze the codebase to understand the email validation..."
 
+### Batch Decisions in Factory Mode
+
+When running inside a pipeline or factory workflow, avoid blocking the
+pipeline on every decision. Classify each decision and route accordingly:
+
+- **Gate-resolvable:** Never ask the human. Quality gates provide the
+  answer (test pass/fail, mutation score, CI status). These are fully
+  automated.
+- **Judgment-required:** Batch for the next human review cycle. Examples:
+  design trade-offs that surfaced during review, non-blocking review
+  findings that need prioritization, retrospective suggestions.
+- **Blocking:** Pause the pipeline immediately. Examples: security concern
+  raised during review, unrecoverable gate failure after 3 rework cycles,
+  ambiguous requirements that affect correctness.
+
+Gate-resolvable decisions never appear in AWAITING_USER_INPUT checkpoints.
+Judgment-required decisions are collected and presented as a single grouped
+checkpoint during the human review phase. Blocking decisions use the
+standard AWAITING_USER_INPUT format immediately.
+
+When emitting AWAITING_USER_INPUT in factory mode, include an `urgency`
+field after the separator:
+
+```
+AWAITING_USER_INPUT
+---
+Urgency: blocking | next-review | informational
+Context: ...
+Decision needed: ...
+Options: ...
+Recommendation: ...
+---
+```
+
+- `blocking` -- pipeline is halted, needs immediate attention
+- `next-review` -- batched for next scheduled human review
+- `informational` -- no action needed, for awareness only
+
+Standalone users can ignore the urgency field; the checkpoint format
+remains backward compatible.
+
 ### Handle Multi-Question Checkpoints
 
 When multiple related decisions are needed, group them in one checkpoint

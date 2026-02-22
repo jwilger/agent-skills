@@ -15,6 +15,7 @@ metadata:
   author: jwilger
   version: "1.0"
   requires: []
+  optional: [pipeline]
   context: []
   phase: build
   standalone: true
@@ -240,3 +241,26 @@ Non-negotiable aspects baked in from production experience.
 - AI-approximation disclaimer on every profile
 - Compressed active-context form on every profile
 - Stand-aside means deference, not disapproval
+
+## Factory Mode (Optional)
+
+When the `pipeline` skill is installed alongside `ensemble-team`, the coordinator
+detects this during setup and enables **factory mode**. This adds a Phase 1.5
+("Factory Mode Configuration") between team formation and the build phase.
+
+In factory mode, the coordinator delegates the entire build phase to the pipeline
+controller rather than managing it directly. The pipeline handles slice queuing, TDD
+pair dispatch, code review orchestration, and merge decisions through quality gates.
+The full team still reviews before any push.
+
+See `references/factory-mode.md` for coordinator handoff details.
+
+### Factory Mode vs. Supervised Mode
+
+- **Supervised mode** (default): The coordinator manages the build phase. All
+  decisions use the Robert's Rules consensus protocol. The coordinator facilitates
+  driver rotation, review cycles, and retrospectives.
+- **Factory mode** (when `pipeline` is installed): The pipeline manages the build
+  phase. Quality gates replace consensus for build-time decisions. The coordinator
+  remains active for planning, factory configuration, and post-build review. The
+  full team participates in pre-push review and retrospectives as before.

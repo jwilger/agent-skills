@@ -60,6 +60,27 @@ npx skills add jwilger/agent-skills --skill code-review --skill mutation-testing
 npx skills add jwilger/agent-skills --skill ensemble-team --skill task-management --skill memory-protocol
 ```
 
+## Factory Pipeline (Autonomous Orchestration)
+
+Recommended as a group when pipeline skill is detected and team workflow or
+"Full" process structure is selected. Pipeline requires ci-integration, and
+factory-review requires pipeline.
+
+| Skill | Description |
+|-------|-------------|
+| `pipeline` | Autonomous build-phase orchestrator. Manages slice lifecycle, quality gates, and rework routing. |
+| `ci-integration` | Deterministic CI/CD interaction. Runs builds, reads results, manages artifacts. |
+| `factory-review` | Human review interface for factory mode. Surfaces audit trail and approval prompts. |
+
+```bash
+npx skills add jwilger/agent-skills --skill pipeline --skill ci-integration --skill factory-review
+```
+
+**When to recommend:**
+- `pipeline` -- Team workflow with CI/CD and desire for reduced human coordination overhead
+- `ci-integration` -- Project has a CI/CD pipeline (GitHub Actions, GitLab CI, etc.)
+- `factory-review` -- Pipeline is installed (always pair with pipeline)
+
 ## Preset Bundles
 
 Based on the user's answer to "How much process structure?":

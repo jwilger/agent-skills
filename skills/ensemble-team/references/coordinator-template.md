@@ -145,4 +145,67 @@ NEVER perform these operations directly:
 | Name | Role | Profile | Expertise |
 |------|------|---------|-----------|
 {{roster_table}}
+
+## Factory Mode Coordinator Instructions
+
+> These instructions apply only when the `pipeline` skill is installed. If the
+> pipeline skill is not present, ignore this section entirely.
+
+### Phase 1 — Understand + Decide (Normal Operation)
+
+The coordinator operates normally during planning. Facilitate team discussions for
+architecture, event modeling, domain modeling, and vertical slice definition. Use the
+full Robert's Rules protocol for all decisions. The coordinator's role does not change
+in this phase.
+
+### Phase 1.5 — Factory Configuration
+
+Before the build phase begins, the coordinator facilitates the team's factory mode
+configuration. This is a **Standard-category decision** (max 3 rounds, quorum 6 of N).
+
+The team must agree on:
+- Autonomy level (conservative / standard / full)
+- Quality gate thresholds (mutation score, coverage, review criteria)
+- Rework budget per gate (default: 3 attempts)
+- Human review cadence (every slice, every N slices, or daily)
+- Immediate escalation conditions
+
+The coordinator helps the team configure `.factory/config.yaml` and validates that
+gate thresholds are reasonable. Once the team reaches consensus, the coordinator
+records the configuration and prepares for handoff.
+
+### Phase 2 — Build (Pipeline Handoff)
+
+The coordinator hands off to the pipeline controller and goes **inactive** for the
+duration of the build phase. The pipeline manages:
+- Slice queue ordering and dispatch
+- TDD pair selection and ping-pong orchestration
+- Code review orchestration (three-stage mob review)
+- Mutation testing and quality gate enforcement
+- CI interaction and merge decisions
+
+**No Robert's Rules during build.** Quality gates replace consensus for build-time
+decisions. The pipeline pulls in the full team for pre-push review.
+
+#### Handoff Protocol
+
+**What the coordinator provides to the pipeline:**
+- Ordered slice queue (from planning phase)
+- Full team roster with roles and profile paths
+- Factory configuration (`.factory/config.yaml`)
+- Any planning-phase decisions relevant to implementation
+
+**What the pipeline returns to the coordinator:**
+- Build summary (slices completed, metrics)
+- Escalation log (any issues that exceeded gate rework budget)
+- Quality metrics (mutation scores, gate pass/fail rates)
+- Recommendations for configuration tuning
+
+### Phase 3 — Review + Retrospective
+
+After the pipeline completes the build phase, the coordinator resumes control:
+- Invoke factory-review to present the audit trail summary to the team
+- Relay any tuning adjustments recommended by the pipeline
+- Facilitate the post-build retrospective using the standard protocol
+- Record factory mode metrics in `.team/eval-results.md`
 ```

@@ -171,6 +171,21 @@ acceptance test passes.
 A test that calls internal functions directly is a unit test, not an acceptance
 test -- even if it asserts on user-visible behavior.
 
+### Cycle-Complete Evidence
+
+At the end of each complete RED-DOMAIN-GREEN-DOMAIN-COMMIT cycle, produce
+a CYCLE_COMPLETE evidence packet containing: slice_id, acceptance_test
+{file, name, output}, unit_tests {count, all_passing, output},
+domain_reviews [{phase, verdict, concerns}], commits [{hash, message}],
+rework_cycles, pair {driver, navigator}.
+
+When `pipeline-state` is provided in context metadata, the TDD skill
+operates in **pipeline mode**: it receives a `slice_id` and stores
+evidence to `.factory/audit-trail/slices/<slice-id>/tdd-cycles/cycle-NNN.json`.
+When running standalone, the evidence is informational only (not stored).
+
+See `references/cycle-evidence.md` for full schema.
+
 ### Harness-Specific Guidance
 
 If running on Claude Code, also read `references/claude-code.md` for

@@ -115,6 +115,40 @@ Use the dependency graph to find unblocked work.
 - Assume an implicit ordering -- make every dependency explicit
 - Block tasks unnecessarily (does B really need A, or just A's interface?)
 
+### Slice-to-Task Decomposition
+
+When working from vertical slices with GWT (Given-When-Then) scenarios (e.g., from event modeling), decompose slices into leaf tasks systematically:
+
+1. Each GWT scenario becomes at least one task
+2. Order tasks by:
+   - **Walking skeleton dependencies first** -- infrastructure or plumbing that multiple scenarios need
+   - **Acceptance test (outermost)** -- the end-to-end test for the scenario
+   - **Unit-level subtasks** -- internal implementation tasks driven by the TDD cycle
+3. Each task includes:
+   - **Description:** Verb + outcome (e.g., "Implement deposit command handler")
+   - **Acceptance criteria:** Directly from the GWT scenario
+   - **Estimated scope:** Files likely affected (helps with mutation testing scoping)
+
+**Example:**
+```
+Slice: "Customer deposits funds"
+  GWT: Given a verified account, When customer deposits $100, Then balance increases by $100
+    Task 1: Create Account aggregate with balance tracking (skeleton)
+    Task 2: Write acceptance test for deposit scenario (outermost)
+    Task 3: Implement deposit command handler (unit-level)
+    Task 4: Add deposit event persistence (unit-level)
+```
+
+### Pipeline Tracking Metadata
+
+When running in pipeline mode, tasks gain additional tracking fields:
+
+- `slice_id` -- Links the task to its originating vertical slice
+- `gate_status` -- `pending`, `passed`, or `failed` (reflects quality gate results)
+- `rework_count` -- Number of times the task returned from a quality gate failure
+
+These fields are informational in standalone mode. In pipeline mode, the orchestrator uses them to track slice progress and detect tasks that are cycling through rework repeatedly.
+
 ### Track Status Through a Consistent Lifecycle
 
 Tasks move through a fixed set of states. Transitions are explicit.

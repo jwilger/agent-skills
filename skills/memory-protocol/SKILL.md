@@ -103,6 +103,35 @@ known gotchas. Link to detailed files in subdirectories for depth.
 Keep MEMORY.md under 200 lines. When it grows beyond that, move details
 into topic files and replace with a one-line summary and link.
 
+### Factory Memory
+
+When running inside a pipeline or factory workflow, the pipeline stores
+operational learnings in `.factory/memory/` to optimize future runs.
+
+**Types of learnings tracked:**
+
+- **CI patterns:** Which types of changes cause CI failures (e.g., "adding
+  new dependencies often breaks the build step")
+- **Rework patterns:** Common rework causes by gate (e.g., "mutation
+  survivors most often in error-handling paths")
+- **Pair effectiveness:** Which engineer pairs are most effective in which
+  domain areas (used for pair selection optimization at full autonomy)
+- **Domain hotspots:** Files and modules that frequently trigger review
+  findings or rework
+
+**How memory optimizes the pipeline:**
+
+- Pair selection (full autonomy level)
+- Slice ordering (prioritize slices in domains with fewer rework patterns)
+- Proactive warnings (flag known CI-failure-prone change patterns before push)
+
+Memory files in `.factory/memory/` are append-only during a session and
+summarized during retrospective. The human can review and edit factory
+memory during Phase 3 (human review).
+
+Standalone users can ignore factory memory; the standard memory practices
+above remain unchanged.
+
 ### Prune Stale Knowledge
 
 Knowledge goes stale. When you encounter a memory that is no longer accurate

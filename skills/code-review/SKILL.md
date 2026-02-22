@@ -120,6 +120,23 @@ If CHANGES REQUIRED:
   2. [specific required change]
 ```
 
+### Structured Review Evidence
+
+After completing all three stages, produce a REVIEW_RESULT evidence packet
+containing: per-stage verdicts {stage, verdict (PASS/FAIL), findings
+[{severity, description, file, line?, required_change?}]}, overall_verdict,
+required_changes_count, blocking_findings_count.
+
+When `pipeline-state` is provided in context metadata, the code-review skill
+operates in **pipeline mode** and stores the evidence to
+`.factory/audit-trail/slices/<slice-id>/review.json`. When running
+standalone, the evidence is informational only (not stored).
+
+In **factory mode**, the full team reviews before the pipeline pushes code --
+this is the quality checkpoint that replaces consensus-during-build. All
+blocking review feedback must be addressed before push. See
+`references/mob-review.md` for the factory mode review subsection.
+
 ### Handling Disagreements
 
 When your review finding conflicts with the implementation approach:

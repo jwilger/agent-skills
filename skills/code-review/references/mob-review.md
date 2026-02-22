@@ -58,6 +58,35 @@ During mob review, team members use their **compressed active-context persona**
 doing the fix work. This keeps the review phase lightweight on context while
 preserving persona-consistent judgment.
 
+## Factory Mode Review
+
+In factory mode, the mob review serves as the critical pre-push quality
+checkpoint. The pipeline invokes mob review AFTER TDD is complete but BEFORE
+pushing code. All three stages still apply (spec compliance, code quality,
+domain integrity).
+
+**Key differences from supervised mode:**
+
+- Review is triggered automatically by the pipeline, not by the coordinator
+- Team members use compressed persona forms during review (same as supervised
+  mode)
+- Review findings are classified: **blocking** (must fix before push),
+  **non-blocking** (batch for later)
+- Blocking findings route back to the TDD pair for immediate rework
+- Non-blocking findings are recorded in the audit trail for the next human
+  review cycle
+- The review stage does NOT use Robert's Rules consensus -- findings are
+  factual observations, not motions to debate
+
+**REVIEW_RESULT evidence:**
+
+- Per-stage: `{stage_name, verdict (PASS/FAIL), findings[]}`
+- Finding: `{severity (blocking/non-blocking/informational), description,
+  file, line?, required_change?}`
+- Overall verdict: PASS only if all three stages PASS and zero blocking
+  findings remain unaddressed
+- Stored at `.factory/audit-trail/slices/<slice-id>/review.json`
+
 ## Verification
 
 After completing a mob review, verify:

@@ -66,6 +66,14 @@ your project grows.
 | `user-input-protocol` | Structured pause/resume pattern for agent-to-user questions | build |
 | `memory-protocol` | Recall-before-act knowledge accumulation and retrieval | build |
 
+### Tier 4 -- Factory Pipeline (requires pipeline orchestrator)
+
+| Skill | Description | Phase |
+|-------|-------------|-------|
+| `pipeline` | Three-phase factory pipeline orchestrator: plan → build → review | all |
+| `ci-integration` | Quality gate definitions and CI adapter for automated pass/fail decisions | ship |
+| `factory-review` | Structured human review protocol for factory output with audit trail | review |
+
 ### Advanced (optional)
 
 | Skill | Description | Phase |
@@ -127,19 +135,183 @@ each other by name but never assume internal structure.
 
 ## Harness Compatibility
 
-| Harness | Skills | TDD Strategy | Optional Hardening |
-|---------|--------|--------------|--------------------|
-| Claude Code | All | Agent teams, serial subagents, chaining | Hook templates available |
-| Codex | All | Serial subagents, chaining | -- |
-| Cursor / Windsurf | All | Chaining, guided | -- |
-| OpenCode | All | Chaining, guided | -- |
-| Goose | All | Chaining, guided | -- |
-| Amp | All | Guided | -- |
-| Aider | All | Guided | -- |
+| Harness | Skills | TDD Strategy | Factory Pipeline | Optional Hardening |
+|---------|--------|--------------|------------------|--------------------|
+| Claude Code | All | Agent teams, serial subagents, chaining | Full (parallel slices, persistent pairs) | Hook templates available |
+| Codex | All | Serial subagents, chaining | Supported (serial execution) | -- |
+| Cursor / Windsurf | All | Chaining, guided | Supported (chaining mode) | -- |
+| OpenCode | All | Chaining, guided | Degraded (advisory gates) | -- |
+| Goose | All | Chaining, guided | Degraded (advisory gates) | -- |
+| Amp | All | Guided | Degraded (advisory gates) | -- |
+| Aider | All | Guided | Degraded (advisory gates) | -- |
 
 Skills work on every harness. The `tdd` skill auto-detects available
-delegation primitives and selects the best execution strategy. Optional
-hook templates provide mechanical enforcement on Claude Code.
+delegation primitives and selects the best execution strategy. The factory
+pipeline adapts to harness capabilities: full structural enforcement on
+Claude Code, serial execution on Codex, and advisory-mode gate checking
+on harnesses without delegation primitives. Optional hook templates
+provide mechanical enforcement on Claude Code.
+
+## Factory Pipeline (v4.0)
+
+v4.0 introduces a factory pipeline that automates the build-and-ship
+phases while keeping humans in control of planning and review.
+
+### Three-Phase Workflow
+
+1. **Human-driven (understand + decide).** The human defines what to build
+   -- requirements, acceptance criteria, architecture decisions. The AI team
+   helps with event modeling, domain modeling, and planning, but the human
+   approves the plan.
+
+2. **Agent-autonomous (build + ship).** The pipeline executes the approved
+   plan without blocking on human input. Quality gates (tests, mutation
+   score, CI status) replace human approval gates. Decisions are classified
+   as gate-resolvable, judgment-required (batched for review), or blocking
+   (pipeline halts). The full TDD cycle, code review, and CI integration
+   run autonomously.
+
+3. **Human review (inspect + tune).** The human reviews shipped work,
+   batched decisions, and the audit trail. Feedback flows back into the
+   next planning cycle.
+
+### Progressive Autonomy
+
+The pipeline supports three autonomy levels:
+
+- **Conservative:** Agent proposes, human approves each vertical slice
+  before build begins. Rework requires human sign-off.
+- **Standard:** Agent builds autonomously. Human reviews at the end of
+  each batch. Rework is autonomous up to 2 cycles per gate.
+- **Full:** Agent selects pairs, orders slices, and optimizes based on
+  factory memory. Human reviews completed batches only.
+
+### Audit Trail
+
+All pipeline activity is recorded in `.factory/` for full traceability:
+build logs, gate results, decision classifications, rework history, and
+factory memory. The human can inspect any part of the trail during review.
+
+### Backward Compatibility
+
+All existing skills continue to work standalone without the pipeline.
+The factory pipeline is an optional orchestration layer -- it composes
+existing skills (`tdd`, `code-review`, `mutation-testing`, etc.) into an
+automated workflow. Projects that do not install the pipeline skills see
+no change in behavior.
+
+### Using the Factory Pipeline
+
+#### Prerequisites
+
+You need:
+- An ensemble team already set up (`ensemble-team` skill, Phase 1-5 complete)
+- Vertical slices defined (from event modeling with GWT scenarios)
+- A CI/CD pipeline configured for your project
+- The three factory skills installed: `pipeline`, `ci-integration`, `factory-review`
+
+Install the factory skills alongside your existing setup:
+
+```bash
+npx skills add jwilger/agent-skills \
+  --skill pipeline \
+  --skill ci-integration \
+  --skill factory-review \
+  --skill mutation-testing
+```
+
+Then re-run `bootstrap` to detect factory mode and choose an autonomy level.
+This generates `.factory/config.yaml` with your settings.
+
+#### Typical Session
+
+1. **Plan (human + team):** You describe what to build. The coordinator
+   facilitates event modeling, domain modeling, and vertical slice definition
+   using the full Robert's Rules protocol. This is the same planning phase
+   as supervised mode -- nothing changes here.
+
+2. **Configure and hand off:** The team agrees on autonomy level and gate
+   thresholds (a Standard-category decision). The coordinator hands the
+   slice queue, team roster, and config to the pipeline controller.
+
+3. **Build (autonomous):** The pipeline takes each slice through:
+   decompose → TDD pair implements → full-team code review → address
+   feedback → mutation test → push + CI → merge or escalate. No human
+   input required unless a gate fails 3 times or a blocking concern is raised.
+
+4. **Review (human):** When the pipeline finishes (or when you check in),
+   invoke the `factory-review` skill. It shows: slices completed, rework
+   rate, gate failures, pending escalations, and quality trends. You can
+   adjust `.factory/config.yaml` (e.g., promote from conservative to
+   standard) and the team runs a retrospective.
+
+#### Harness-Specific Guidance
+
+The pipeline adapts to what your harness can do. The core workflow is
+identical everywhere -- only the execution mechanism changes.
+
+**Claude Code** (full capability):
+- Pipeline uses agent teams for TDD pairs (persistent ping-pong sessions)
+- Background agents for CI monitoring
+- Full parallel slice execution at the `full` autonomy level
+- Hook templates available for mechanical enforcement of phase boundaries
+- Recommended: start here if you have a choice of harness
+
+**Codex**:
+- Pipeline uses serial subagents for TDD phases (no persistent pair sessions)
+- Each TDD phase runs in an isolated subagent with constrained scope
+- No parallel slices (single-threaded execution)
+- All quality gates and audit trail features work identically
+
+**Cursor / Windsurf**:
+- Pipeline operates in chaining mode (single context, sequential phases)
+- The agent plays driver and navigator roles sequentially within one context
+- Quality gates still enforce: tests must pass, review must complete,
+  mutation score must hit 100% on changed files
+- No mechanical enforcement (advisory only) -- the agent follows practices
+  by convention
+- Longer context windows recommended (the full pipeline consumes more
+  context than individual skills)
+
+**Other harnesses (OpenCode, Goose, Amp, Aider)**:
+- Chaining or guided mode depending on harness capability
+- Factory mode degrades gracefully: quality gate *checks* still run (the
+  agent verifies tests pass, reviews code, runs mutation testing) but the
+  structural enforcement (isolated subagents, persistent pairs) is not
+  available
+- The audit trail still works -- `.factory/` files are written regardless
+  of harness
+- Guided TDD mode (`/tdd red`, `/tdd green`) works within the pipeline
+  the same way it works standalone
+
+#### Autonomy Levels in Practice
+
+Start conservative and promote as you build confidence:
+
+| Level | When to use | What the pipeline does autonomously |
+|-------|-------------|-------------------------------------|
+| **Conservative** | First 2-3 slices, new domain, new team | Runs gates, reports every result. You approve every merge and every rework attempt. |
+| **Standard** | After verifying gate quality on a few slices | Auto-reworks within budget, batches non-blocking findings, auto-retries infra CI failures. You approve merges. |
+| **Full** | 5+ clean slices at standard, stable CI | Auto-merges when all gates pass, runs slices in parallel (Claude Code only), optimizes pair selection from factory memory. You review batches. |
+
+Change the level at any time by editing `.factory/config.yaml`. The change
+takes effect on the next slice. The pipeline never auto-promotes -- level
+changes are always your decision.
+
+#### What to Do When Things Go Wrong
+
+- **Gate fails once or twice:** The pipeline auto-reworks (at standard/full).
+  The TDD pair gets the failure details and tries again. You don't need to
+  intervene.
+- **Gate fails 3 times:** The pipeline halts that slice and escalates to you
+  with full context: what failed, what was tried, all evidence from all
+  attempts. You decide whether to fix it yourself, adjust the approach, or
+  skip the slice.
+- **Blocking concern during review:** A team member flags a security issue
+  or domain integrity problem. The pipeline halts immediately. You see the
+  concern in the next `factory-review` summary.
+- **CI infra failure:** At standard/full, the pipeline retries once
+  automatically. After 2 failures, it escalates.
 
 ## Installing Individual Skills
 
@@ -162,6 +334,11 @@ npx skills add jwilger/agent-skills --skill task-management
 npx skills add jwilger/agent-skills --skill debugging-protocol
 npx skills add jwilger/agent-skills --skill user-input-protocol
 npx skills add jwilger/agent-skills --skill memory-protocol
+
+# Factory pipeline skills
+npx skills add jwilger/agent-skills --skill pipeline
+npx skills add jwilger/agent-skills --skill ci-integration
+npx skills add jwilger/agent-skills --skill factory-review
 
 # Advanced skills
 npx skills add jwilger/agent-skills --skill mutation-testing
@@ -198,6 +375,83 @@ When reviewing skills, check for:
 - **Security:** Do shell fragments in SKILL.md limit themselves to
   read-only environment detection? No writes, no network calls, no
   package installation.
+
+## Migrating from v3.x to v4.0
+
+v4.0 adds the factory pipeline. No existing skills are renamed, removed,
+or changed in a breaking way. If you don't install the pipeline skills,
+your project works exactly as before.
+
+**New skills to install (optional):**
+
+```bash
+npx skills add jwilger/agent-skills \
+  --skill pipeline \
+  --skill ci-integration \
+  --skill factory-review
+```
+
+**What changed in existing skills:**
+
+All changes are additive. New sections are only active when the `pipeline`
+skill is detected:
+
+- `tdd`: Produces CYCLE_COMPLETE evidence packets when running in pipeline
+  mode. No change in standalone behavior.
+- `code-review`: Produces REVIEW_RESULT evidence packets. Adds factory mode
+  review (full team reviews before push). No change in standalone behavior.
+- `mutation-testing`: Produces MUTATION_RESULT evidence packets. Adds
+  pipeline mode where failures auto-route to the TDD pair. No change in
+  standalone behavior.
+- `task-management`: Adds slice-to-task decomposition for vertical slices
+  with GWT scenarios. Adds pipeline tracking metadata. No change in
+  standalone behavior.
+- `ensemble-team`: Detects pipeline skill and enables factory mode. Adds
+  Phase 1.5 (factory configuration) and factory mode coordinator
+  instructions. In supervised mode (no pipeline), behavior is identical to
+  v3.x.
+- `bootstrap`: Detects pipeline skill and offers autonomy level question.
+  Generates `.factory/config.yaml`. Without the pipeline skill, bootstrap
+  behaves identically to v3.x.
+- `user-input-protocol`: Adds batch mode for factory (decisions classified
+  as gate-resolvable, judgment-required, or blocking). Adds urgency field.
+  No change in standalone behavior.
+- `memory-protocol`: Adds factory memory practice (`.factory/memory/`).
+  No change in standalone behavior.
+
+**New files in your project (only when factory mode is active):**
+
+```
+.factory/
+  config.yaml                    # Autonomy levels, gate thresholds
+  slice-queue.json               # Vertical slice queue state
+  memory/                        # Operational learnings
+  audit-trail/                   # Full evidence trail for every slice
+```
+
+**If you already have an ensemble team set up:**
+
+Re-run `bootstrap` to detect factory mode. Then re-run the team formation
+session (Phase 5 of `ensemble-team`) to discuss Topic #11: "What is our
+autonomy and oversight model?" This is the team's chance to agree on
+autonomy level, rework budgets, and review cadence before the pipeline
+takes over the build phase.
+
+**Update commands:**
+
+```bash
+# Update all skills to v4.0
+npx skills add jwilger/agent-skills --all
+
+# Or add just the factory skills to an existing setup
+npx skills add jwilger/agent-skills \
+  --skill pipeline \
+  --skill ci-integration \
+  --skill factory-review
+
+# Re-run bootstrap to detect factory mode
+# (invoke /bootstrap in your agent session)
+```
 
 ## Migrating from v2.x to v3.0
 
