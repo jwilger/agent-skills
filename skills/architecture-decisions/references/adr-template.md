@@ -5,27 +5,46 @@ section with real content from the decision conversation. Never leave
 placeholder text.
 
 ```markdown
+## Research Findings
+
+Summarize what was learned during the RESEARCH phase. Each finding must
+reference the specific source (documentation URL, source file, API
+response, etc.).
+
+### Dependency: <Name>
+- **Source:** <URL or file path consulted>
+- **Key finding:** What the dependency actually does/requires
+- **Constraint (if any):** If this dependency already decides the
+  question, state it here
+
+### Dependency: <Another Name>
+- **Source:** <URL or file path consulted>
+- **Key finding:** What was verified
+- **Constraint (if any):** If applicable
+
 ## Context
 
 What problem motivates this decision? What constraints exist? Why now?
+Reference specific research findings that establish the constraints.
 
 ## Decision
 
-State the decision in active voice:
-- "We will use PostgreSQL for event storage because..."
-- "We will adopt a monolith-first architecture..."
+State the decision in active voice, citing research findings:
+- "We will use PostgreSQL for event storage because [Research Findings:
+  PostgreSQL] confirmed native JSONB indexing meets our query patterns."
+- "We will adopt a monolith-first architecture because..."
 
 ## Alternatives Considered
 
 ### Alternative Name
 - **Pros**: Concrete advantages
-- **Cons**: Concrete disadvantages
-- **Why not chosen**: Specific reasoning
+- **Cons**: Concrete disadvantages (cite research findings)
+- **Why not chosen**: Specific reasoning grounded in verified facts
 
 ### Another Alternative
 - **Pros**: Concrete advantages
-- **Cons**: Concrete disadvantages
-- **Why not chosen**: Specific reasoning
+- **Cons**: Concrete disadvantages (cite research findings)
+- **Why not chosen**: Specific reasoning grounded in verified facts
 
 ## Consequences
 
@@ -58,14 +77,17 @@ commit message for the commit that updates `docs/ARCHITECTURE.md`:
 git add docs/ARCHITECTURE.md
 git commit -m "arch: <brief decision summary>
 
+## Research Findings
+- <Dependency>: <key finding> (source: <URL or file>)
+
 ## Context
 What problem motivates this decision?
 
 ## Decision
-We will <chosen approach> because <reasoning>.
+We will <chosen approach> because <reasoning citing findings>.
 
 ## Alternatives Considered
-- <Alternative>: <why not chosen>
+- <Alternative>: <why not chosen, citing findings>
 
 ## Consequences
 - Positive: <what improves>
@@ -95,7 +117,8 @@ git push -u origin HEAD
 gh label create adr --description "Architecture Decision Record" --color "0075ca" 2>/dev/null || true
 gh pr create --title "ADR: <Decision Title>" --label adr --body "<PR body from template above>"
 
-# Return to main for next ADR
+# Do NOT merge -- the PR enters HOLD phase
+# Return to main for other work
 git checkout main
 ```
 
