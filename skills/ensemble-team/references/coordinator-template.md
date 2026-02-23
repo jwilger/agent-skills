@@ -85,11 +85,43 @@ messaging.
 - The Driver rotates by task based on the expertise needed.
 
 ### Reviewers
-- Activated with read-only access. The activation prompt must **explicitly instruct
-  them NOT to use file-editing or file-writing tools**. Reviewers operate in read-only
-  mode and communicate suggestions via messages only.
-- Each Reviewer focuses on their area of expertise and provides feedback to the Driver
-  through messages.
+- Activated with read-only access **plus write access to `.reviews/` only**. The
+  activation prompt must explicitly instruct them NOT to use file-editing or
+  file-writing tools on project files. Reviewers operate in read-only mode for the
+  codebase but write structured review files to `.reviews/`.
+- Each Reviewer writes structured review feedback to `.reviews/` using the format in
+  `references/file-based-reviews.md`, then sends a brief one-line coordination message
+  to the Driver (e.g., "Review posted — verdict: CHANGES-REQUESTED").
+- **Fallback when messaging is unavailable**: Reviewers write review files only. The
+  Driver polls `.reviews/` for files matching the current task slug.
+
+### File-Based Review Workflow
+
+**PREREQUISITE**: Read `references/file-based-reviews.md` for the full specification.
+
+Reviews are written to `.reviews/` files on disk. This ensures feedback survives context
+compaction and works on harnesses without inter-agent messaging.
+
+**Capability detection**: Check whether `SendMessage` (or equivalent) is available.
+
+| Capability | Review Mode |
+|------------|-------------|
+| Messaging available | Files + messages: Reviewers write files, send one-line summary message |
+| Messaging unavailable | Files only: Reviewers write files, Driver polls `.reviews/` |
+
+**Coordinator responsibilities**:
+- Tell Reviewers where to write: `.reviews/<name>-<task-slug>.md`
+- Tell the Driver where to read: `.reviews/` directory, filtered by current task slug
+- Ensure `.reviews/` is added to `.gitignore` during project setup
+
+**Driver activation prompt addition**: "Read `.reviews/` files matching the current task
+for authoritative review feedback. Messages contain coordination signals only — the full
+review content is in the files."
+
+**Reviewer activation prompt addition**: "Write structured review feedback to
+`.reviews/<your-name>-<task-slug>.md` using the format specified in
+`references/file-based-reviews.md`. Send a one-line summary message after posting (if
+messaging is available). Do NOT put substantive review content in messages."
 
 ### Common Launch Instructions
 - Include the teammate's `.team/` profile content in the activation prompt so the agent
@@ -107,6 +139,11 @@ messaging.
 Configure permissions so that team agents can use file editing and shell tools as
 needed. How this is done depends on the harness — consult your harness documentation
 for permission configuration. Do **not** bypass permission checks.
+
+**Reviewer write scope**: Reviewers need write access to `.reviews/` only. On Claude
+Code, add `Write(.reviews/*)` to the Reviewer's permission scope. On other harnesses,
+use the narrowest available scope. See `references/file-based-reviews.md` for
+harness-specific permission guidance.
 
 ## Coordinator Restrictions
 
@@ -141,6 +178,8 @@ NEVER perform these operations directly:
 - **CI green gate**: The Driver checks CI status and waits for green before new work.
 - **Consensus gating**: The team collects {{team_size}}/{{team_size}} consensus per
   their own process.
+- **Review file management**: Reviewers write `.reviews/` files and the Driver reads
+  them. The coordinator does not create, read, or manage review files.
 
 ## Team Roster
 

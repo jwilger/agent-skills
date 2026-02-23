@@ -208,6 +208,9 @@ access, etc.). How this is configured depends on the harness:
 - **Cursor/Windsurf**: Configure tool permissions in the IDE settings
 - **Other harnesses**: Follow the harness documentation for agent permission grants
 
+Reviewers need write access to `.reviews/` only. See `references/file-based-reviews.md`
+for scoped permission configuration and the review file workflow.
+
 ### Phase 7: Configure CI
 
 Add `paths-ignore` rules to CI config for any harness-generated session or transcript
@@ -230,6 +233,7 @@ for its operating instructions. Suggest telling the coordinator what to build.
 - `docs/glossary.md` — domain glossary
 - `docs/deferred-items.md` — deferred items tracker
 - `docs/future-ideas.md` — parking lot for out-of-scope ideas
+- `.reviews/` — review feedback directory (created by Reviewers during work)
 - Harness config pointer (e.g., `CLAUDE.md`) — directs coordinator to read
   `.team/coordinator-instructions.md`
 
@@ -274,6 +278,7 @@ Non-negotiable aspects baked in from production experience.
 - AI-approximation disclaimer on every profile
 - Compressed active-context form on every profile
 - Stand-aside means deference, not disapproval
+- File-based reviews survive context compaction (messaging supplements, not replaces)
 
 ## Factory Mode (Optional)
 
