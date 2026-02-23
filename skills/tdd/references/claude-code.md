@@ -4,13 +4,22 @@ This file is loaded ONLY when the TDD skill runs on Claude Code. It
 documents Claude Code-specific patterns for orchestration, enforcement,
 and team workflows.
 
-## Tool Usage
+## Strategy Detection (do this FIRST)
 
-**Task tool:** Spawn focused subagents. Each phase agent runs in its own
-Task invocation with a phase-specific prompt from `references/{phase}-prompt.md`.
+Before reading any other section of this file or any other reference file,
+determine your execution strategy:
 
-**TeamCreate tool:** Create persistent agent teams for ping-pong pairing.
-Name teams descriptively (e.g., `pair-<slice-id>`).
+1. **Is TeamCreate available?** -> **Agent teams.** Read
+   `references/ping-pong-pairing.md`. Skip the "Serial Subagent Patterns"
+   section below.
+2. **Is Task available (but not TeamCreate)?** -> **Serial subagents.** Read
+   `references/orchestrator.md`. Skip the "Agent Teams Patterns" section
+   below.
+3. **Neither?** -> **Chaining.** Follow the chaining section in SKILL.md.
+
+Do NOT read both strategy files. Each assumes its own execution model.
+
+## Common Tool Notes
 
 **SendMessage tool:** Engineers in a pair exchange structured handoff
 messages. The orchestrator monitors via task updates.
@@ -55,7 +64,14 @@ the cycle state visible at a glance via `TaskList`.
 Task dependencies provide supplementary visibility. They do not replace
 hook-based or structural enforcement -- they complement it.
 
-## Agent Debate Protocol
+## Serial Subagent Patterns
+
+> Skip this section if you are using agent teams.
+
+**Task tool:** Spawn focused subagents. Each phase agent runs in its own
+Task invocation with a phase-specific prompt from `references/{phase}-prompt.md`.
+
+### Agent Debate Protocol
 
 The domain agent has veto power over primitive obsession, invalid-state
 representability, and parse-don't-validate violations.
@@ -65,6 +81,32 @@ representability, and parse-don't-validate violations.
 3. Orchestrator facilitates (max 2 rounds).
 4. No consensus: escalate to user via the ask-user skill or
    AskUserQuestion tool.
+
+## Agent Teams Patterns
+
+> Skip this section if you are using serial subagents.
+
+**TeamCreate tool:** Create persistent agent teams for ping-pong pairing.
+Name teams descriptively (e.g., `pair-<slice-id>`).
+
+### Ensemble Team Integration
+
+Before beginning orchestration, detect ensemble team mode:
+
+1. Glob for `.team/*.md` -- are there team member profiles?
+2. Read `ensemble_team.preset` from `.claude/sdlc.yaml` -- is it set
+   to something other than `"none"`?
+
+If both conditions are met, the ensemble team is active. Switch to
+ping-pong pairing mode:
+
+- Create a persistent pair team via TeamCreate.
+- Select two engineers from `.team/` profiles. Track history in
+  `.team/pairing-history.json` (no repeat of last 2 pairings).
+- Load compressed active-context forms for bootstrapping.
+- Both engineers stay alive for the entire TDD cycle of a vertical
+  slice. Handoffs happen via SendMessage, not agent recreation.
+- Use mob review (full team, compressed contexts) for PR reviews.
 
 ## Code Review Gate
 
@@ -90,25 +132,6 @@ when all three complete. Shut down the review team after synthesis.
 
 When `parallel_review` is not set or is `false`, use a single
 code-reviewer agent running all three stages sequentially.
-
-## Ensemble Team Integration
-
-Before beginning orchestration, detect ensemble team mode:
-
-1. Glob for `.team/*.md` -- are there team member profiles?
-2. Read `ensemble_team.preset` from `.claude/sdlc.yaml` -- is it set
-   to something other than `"none"`?
-
-If both conditions are met, the ensemble team is active. Switch to
-ping-pong pairing mode:
-
-- Create a persistent pair team via TeamCreate.
-- Select two engineers from `.team/` profiles. Track history in
-  `.team/pairing-history.json` (no repeat of last 2 pairings).
-- Load compressed active-context forms for bootstrapping.
-- Both engineers stay alive for the entire TDD cycle of a vertical
-  slice. Handoffs happen via SendMessage, not agent recreation.
-- Use mob review (full team, compressed contexts) for PR reviews.
 
 ## Optional Hook Enforcement
 
