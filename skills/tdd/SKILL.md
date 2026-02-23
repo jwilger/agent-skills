@@ -94,6 +94,25 @@ When automated mode activates, detect available primitives in this order:
 Select the most capable strategy available. Do not attempt a higher strategy
 when its primitives are missing.
 
+**After determining your strategy, read ONLY the entry-point file for that
+strategy:**
+
+| Strategy | Entry-point file |
+|----------|-----------------|
+| Agent teams | `references/ping-pong-pairing.md` |
+| Serial subagents | `references/orchestrator.md` |
+| Chaining | (no entry file -- follow the chaining section below) |
+
+Do NOT read `orchestrator.md` when using agent teams. Do NOT read
+`ping-pong-pairing.md` when using serial subagents. Each file assumes its
+own strategy's execution model.
+
+Both `orchestrator.md` and `ping-pong-pairing.md` reference
+`references/shared-rules.md` for rules that apply to all strategies (domain
+veto, outside-in progression, pipeline integration, pre-implementation
+context checklist). Read `shared-rules.md` when directed by your strategy's
+entry-point file.
+
 ### Execution Strategy: Chaining (Fallback)
 
 Used when no delegation primitives are available. The agent plays each role

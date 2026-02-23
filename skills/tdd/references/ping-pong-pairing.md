@@ -1,7 +1,25 @@
 # Ping-Pong TDD Pairing Protocol
 
+> **Scope:** This file applies to the **agent teams** execution strategy only.
+> If you are using serial subagents (Task tool without TeamCreate), use
+> `orchestrator.md` instead. If you are using chaining (no delegation
+> primitives), follow the chaining section in SKILL.md.
+
 For use when persistent agent teams are available. Two engineers alternate
 driver (writes failing test) and navigator (makes it pass) roles.
+
+## Shared Rules
+
+Read `references/shared-rules.md` for rules that apply to all execution
+strategies:
+
+- Domain veto power (max 2 rounds, then escalate)
+- Outside-in progression (first test must target application boundary)
+- Type-first TDD anti-pattern (types flow from tests, never precede them)
+- Pre-implementation context checklist (architecture, glossary, types,
+  event model)
+- Pipeline integration (when `pipeline-state` is in context metadata)
+- Recovery protocol (re-delegate, never self-fix)
 
 ## Pair Selection
 
