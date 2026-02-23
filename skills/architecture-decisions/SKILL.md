@@ -1,15 +1,15 @@
 ---
 name: architecture-decisions
 description: >-
-  Architecture Decision Records and living architecture documentation.
-  Activate when making technology choices, defining system boundaries,
-  recording architectural decisions, or creating/updating ARCHITECTURE.md.
-  Covers ADR format, decision governance, design facilitation, and
-  architectural review.
+  Architecture Decision Records with a four-phase lifecycle
+  (RESEARCH → DRAFT → HOLD → MERGE). Activate when making technology
+  choices, defining system boundaries, recording architectural decisions,
+  or creating/updating ARCHITECTURE.md. Enforces research-before-writing
+  and explicit merge authorization.
 license: CC0-1.0
 metadata:
   author: jwilger
-  version: "1.0"
+  version: "2.0"
   requires: []
   context: [architecture-decisions, event-model, source-files]
   phase: decide
@@ -18,135 +18,108 @@ metadata:
 
 # Architecture Decisions
 
-**Value:** Communication -- architecture decisions recorded before
-implementation ensure every contributor (human or agent) understands why
-the system is shaped the way it is. Decisions made in silence are decisions
-lost.
+**Value:** Communication -- architecture decisions grounded in verified
+research ensure every contributor understands not just why a choice was
+made, but that the reasoning reflects reality. Decisions based on
+assumptions are decisions waiting to fail.
 
 ## Purpose
 
-Teaches the agent to record architecture decisions before implementing them,
-maintain a living architecture document, and facilitate structured decision-making.
-Prevents the common failure mode where architecture emerges accidentally and
-rationale is lost.
+Teaches the agent to move architecture decisions through a strict
+four-phase lifecycle: research dependencies first, draft from verified
+findings, hold for review, merge only with explicit authorization.
+Prevents decisions based on stale assumptions about external dependencies.
+See `references/adr-lifecycle.md` for detailed phase rules.
 
 ## Practices
 
-### Record Decisions Before Implementation
+### Follow the Four-Phase ADR Lifecycle
 
-Never implement a structural change without first recording the decision. An
-architecture decision is any choice that affects system structure, technology
-stack, domain boundaries, integration patterns, or cross-cutting concerns.
+Every architecture decision follows four phases in strict order. Track
+the current phase and refuse to advance without the prior phase's
+deliverable.
 
-1. Identify the decision: what problem motivates this choice?
-2. Document alternatives: at least two realistic options with tradeoffs
-3. Record the chosen approach and its consequences
-4. Only then proceed to implementation
+**RESEARCH** — Before writing any ADR text, identify all external
+dependencies the decision touches. Read their source code and
+documentation. Produce a written summary of findings. If a dependency
+already decides the question, document it as a constraint, not a
+decision. Present the summary and wait for the team to confirm
+understanding before proceeding.
 
-**Do:**
-- Record decisions when they are made, while context is fresh
-- One decision per record -- keep them atomic
-- State decisions in active voice: "We will use PostgreSQL for event storage"
-- Acknowledge negative consequences honestly
+**DRAFT** — Write the ADR from verified research findings. Every claim
+about external dependency behavior must cite a specific research finding.
+Create the ADR as a PR on a dedicated `adr/<slug>` branch using
+`references/adr-template.md`. The author does NOT merge.
 
-**Do not:**
-- Document decisions after implementation as retroactive justification
-- Bundle multiple decisions into one record
-- Omit alternatives -- a decision without alternatives is not a decision
+**HOLD** — Signal hold and wait for explicit merge authorization.
+Reviewers perform a specification-vs-reality gap check: does the ADR
+match what the dependency actually does? Any reviewer may place a
+blocking hold that must be explicitly lifted. Silence is not consent.
+No implementation work depending on the ADR begins during HOLD.
+
+**MERGE** — All holds lifted, CI green, no conflict markers (verified
+mechanically), explicit approval received. Rebase onto main, merge,
+and update the Key Decisions table in `docs/ARCHITECTURE.md`.
+
+**Phase gate enforcement:**
+- DRAFT attempted without RESEARCH findings → halt with warning:
+  "RESEARCH phase incomplete. Summarize dependency findings first."
+- MERGE attempted without all holds cleared → protocol violation
+  regardless of content correctness
+- Prompt the author at each phase transition before proceeding
+
+When GitHub PRs are not available, use commit messages as the decision
+record (see `references/adr-template.md` for the commit format). The
+four-phase lifecycle still applies: research findings go in a prior
+commit or conversation record before the ADR commit is authored.
 
 ### Maintain the Living Architecture Document
 
-`docs/ARCHITECTURE.md` is the single authoritative source for current system
-architecture. It describes WHAT the architecture IS, not WHY it became that way
-(the WHY lives in decision records).
+`docs/ARCHITECTURE.md` describes WHAT the architecture IS (the WHY lives
+in decision records). Update it in the MERGE phase of every ADR. A stale
+architecture document is worse than none.
 
-Structure:
-
-```markdown
-# Architecture
-
-## Overview
-High-level system description
-
-## Key Decisions
-Current architectural choices (link to decision records)
-
-## Components
-Major system components and their responsibilities
-
-## Patterns
-Patterns in use (event sourcing, CQRS, etc.)
-
-## Constraints
-Current constraints and known tradeoffs
-```
-
-Update this document whenever a decision changes the architecture. Keep it
-current -- a stale architecture document is worse than none.
-
-### Use ADR-as-PR Format
-
-When the project uses GitHub, architecture decision records live as PR
-descriptions, not standalone files. This gives decisions a natural lifecycle:
-
-- **Open PR** = proposed decision, under review
-- **Merged PR** = accepted decision
-- **Closed PR** = rejected decision
-- **New PR with "Supersedes #N"** = revised decision
-
-Each ADR PR:
-1. Branches independently from main (`adr/<slug>`)
-2. Updates `docs/ARCHITECTURE.md` with the current decision
-3. You MUST use `references/adr-template.md` for the PR description as the full decision record
-4. Gets labeled `adr` for discoverability
-
-When GitHub PRs are not available, record the architecture decision in
-the commit message of the commit that updates `docs/ARCHITECTURE.md`.
-Use the same template structure (Context, Decision, Alternatives,
-Consequences). The commit message becomes the decision record, and
-`git log -- docs/ARCHITECTURE.md` becomes the decision history.
+Required sections: Overview, Key Decisions (linking to ADR PRs/commits),
+Components, Patterns, Constraints.
 
 ### Facilitate Decisions Systematically
 
-When multiple architectural decisions are needed (new project, major redesign):
+When multiple decisions are needed (new project, major redesign):
 
-1. **Inventory decision points** across categories: technology stack, domain
-   boundaries, integration patterns, cross-cutting concerns
-2. **Present the agenda** to the human for review before facilitating
-3. **For each decision**: present context, present 2-4 options with tradeoffs,
-   let the human choose, record immediately
-4. **Never batch** -- record each decision individually so they can be reviewed
-   and accepted independently
+1. Inventory decision points across categories (see
+   `references/adr-template.md` for the categories checklist)
+2. Present the agenda to the human for review
+3. For each decision: run the full four-phase lifecycle independently
+4. Never batch -- one decision per record, each reviewed independently
 
 ### Review for Architectural Alignment
 
-Before approving implementation work, verify it aligns with documented
-architecture:
-
-- Does it follow patterns documented in ARCHITECTURE.md?
-- Does it respect domain boundaries?
-- Does it introduce new dependencies or patterns not yet decided?
-- If it conflicts, record a new decision before proceeding
+Before approving implementation work, verify alignment with documented
+architecture. Does it follow documented patterns? Respect domain
+boundaries? Introduce undecided dependencies? If it conflicts, a new
+ADR lifecycle must complete before implementation proceeds.
 
 ## Enforcement Note
 
-This skill provides advisory guidance. It instructs the agent to record
-decisions before implementation but cannot mechanically prevent implementation
-without a decision record. The agent follows these practices by convention.
-If you observe implementation proceeding without a decision record, point it
-out.
+This skill provides advisory guidance with structural phase gates. The
+agent tracks ADR phase state and halts advancement when prior-phase
+deliverables are missing. It cannot mechanically prevent all violations
+but will refuse to draft without research or merge without cleared holds.
+If you observe the agent skipping a phase, point it out.
 
 ## Verification
 
 After completing work guided by this skill, verify:
 
 - [ ] Every structural change has a corresponding decision record
+- [ ] RESEARCH phase produced a written dependency findings summary
+- [ ] DRAFT cites specific research findings for dependency claims
+- [ ] HOLD received explicit approval (not silence)
+- [ ] No implementation work began before MERGE completed
 - [ ] `docs/ARCHITECTURE.md` reflects the current architecture
-- [ ] Each decision record states context, alternatives, and consequences
-- [ ] No decision was recorded retroactively after implementation
 - [ ] Decision records are atomic (one decision per record)
 
-If any criterion is not met, record the missing decision before proceeding.
+If any criterion is not met, halt and complete the missing phase.
 
 ## Dependencies
 
