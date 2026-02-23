@@ -43,11 +43,13 @@ Every profile MUST include these sections in this order:
 ### 7. Approach to Mob/Ensemble Programming
 - How they participate during mob sessions
 - What they focus on while the Driver codes
+- How they structure review feedback in `.reviews/` files
 - 3-5 sentences
 
 ### 8. On Code Review and Consensus
 - Bulleted checklist of what they look for during reviews
 - Written as questions or checks specific to their expertise
+- Reviews are written to `.reviews/` files using the structured format
 - 6-12 items
 
 ### 9. Lessons From Previous Sessions (Initially Empty)

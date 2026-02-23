@@ -79,6 +79,17 @@ into every new team setup from day one.
 - Before writing detailed review, check if others already flagged the same issue.
   Brief "+1" for agreement. Don't re-send acknowledged reviews.
 
+### Context Compaction Destroys Inter-Agent Messages
+- **Problem**: In long-running sessions, context compaction discards the content of
+  inter-agent messages. Reviewers send detailed feedback, the Driver's context compacts,
+  and the message body disappears — leading to repeated request/re-send loops that waste
+  significant time and tokens.
+- **Fix**: Write structured review feedback to `.reviews/` files on disk. Files survive
+  context compaction. Messages remain for coordination ("review posted", "ready for
+  re-review") but substantive feedback lives in files only.
+- **Ongoing**: File-based reviews also provide a fallback for harnesses that lack
+  inter-agent messaging entirely (Cursor, Windsurf, generic harnesses).
+
 ### Driver Onboarding Must Be Explicit
 - New Drivers need to read: PROJECT.md, AGENTS.md, docs/glossary.md, and the
   relevant user story BEFORE writing any code.
