@@ -28,7 +28,7 @@ Version is tracked in the `VERSION` file (semver). Use `/bump` to increment.
 | Tier | Skills | Token Budget |
 |------|--------|-------------|
 | 0 (Bootstrap) | `bootstrap` | 1000 |
-| 1 (Core Process) | `tdd`, `domain-modeling`, `code-review`, `architecture-decisions`, `event-modeling`, `ticket-triage` | 3000 |
+| 1 (Core Process) | `tdd`, `domain-modeling`, `code-review`, `architecture-decisions`, `event-modeling`, `ticket-triage`, `design-system` | 3000 |
 | 2 (Team Workflows) | `ensemble-team`, `task-management` | 4000 |
 | 3 (Utility) | `debugging-protocol`, `user-input-protocol`, `memory-protocol` | 3000 |
 | 4 (Factory Pipeline) | `pipeline`, `ci-integration`, `factory-review` | 3000 |

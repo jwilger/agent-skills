@@ -160,6 +160,9 @@ If any criterion is not met, revisit the relevant practice before proceeding.
 
 This skill works standalone. For enhanced workflows, it integrates with:
 
+- **design-system:** The design system specification provides the token
+  definitions, component catalog, and hierarchy that this skill implements
+  in code.
 - **domain-modeling:** Read models from the domain define what data components
   receive as props.
 - **tdd:** Test components in isolation at each level -- atom tests,
