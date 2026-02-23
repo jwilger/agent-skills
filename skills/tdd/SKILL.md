@@ -94,6 +94,13 @@ When automated mode activates, detect available primitives in this order:
 Select the most capable strategy available. Do not attempt a higher strategy
 when its primitives are missing.
 
+**You are the orchestrator.** The agent reading this file performs capability
+detection and dispatches directly. Do NOT spawn a single "orchestrator"
+subagent to do it for you -- that hides work, bypasses strategy detection,
+and pre-selects the wrong strategy. Whether you were invoked by `/tdd`, by
+the pipeline, or by any other caller: you detect capabilities, you choose
+the strategy, you create the team or spawn the phase agents yourself.
+
 **After determining your strategy, read ONLY the entry-point file for that
 strategy:**
 

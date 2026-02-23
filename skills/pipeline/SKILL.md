@@ -67,8 +67,26 @@ quality gate. A gate failure routes back for rework; it never skips forward.
    pre-implementation context: architecture docs, glossary, existing domain
    types matching the slice's referenced types, and event model context from
    the slice. If the slice touches UI, design system components are included.
-   This context is passed to the TDD orchestrator as `project_references` and
-   `slice_context` so every phase agent operates with full domain awareness.
+
+   **TDD dispatch (the pipeline controller IS the orchestrator):**
+   The pipeline controller performs capability detection (per TDD skill's
+   hierarchy) and dispatches directly. Do NOT spawn a single "orchestrator"
+   subagent -- that hides work and bypasses strategy detection.
+
+   - **TeamCreate available:** Create a pair team (e.g.,
+     `pair-<slice-id>`), spawn two developer agents into it, bootstrap
+     both with pre-implementation context and the ping-pong protocol from
+     `tdd/references/ping-pong-pairing.md`. The pair exchanges handoffs
+     via SendMessage. The pipeline controller monitors via task updates
+     and handles operational tasks (running tests, git commits) directly.
+   - **Task available (no TeamCreate):** The pipeline controller acts as
+     the serial subagent orchestrator per `tdd/references/orchestrator.md`,
+     spawning per-phase agents (RED, DOMAIN, GREEN, COMMIT) using the
+     Task tool with fresh context each time.
+   - **Neither available:** The pipeline controller runs chaining mode,
+     playing each TDD role sequentially per the TDD skill's chaining
+     section.
+
    The TDD pair then works through red-green-domain-commit cycles without
    consensus rounds. No team discussion during implementation. Output: passing
    tests, committed code, cycle evidence in
