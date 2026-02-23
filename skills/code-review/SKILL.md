@@ -98,10 +98,14 @@ Check for:
    do primitives leak through?
 3. **Validation placement:** Is validation at construction (parse-don't-validate),
    not scattered through business logic?
-4. **State representation:** Can the types represent invalid states?
+4. **State representation:** Can the types represent invalid states? Are bool
+   fields hiding state machines? (See `domain-modeling` bool-as-state check.)
+5. **Convention compliance:** Do types and patterns match project conventions?
+   Apply the Convention Over Precedent rule -- existing code that violates a
+   convention is not a defense.
 
-Flag issues but do not block on suggestions. Domain integrity flags are
-strongly recommended but not required for merge.
+Flag issues but do not block on suggestions, EXCEPT convention violations --
+those are blocking per the Convention Over Precedent rule.
 
 ### Review Output
 
@@ -136,6 +140,29 @@ In **factory mode**, the full team reviews before the pipeline pushes code --
 this is the quality checkpoint that replaces consensus-during-build. All
 blocking review feedback must be addressed before push. See
 `references/mob-review.md` for the factory mode review subsection.
+
+### Convention Over Precedent
+
+Written conventions override observed patterns. When a review finding
+conflicts with a project convention (CLAUDE.md, AGENTS.md, crate-level docs,
+architectural decision records) but matches existing code in the codebase,
+the finding is still valid. Existing code that violates a convention is tech
+debt, not precedent.
+
+Rules:
+
+1. **Never downgrade on the basis of existing code.** A convention violation
+   is blocking regardless of how many files already contain the same mistake.
+2. **Flag the new code as blocking.** Apply the same severity you would if no
+   prior code existed.
+3. **Note existing violations as refactoring candidates.** In the review
+   output, add a separate note listing files where the same anti-pattern
+   already exists so the team can schedule cleanup.
+
+Example: a project convention says "use the typestate pattern for state
+machines." The new code uses `struct Foo { is_active: bool }` because three
+existing files do the same. The review must block the new code AND note the
+three existing files as tech debt.
 
 ### Handling Disagreements
 
@@ -176,6 +203,7 @@ After completing a review guided by this skill, verify:
 - [ ] Every acceptance criterion was mapped to code and tests in Stage 1
 - [ ] Each changed file was assessed for clarity and domain type usage in Stage 2
 - [ ] Domain integrity was checked for compile-time enforcement opportunities in Stage 3
+- [ ] Convention violations were not downgraded due to matching existing code
 - [ ] A structured summary was produced with clear PASS/FAIL per stage
 - [ ] Any CHANGES REQUIRED items list specific, actionable fixes
 

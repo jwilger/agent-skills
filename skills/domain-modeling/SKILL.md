@@ -50,6 +50,25 @@ When reviewing code, flag every parameter, field, or return type where a
 primitive represents a domain concept. The fix is a newtype or value object
 that validates on construction.
 
+**Bool-as-state anti-pattern:** A `bool` field whose name describes a domain
+state (`already_exists`, `is_initialized`, `is_published`, `has_been_reviewed`)
+is a state machine encoded as a primitive. Two states today become three
+tomorrow, and the bool cannot represent the third.
+
+```rust
+// BAD: bool encodes a two-state machine as a primitive
+struct Article { is_published: bool }
+
+// GOOD: enum names the states and extends safely
+enum ArticleState { Draft, Published, Archived }
+```
+
+Flag any bool field that answers "what state is this in?" rather than "is this
+condition true?" The fix is an enum whose variants name the domain states.
+This check is distinct from "make invalid states unrepresentable" -- that rule
+catches impossible combinations; this one catches domain concepts hiding inside
+a boolean.
+
 ### Parse, Don't Validate
 
 Validate at the boundary. Use strong types internally. Never re-validate
@@ -178,6 +197,7 @@ review.
 After applying domain modeling principles, verify:
 
 - [ ] No primitive types (`String`, `int`, `number`) used for domain concepts
+- [ ] No bool fields encoding domain states (use enums for state machines)
 - [ ] All identifiers use newtype wrappers, not raw primitives
 - [ ] Invalid states are unrepresentable (no contradictory field combinations)
 - [ ] Validation occurs at construction boundaries, not deep in business logic
