@@ -125,6 +125,9 @@ If any criterion is not met, halt and complete the missing phase.
 
 This skill works standalone. For enhanced workflows, it integrates with:
 
+- **design-system:** The design system specification informs technology
+  decisions for UI implementation (CSS framework, component library, build
+  tooling)
 - **event-modeling:** Completed event models surface the decision points that
   need architectural choices (technology, boundaries, integration patterns)
 - **domain-modeling:** Domain model constraints inform bounded context
