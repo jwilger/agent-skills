@@ -7,7 +7,7 @@ description: >-
 license: CC0-1.0
 metadata:
   author: jwilger
-  version: "1.0"
+  version: "2.0"
   requires: []
   context: [test-files, domain-types, source-files]
   phase: build
@@ -44,8 +44,11 @@ Every feature is built by repeating: RED -> DOMAIN -> GREEN -> DOMAIN -> COMMIT.
    `raise NotImplementedError`, etc.). Do not implement logic. Stop.
    Done when: tests COMPILE but still FAIL (assertion/panic, not compilation error).
 
-3. **GREEN** -- Write the minimal code to make the test pass. Only edit
-   production files. Run the test. Paste passing output. Stop.
+3. **GREEN** -- Address the immediate failure. Read the exact error message.
+   Make the SMALLEST change that fixes THIS SPECIFIC message. Run tests. If
+   a new failure appears, repeat — one error at a time. Only edit production
+   files. Paste output after each change. Do NOT write the full
+   implementation in one pass.
    Done when: tests PASS with minimal implementation.
 
 4. **DOMAIN (after GREEN)** -- Review the implementation for domain violations:
@@ -54,9 +57,10 @@ Every feature is built by repeating: RED -> DOMAIN -> GREEN -> DOMAIN -> COMMIT.
    Done when: types are clean and tests still pass.
 
 5. **COMMIT** -- Run the full test suite. Stage all changes and create a git
-   commit referencing the GWT scenario. This is a **hard gate**: no new RED
-   phase may begin until this commit exists.
-   Done when: git commit created with all tests passing.
+   commit referencing the GWT scenario. Run `git status` after committing to
+   verify no uncommitted files remain. This is a **hard gate**: no new RED
+   phase may begin until this commit exists and the working tree is clean.
+   Done when: git commit created, all tests passing, working tree clean.
 
 After step 5, either start the next RED phase or tidy the code (structural
 changes only, separate commit).
@@ -153,14 +157,18 @@ phase runs in an isolated subagent with constrained scope.
 ### Execution Strategy: Agent Teams
 
 Used when TeamCreate is available for persistent agent sessions. Maximum
-enforcement through role specialization and persistent pair context.
+enforcement through role specialization and persistent team context.
 
-- Follow `references/ping-pong-pairing.md` for pair session lifecycle, role
-  selection, structured handoffs, and drill-down ownership.
-- Both engineers persist for the entire TDD cycle of a vertical slice.
+- Follow `references/ping-pong-pairing.md` for three-member team lifecycle
+  (ping, pong, domain reviewer), sequential spawning, structured handoffs,
+  and iterative GREEN discipline.
+- All three members persist for the entire TDD cycle of a vertical slice.
   Handoffs happen via lightweight structured messages, not agent recreation.
 - Track pairing history in `.team/pairing-history.json`. Do not repeat either
-  of the last 2 pairings.
+  of the last 2 ping/pong combinations. Domain reviewer may repeat.
+- Spawn agents sequentially: ping first (wait for RED evidence), then domain
+  reviewer (wait for review), then pong (wait for GREEN). Never spawn all
+  at once.
 - The orchestrator monitors and intervenes only for external clarification
   routing or blocking disagreements.
 
@@ -213,7 +221,7 @@ At the end of each complete RED-DOMAIN-GREEN-DOMAIN-COMMIT cycle, produce
 a CYCLE_COMPLETE evidence packet containing: slice_id, acceptance_test
 {file, name, output, boundary_type, boundary_evidence}, unit_tests
 {count, all_passing, output}, domain_reviews [{phase, verdict, concerns}],
-commits [{hash, message}], rework_cycles, pair {driver, navigator}.
+commits [{hash, message}], rework_cycles, team {ping, pong, domain_reviewer}.
 
 When `pipeline-state` is provided in context metadata, the TDD skill
 operates in **pipeline mode**: it receives a `slice_id` and stores
@@ -259,6 +267,8 @@ After completing a cycle, verify:
 - [ ] Phase boundary rules were respected (file-type restrictions)
 - [ ] Evidence (test output) was provided at each handoff
 - [ ] Commit exists for every completed RED-GREEN cycle
+- [ ] GREEN phase iterated one failure at a time (not full implementation in one pass)
+- [ ] Working tree clean after every COMMIT (`git status` verified)
 - [ ] Walking skeleton completed first (first vertical slice)
 
 **HARD GATE -- COMMIT (must pass before any new RED phase):**

@@ -44,9 +44,10 @@ reviewed, and what was committed.
     }
   ],
   "rework_cycles": "number -- times this cycle was sent back for rework (0 if clean)",
-  "pair": {
-    "driver": "string -- engineer name (driver for this cycle)",
-    "navigator": "string -- engineer name (navigator for this cycle)"
+  "team": {
+    "ping": "string -- engineer name (wrote failing test for this cycle)",
+    "pong": "string -- engineer name (wrote GREEN implementation for this cycle)",
+    "domain_reviewer": "string -- engineer name (reviewed test and implementation)"
   }
 }
 ```
@@ -101,11 +102,12 @@ Number of times the cycle was sent back from a domain review or quality gate.
 Zero means the cycle completed cleanly on the first pass. This metric feeds
 into the pipeline's rework rate calculation.
 
-### `pair`
+### `team`
 
-The two engineers who worked the cycle. Driver writes the initial test (RED)
-and implementation (GREEN). Navigator reviews and provides feedback. Roles
-may swap between cycles within a slice.
+The three members who worked the cycle. Ping writes the failing test (RED).
+Pong writes the GREEN implementation. Domain reviewer reviews both the test
+and the implementation. Roles swap between cycles within a slice (ping
+becomes pong, pong becomes ping; domain reviewer may stay or rotate).
 
 ## When Produced
 

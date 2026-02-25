@@ -42,6 +42,26 @@ with only stubs created by the domain phase), or any file in `tests/`,
    undefined (not just unimplemented), stop -- the domain phase should
    have created it.
 
+## Iterative Discipline
+
+The GREEN phase is an iterative loop, not a single leap:
+
+1. Read the exact error message from the test output.
+2. Identify the SMALLEST change that addresses THIS SPECIFIC error.
+3. Make that change and nothing else.
+4. Run tests. Paste output.
+5. If a new error appears, go back to step 1.
+6. When the test passes, stop.
+
+**Why this matters:** Writing the full implementation in one pass bypasses
+the feedback loop. You may write code that passes the test but introduces
+subtle bugs, unnecessary complexity, or domain violations. The iterative
+approach lets each error message guide you to the minimal correct solution.
+
+**Common mistake:** "I know what the full implementation should be, so I'll
+write it all at once." Even when you know the answer, the discipline of one
+error at a time catches incorrect assumptions and keeps changes auditable.
+
 ## What NOT to Do
 
 - Do not touch test files (that is the RED phase's job)

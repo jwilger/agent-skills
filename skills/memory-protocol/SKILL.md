@@ -8,7 +8,7 @@ description: >-
 license: CC0-1.0
 metadata:
   author: jwilger
-  version: "1.0"
+  version: "1.1"
   requires: []
   context: []
   phase: build
@@ -149,6 +149,36 @@ Before context compaction or at natural stopping points (task complete,
 switching tasks), store any undocumented insights from the current session.
 This is your last chance before the knowledge evaporates.
 
+### WORKING_STATE.md for Long-Running Sessions
+
+For sessions lasting beyond a single task (pipeline runs, multi-slice TDD,
+team coordination), maintain a WORKING_STATE.md file as insurance against
+context compaction and crashes.
+
+- **Location:** `.factory/WORKING_STATE.md` (pipeline mode) or project root
+  (standalone)
+- **Contents:** current task, progress checklist, key decisions, files
+  modified, blockers, last updated timestamp
+- **Update cadence:** after every significant state change (task start, phase
+  change, decision made, blocker encountered)
+- **Read cadence:** at session start, after context compaction, after any
+  interruption — never guess state from memory
+
+See `references/working-state.md` for the full format and examples.
+
+### Self-Reminder Protocol
+
+Long sessions cause instruction decay. Counter this by periodically
+re-reading critical context:
+
+- Every 5-10 messages, re-read: WORKING_STATE.md, role constraints, active
+  task context
+- After ANY context compaction, immediately re-read all state before acting
+- Critical for: pipeline controllers, team coordinators, long TDD sessions
+
+The self-reminder is the primary defense against role drift. Skipping it is
+the #1 cause of agents reverting to bad habits mid-session.
+
 ## Enforcement Note
 
 This skill provides advisory guidance. It cannot force the agent to search
@@ -169,6 +199,9 @@ After completing work guided by this skill, verify:
 - [ ] Stored any newly discovered conventions
 - [ ] MEMORY.md remains under 200 lines
 - [ ] No stale or contradicted memories left uncorrected
+- [ ] WORKING_STATE.md maintained for long-running sessions
+- [ ] Self-reminder protocol followed (state re-read every 5-10 messages)
+- [ ] State re-read after context compaction (not guessed from memory)
 
 ## Dependencies
 
@@ -177,6 +210,10 @@ This skill works standalone. For enhanced workflows, it integrates with:
 - **debugging-protocol:** Search memory before starting the 4-phase investigation
 - **user-input-protocol:** Store user answers to avoid re-asking the same questions
 - **tdd:** Store test patterns and domain modeling insights between sessions
+- **pipeline:** Pipeline controllers use WORKING_STATE.md and self-reminder to
+  maintain role discipline across long autonomous runs
+- **ensemble-team:** Team coordinators use self-reminder to prevent role drift
+  during multi-agent sessions
 
 Missing a dependency? Install with:
 ```

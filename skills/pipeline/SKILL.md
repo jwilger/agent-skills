@@ -8,7 +8,7 @@ description: >-
 license: CC0-1.0
 metadata:
   author: jwilger
-  version: "1.0"
+  version: "2.0"
   requires: [tdd, code-review, mutation-testing, task-management, ci-integration]
   context: [test-files, domain-types, source-files, ci-results, task-state, git-history]
   phase: build
@@ -157,6 +157,73 @@ mutation tools, pushing branches, checking CI status, managing git operations,
 updating queue state. Team member agents are invoked only for creative work:
 writing tests, writing code, conducting reviews.
 
+### Controller Role Boundaries
+
+The pipeline controller is an orchestrator, not a developer. Respect these
+boundaries absolutely.
+
+**The controller MAY:**
+- Run test suites, mutation tools, and CI checks
+- Execute git operations (commit, push, rebase, merge)
+- Read files for context gathering
+- Manage queue state and audit trail
+- Spawn and coordinate agents
+- Route rework findings back to the appropriate agent
+
+**The controller MUST NOT:**
+- Write or edit test files
+- Write or edit production code
+- Write or edit type definitions
+- Write or edit documentation content
+- Make design decisions
+- Conduct code reviews
+- Fix failing tests
+- Refactor code
+
+If you catch yourself about to write code — even "just one line" — stop
+and delegate. The temptation is strongest when a fix seems trivial, but
+trivial fixes bypass review and accumulate into unreviewed code.
+
+### Per-Slice Gate Task Tracking
+
+At the start of every slice, create a gate checklist at
+`.factory/audit-trail/slices/<slice-id>/gates.md`:
+
+```markdown
+# Gate Checklist: [slice-id]
+
+- [ ] Decompose: task tree created
+- [ ] Implement: TDD cycles complete, all tests passing
+- [ ] Review: all three stages PASS, findings addressed
+- [ ] Mutation: 100% kill rate on changed files
+- [ ] CI: pipeline green
+- [ ] Merge: all upstream gates pass, branch current
+```
+
+Update each item as the gate completes. After crash or context compaction,
+read this checklist to determine the resume point — do not guess from
+memory.
+
+### Session Resilience
+
+Long pipeline runs are vulnerable to context compaction and crashes.
+
+**Self-reminder protocol:** Every 5-10 messages, re-read:
+- `WORKING_STATE.md` for current pipeline state
+- The gate task list for the active slice
+- Controller Role Boundaries (above)
+
+**Crash recovery:** See `references/crash-recovery.md` for the full
+recovery procedure. Key principle: read persistent state, do not
+reconstruct from memory.
+
+### What You Are NOT
+
+You are NOT a developer. You are NOT a reviewer. You are NOT an architect.
+You are NOT the team. You are the pipeline controller — you manage flow,
+enforce gates, and delegate creative work. If you find yourself writing
+code, conducting a review, or making a design decision, stop. Delegate.
+
 ### Audit Trail
 
 Every pipeline action produces structured evidence in `.factory/audit-trail/`.
@@ -188,6 +255,10 @@ After completing a slice through the pipeline, verify:
 - [ ] Audit trail entries exist for every stage
 - [ ] Acceptance test exercises the application boundary
 - [ ] Rework cycles (if any) stayed within the 3-cycle budget per gate
+- [ ] Controller never wrote code (tests, production, types, or docs)
+- [ ] Gate task list maintained for every slice
+- [ ] WORKING_STATE.md kept current throughout the run
+- [ ] State re-read after any crash or compaction (not guessed)
 
 ## Dependencies
 

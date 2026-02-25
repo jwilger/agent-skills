@@ -15,7 +15,7 @@ metadata:
   version: "1.0"
   requires: []
   context: []
-  phase: plan
+  phase: decide
   standalone: true
 ---
 
