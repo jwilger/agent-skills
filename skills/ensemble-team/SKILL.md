@@ -13,9 +13,9 @@ description: >
 license: CC0-1.0
 metadata:
   author: jwilger
-  version: "1.0"
+  version: "2.0"
   requires: []
-  optional: [pipeline]
+  optional: [pipeline, agent-coordination]
   context: []
   phase: build
   standalone: true
@@ -239,24 +239,33 @@ for its operating instructions. Suggest telling the coordinator what to build.
 
 ## Retrospective Protocol
 
-Retrospectives are event-driven, not time-based. AI agents work continuously —
-arbitrary intervals are meaningless.
+A single agent writing all perspectives is NOT a retrospective — it is a
+summary. Every agent spawned for a retrospective MUST be a named team member
+from `.team/`.
 
-- **Trigger**: After each shipped PR (merged to the integration branch).
-- **Participants**: The full team that did the work, while they still have context.
-  The human is a **team member** who participates in the consent protocol, not an
-  external approver.
-- **Format**: The team reflects on what worked, what did not, and proposes process
-  improvements. Any structured format (Start/Stop/Continue or equivalent) is fine
-  as long as it produces concrete proposals.
-- **Output**: Retrospective proposals are changes to `AGENTS.md` conventions or new
-  ADRs in `docs/ARCHITECTURE.md` — the same places formation session outputs go.
-  Process improvement proposals require the same consent protocol as any other team
-  decision, and the human must consent (as a team member) before changes to
-  `AGENTS.md` or new ADRs are adopted.
-- **Mini-retros** after each CI build remain a lightweight observational checkpoint
-  (did we follow the pipeline? was the commit atomic?) and do not require human
-  consent. They are observational, not prescriptive.
+Retrospectives are event-driven, not time-based. Trigger: after each shipped
+PR (merged to the integration branch).
+
+See `references/retrospective-protocol.md` for the full procedure. The four
+mandatory phases:
+
+1. **Previous Action Item Audit** — Status all prior action items. Items
+   marked NOT-STARTED from 2+ retros ago escalate to blocking.
+2. **Individual Observations** — Each member writes independently (to
+   `.reviews/retro/` files). No discussion until all have written.
+3. **Team Discussion** — Actual message exchange where members react to
+   each other's observations. The coordinator verifies real exchange
+   occurred (not a single agent summarizing).
+4. **Consensus and Record** — Consent protocol for proposals. Output to
+   `AGENTS.md` conventions or ADRs. Every action item has a named owner.
+
+**Action item implementation gate:** Retro action items are implemented
+before the next work item starts. This prevents the backlog of unaddressed
+improvements that makes retros feel pointless.
+
+**Mini-retros** after each CI build remain a lightweight observational
+checkpoint (did we follow the pipeline? was the commit atomic?) and do not
+require human consent. They are observational, not prescriptive.
 
 ## Key Principles
 
@@ -264,15 +273,20 @@ Non-negotiable aspects baked in from production experience.
 
 **PREREQUISITE**: Read `references/lessons-learned.md` before proceeding.
 
+- Named team members only: every agent spawned for team work MUST be a named
+  member from `.team/`. Never use generic background agents for team activities.
 - Consensus before push (review locally, then push)
 - Refactor step is mandatory every commit
 - CI wait rule (never queue multiple CI runs)
 - Mini-retro after every CI build (team runs it, not coordinator)
 - PR-triggered retrospective with consent-based outputs
+- Retro action items implemented before next work item starts
 - Driver handoff protocol (summary + git log + green baseline)
 - Glossary compliance (domain types match glossary)
 - Deferred items tracked immediately
 - Reviewer coordination (check others' reviews first)
+- Non-blocking feedback escalation: items appearing in 2+ consecutive reviews
+  escalate to blocking
 - Explicit Driver onboarding in activation prompts
 - Session transcripts excluded from CI triggers
 - AI-approximation disclaimer on every profile

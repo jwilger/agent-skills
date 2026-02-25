@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-Agent Skills (v4.1.0) is a portable library of Markdown-based skills that encode professional software development practices for any AI coding agent. Skills are harness-agnostic — they work on Claude Code, Codex, Cursor, Windsurf, OpenCode, Goose, Amp, Aider, and any Agent Skills-compatible harness.
+Agent Skills (v5.0.0) is a portable library of Markdown-based skills that encode professional software development practices for any AI coding agent. Skills are harness-agnostic — they work on Claude Code, Codex, Cursor, Windsurf, OpenCode, Goose, Amp, Aider, and any Agent Skills-compatible harness.
 
 This is a **content-only repository**: no build system, no test runner, no compiled artifacts. The deliverables are SKILL.md files and their reference documentation, installed via `npx skills add jwilger/agent-skills`.
 
@@ -30,7 +30,7 @@ Version is tracked in the `VERSION` file (semver). Use `/bump` to increment.
 | 0 (Bootstrap) | `bootstrap` | 1000 |
 | 1 (Core Process) | `tdd`, `domain-modeling`, `code-review`, `architecture-decisions`, `event-modeling`, `ticket-triage`, `design-system` | 3000 |
 | 2 (Team Workflows) | `ensemble-team`, `task-management` | 4000 |
-| 3 (Utility) | `debugging-protocol`, `user-input-protocol`, `memory-protocol` | 3000 |
+| 3 (Utility) | `debugging-protocol`, `user-input-protocol`, `memory-protocol`, `agent-coordination`, `session-reflection` | 3000 |
 | 4 (Factory Pipeline) | `pipeline`, `ci-integration`, `factory-review` | 3000 |
 | Advanced | `mutation-testing`, `atomic-design` | 3000 |
 

@@ -122,3 +122,21 @@ into every new team setup from day one.
 ### Validate at Boundary, Trust Types Inside
 - Parse, don't validate. Produce typed values at the boundary that carry proof of
   validity. Never re-validate inside the system.
+
+## Multi-Agent Coordination
+
+### Idle Notifications Are Heartbeats, Not Alarms
+- **Problem**: Agents treat idle notifications from other agents as "stuck" signals,
+  triggering message spamming and polling loops that waste tokens and disrupt work.
+- **Fix**: An idle notification means the agent is alive and processing. Take NO
+  action unless ALL THREE conditions are true: (a) extended idle beyond expected
+  duration, (b) a specific task is waiting on output, AND (c) the user asked you to
+  investigate. See the `agent-coordination` skill for the full decision tree.
+
+### Pipeline Controller Must Never Write Code
+- **Problem**: Under pressure (crashes, rework, simple-looking fixes), the pipeline
+  controller reverts to writing code directly instead of delegating. This bypasses
+  review, breaks role boundaries, and produces unaudited changes.
+- **Fix**: Explicit "MUST NOT" list in the controller's role definition. If the
+  controller catches itself about to write code — even "just one line" — it must
+  stop and delegate. The temptation is strongest during crash recovery.

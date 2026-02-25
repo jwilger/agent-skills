@@ -111,6 +111,27 @@ ensemble_team:
   preset: none
 ```
 
+## System Prompt (Factory Mode)
+
+When factory mode is configured (pipeline + ensemble-team + user selected
+factory mode), generate a system prompt file and launcher script. See
+`system-prompt-generation.md` for the full procedure.
+
+**Claude Code:** Generate `SYSTEM_PROMPT.md` and `bin/ccf` launcher. Add
+to CLAUDE.md managed section:
+
+```markdown
+<!-- BEGIN MANAGED: system-prompt -->
+## System Prompt
+
+Pipeline controller system prompt: `SYSTEM_PROMPT.md`
+Launcher: `bin/ccf` (uses `claude --system-prompt`)
+<!-- END MANAGED: system-prompt -->
+```
+
+**Other harnesses:** Fold the system prompt content into the instruction
+file preamble within managed markers.
+
 ## Re-run Safety
 
 All generated content lives inside managed markers. Re-running bootstrap:

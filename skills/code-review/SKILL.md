@@ -10,7 +10,7 @@ license: CC0-1.0
 compatibility: Designed for any coding agent (Claude Code, Codex, Cursor, OpenCode, etc.)
 metadata:
   author: jwilger
-  version: "1.0"
+  version: "1.1"
   requires: [domain-modeling]
   context: [source-files, test-files, domain-types, git-history]
   phase: ship
@@ -141,6 +141,37 @@ this is the quality checkpoint that replaces consensus-during-build. All
 blocking review feedback must be addressed before push. See
 `references/mob-review.md` for the factory mode review subsection.
 
+### File-Based Review Artifacts
+
+Review findings MUST be written to `.reviews/` files as the default
+persistence mechanism. Messages are supplementary coordination signals
+only — they do not survive context compaction.
+
+- **Naming:** `<reviewer-name>-<task-slug>.md` (e.g., `kent-beck-user-login.md`)
+- **Content:** Full structured review output (all three stages)
+- **Location:** `.reviews/` directory (add to `.gitignore`)
+- Messages say "review posted to .reviews/" — substantive feedback lives in
+  files only
+
+This ensures review findings survive context compaction, agent restarts, and
+harnesses that lack inter-agent messaging.
+
+### Non-Blocking Feedback Escalation
+
+Non-blocking items (SUGGESTION severity) that appear in 2+ consecutive
+reviews of different slices MUST escalate to blocking (IMPORTANT severity).
+Track recurrence by checking previous review files in `.reviews/`.
+
+This prevents persistent quality issues from being perpetually deferred as
+"just a suggestion."
+
+### User-Facing Behavior Verification
+
+When a GWT scenario describes user-visible behavior (UI elements, displayed
+messages, visual changes), the changeset MUST include code that produces
+that visible output. An API-only implementation when the scenario describes
+UI interaction is a spec compliance failure — the slice is incomplete.
+
 ### Convention Over Precedent
 
 Written conventions override observed patterns. When a review finding
@@ -206,6 +237,9 @@ After completing a review guided by this skill, verify:
 - [ ] Convention violations were not downgraded due to matching existing code
 - [ ] A structured summary was produced with clear PASS/FAIL per stage
 - [ ] Any CHANGES REQUIRED items list specific, actionable fixes
+- [ ] Review findings written to `.reviews/` files (not messages only)
+- [ ] Recurring non-blocking items escalated to blocking when seen in 2+ reviews
+- [ ] User-facing behavior verification applied to UI-describing scenarios
 
 If any criterion is not met, revisit the relevant stage before finalizing.
 

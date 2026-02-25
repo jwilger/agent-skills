@@ -8,7 +8,7 @@ description: >-
 license: CC0-1.0
 metadata:
   author: jwilger
-  version: "2.0"
+  version: "2.1"
   requires: []
   context: []
   phase: understand
@@ -111,6 +111,13 @@ a single source of truth and avoid duplication. See
 `references/agents-md.md` for AGENTS.md best practices (small routing
 document, progressive disclosure, managed markers) and
 `references/harness-files.md` for harness-specific generation rules.
+
+### Step 6.5: Generate System Prompt (Pipeline/Factory Mode Only)
+
+When the `pipeline` skill is detected and the user selected factory mode,
+generate a system prompt and launcher script. See
+`references/system-prompt-generation.md` for patterns. For harnesses without
+`--system-prompt` support, fold critical directives into CLAUDE.md/AGENTS.md.
 
 ### Step 7: Optional Ensemble Team
 
