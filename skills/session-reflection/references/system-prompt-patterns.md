@@ -37,7 +37,7 @@ Observable, checkable, mechanical.
 ```
 At session start:
 1. Read WORKING_STATE.md
-2. Read SYSTEM_PROMPT.md
+2. Read .claude/SYSTEM_PROMPT.md
 3. Run git status
 4. Confirm current task with user
 ```

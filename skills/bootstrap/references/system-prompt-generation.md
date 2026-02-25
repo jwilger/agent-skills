@@ -1,18 +1,22 @@
 # System Prompt Generation
 
-When to generate a project-specific system prompt:
+This feature is **Claude Code only**. Other harnesses do not support a
+`--system-prompt` flag — on those harnesses, fold critical directives into
+the instruction file (AGENTS.md, `.cursor/rules`, etc.) during Step 6.
 
-- The `pipeline` skill is installed
-- The `ensemble-team` skill is installed
-- The user selected factory mode during bootstrap
-- The harness supports a `--system-prompt` flag or equivalent
+## When to Generate
 
-If any condition is not met, fold critical directives into the instruction
-file (CLAUDE.md, AGENTS.md, `.cursor/rules`) instead.
+Generate a system prompt and launcher ONLY when ALL conditions are true:
+
+1. The harness is Claude Code
+2. The `pipeline` skill is installed
+3. The user selected factory mode during bootstrap
+
+If any condition is false, skip this step entirely.
 
 ## System Prompt File Structure
 
-Create `SYSTEM_PROMPT.md` in the project root:
+Create `.claude/SYSTEM_PROMPT.md`:
 
 ```markdown
 # [Project Name] System Prompt
@@ -60,49 +64,19 @@ On every session start:
 - Use specific forbidden actions, not general principles
 - The system prompt supplements skills — it does not replace them
 
-## Launcher Script
-
-For harnesses that support system prompts, generate a launcher script.
-
-### Claude Code (`bin/ccf`)
+## Launcher Script (`bin/ccf`)
 
 ```bash
 #!/usr/bin/env bash
 set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 PROJECT_DIR="$(dirname "$SCRIPT_DIR")"
-claude --system-prompt "$PROJECT_DIR/SYSTEM_PROMPT.md" "$@"
+claude --system-prompt "$PROJECT_DIR/.claude/SYSTEM_PROMPT.md" "$@"
 ```
 
 Make executable: `chmod +x bin/ccf`
 
 Usage: `bin/ccf` (interactive) or `bin/ccf "build slice-003"` (with prompt)
-
-### Other Harnesses
-
-| Harness | System Prompt Support | Alternative |
-|---------|----------------------|-------------|
-| Claude Code | `--system-prompt` flag | Native support |
-| Codex | No flag available | Fold into AGENTS.md preamble |
-| Cursor | No flag available | Fold into `.cursor/rules` preamble |
-| Windsurf | No flag available | Fold into instruction file |
-| Generic | Varies | Fold into AGENTS.md preamble |
-
-### Folding Into Instruction Files
-
-When the harness does not support a system prompt flag, add a clearly
-marked section at the TOP of the instruction file:
-
-```markdown
-<!-- BEGIN MANAGED: system-prompt -->
-## Critical Controller Constraints
-
-[Role boundaries and startup procedure from SYSTEM_PROMPT.md]
-<!-- END MANAGED: system-prompt -->
-```
-
-Place this before other content so it is read first and given highest
-priority in the agent's context.
 
 ## Refinement
 

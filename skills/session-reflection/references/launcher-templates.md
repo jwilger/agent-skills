@@ -34,7 +34,7 @@ session start.
 set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 PROJECT_DIR="$(dirname "$SCRIPT_DIR")"
-claude --system-prompt "$PROJECT_DIR/SYSTEM_PROMPT.md" "$@"
+claude --system-prompt "$PROJECT_DIR/.claude/SYSTEM_PROMPT.md" "$@"
 ```
 
 ### Setup
@@ -70,7 +70,7 @@ set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 PROJECT_DIR="$(dirname "$SCRIPT_DIR")"
 
-SYSTEM_PROMPT="$PROJECT_DIR/SYSTEM_PROMPT.md"
+SYSTEM_PROMPT="$PROJECT_DIR/.claude/SYSTEM_PROMPT.md"
 
 if [ ! -f "$SYSTEM_PROMPT" ]; then
   echo "Warning: $SYSTEM_PROMPT not found. Running without system prompt."
@@ -159,7 +159,7 @@ For any harness that adds system prompt support in the future:
 
 When generating a launcher or instruction file integration:
 
-- [ ] System prompt file (SYSTEM_PROMPT.md) exists and is under 500 tokens
+- [ ] System prompt file (.claude/SYSTEM_PROMPT.md) exists and is under 500 tokens
 - [ ] Launcher script is executable (chmod +x)
 - [ ] Launcher passes through all arguments to the underlying command
 - [ ] Launcher handles missing system prompt file gracefully
