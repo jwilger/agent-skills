@@ -112,18 +112,20 @@ a single source of truth and avoid duplication. See
 document, progressive disclosure, managed markers) and
 `references/harness-files.md` for harness-specific generation rules.
 
-### Step 6.5: Generate System Prompt (Pipeline/Factory Mode Only)
+### Step 6.5: Generate System Prompt (Claude Code + Factory Mode Only)
 
-When the `pipeline` skill is detected and the user selected factory mode:
+Only when BOTH conditions are true: (a) the harness is Claude Code, AND
+(b) the `pipeline` skill is detected and the user selected factory mode:
 
-1. Create `SYSTEM_PROMPT.md` in the project root with: Role and Constraints
-   (controller MAY/MUST NOT boundaries), Startup Procedure (read state files),
-   Common Mistakes (empty initially), and Reminders.
-2. On Claude Code, create `bin/ccf` launcher script that runs
-   `claude --system-prompt SYSTEM_PROMPT.md "$@"` and `chmod +x bin/ccf`.
-3. On other harnesses, fold the system prompt content into the instruction
-   file preamble (CLAUDE.md, AGENTS.md, `.cursor/rules`) inside managed
-   markers.
+1. Create `.claude/SYSTEM_PROMPT.md` with: Role and Constraints (controller
+   MAY/MUST NOT boundaries), Startup Procedure (read state files), Common
+   Mistakes (empty initially), and Reminders.
+2. Create `bin/ccf` launcher script that runs
+   `claude --system-prompt .claude/SYSTEM_PROMPT.md "$@"` and
+   `chmod +x bin/ccf`.
+
+On non-Claude-Code harnesses, skip this step entirely — fold critical
+directives into the harness instruction file during Step 6 instead.
 
 See `references/system-prompt-generation.md` for templates and content
 guidelines (keep under 500 tokens, use MUST/NEVER language).
