@@ -50,6 +50,9 @@ your project grows.
 | `architecture-decisions` | ADR format, governance, and lightweight decision records | decide |
 | `event-modeling` | Discovery, swimlanes, GWT scenarios, model validation | understand |
 | `ticket-triage` | Evaluate ticket readiness against six criteria with actionable remediation guidance | plan |
+| `design-system` | Design token definitions, component catalog, and visual consistency specification | decide |
+| `refactoring` | Safe refactoring patterns under green tests: extract, inline, rename, move, simplify | build |
+| `pr-ship` | PR creation, commit hygiene, merge strategy, and post-merge workflow | ship |
 
 ### Tier 2 -- Team Workflows (benefit from harness delegation support)
 
@@ -65,6 +68,9 @@ your project grows.
 | `debugging-protocol` | Systematic 4-phase investigation: root cause before fix | build |
 | `user-input-protocol` | Structured pause/resume pattern for agent-to-user questions | build |
 | `memory-protocol` | Recall-before-act knowledge accumulation and retrieval | build |
+| `agent-coordination` | File-based communication, patience discipline, agent identity resolution for multi-agent workflows | build |
+| `session-reflection` | Structured session analysis with hard triggers, context budgets, and continuation summaries | build |
+| `error-recovery` | Error classification, retry strategies with backoff, escalation rules for autonomous operation | build |
 
 ### Tier 4 -- Factory Pipeline (requires pipeline orchestrator)
 
@@ -339,6 +345,24 @@ changes are always your decision.
 - **CI infra failure:** At standard/full, the pipeline retries once
   automatically. After 2 failures, it escalates.
 
+## Plugin Marketplace (Claude Code Only)
+
+Skills are harness-agnostic by design. For Claude Code users who want
+mechanical enforcement beyond what advisory skills provide, a companion
+plugin marketplace offers hooks, custom agents, and session management
+tools.
+
+| Plugin | What it adds |
+|--------|-------------|
+| `tdd-enforcement` | PreToolUse hooks that block file edits outside the current TDD phase; PostToolUse hooks requiring test evidence; Stop hooks verifying clean working tree |
+| `pipeline-agents` | Custom agent definitions for pipeline roles (controller, TDD-red, TDD-green, domain-reviewer) with `disallowedTools` enforcing role boundaries |
+| `ensemble-coordinator` | Coordinator agent with retrospective enforcement hooks |
+| `session-tools` | PreCompact auto-save, SessionStart context restore, Stop session reflection |
+
+Plugins live in the `plugins/` directory with a marketplace manifest at
+`.claude-plugin/marketplace.json`. Skills remain the single source of
+truth -- plugins add mechanical enforcement on top of advisory guidance.
+
 ## Installing Individual Skills
 
 Each skill is a directory under `skills/`. Install individually with `--skill`:
@@ -351,6 +375,9 @@ npx skills add jwilger/agent-skills --skill code-review
 npx skills add jwilger/agent-skills --skill architecture-decisions
 npx skills add jwilger/agent-skills --skill event-modeling
 npx skills add jwilger/agent-skills --skill ticket-triage
+npx skills add jwilger/agent-skills --skill design-system
+npx skills add jwilger/agent-skills --skill refactoring
+npx skills add jwilger/agent-skills --skill pr-ship
 
 # Team workflow skills
 npx skills add jwilger/agent-skills --skill ensemble-team
@@ -360,6 +387,9 @@ npx skills add jwilger/agent-skills --skill task-management
 npx skills add jwilger/agent-skills --skill debugging-protocol
 npx skills add jwilger/agent-skills --skill user-input-protocol
 npx skills add jwilger/agent-skills --skill memory-protocol
+npx skills add jwilger/agent-skills --skill agent-coordination
+npx skills add jwilger/agent-skills --skill session-reflection
+npx skills add jwilger/agent-skills --skill error-recovery
 
 # Factory pipeline skills
 npx skills add jwilger/agent-skills --skill pipeline
@@ -401,6 +431,56 @@ When reviewing skills, check for:
 - **Security:** Do shell fragments in SKILL.md limit themselves to
   read-only environment detection? No writes, no network calls, no
   package installation.
+
+## Migrating from v5.0 to v5.1
+
+v5.1 adds front-end enforcement, design system compliance, new skills,
+and a companion plugin marketplace. All changes are additive.
+
+**New skills (install if needed):**
+
+```bash
+npx skills add jwilger/agent-skills \
+  --skill refactoring \
+  --skill pr-ship \
+  --skill error-recovery
+```
+
+**Front-end and design system enforcement (automatic with skill update):**
+
+- Event modeling now requires wireframe-to-component mapping (Step 4) and
+  UI component inventory in slice definitions (Step 9). Slices that specify
+  backend behavior without specifying UI components are flagged as incomplete.
+- TDD boundary validation now requires `boundary_type: "Browser"` for web
+  app slices with `ui_components_referenced`. HTTP-only tests are rejected.
+- Design system context is now mandatory (not conditional) for UI slices in
+  the TDD pre-implementation checklist. The TDD pair must verify design
+  token compliance during DOMAIN review.
+- The review gate (Gate 2) now checks for hard-coded color/spacing/sizing
+  values and verifies component names match the design system catalog.
+
+**Plugin marketplace (Claude Code only, optional):**
+
+Four companion plugins are available in `plugins/` for mechanical enforcement
+on Claude Code: `tdd-enforcement`, `pipeline-agents`, `ensemble-coordinator`,
+and `session-tools`. These are optional — skills continue to work without them.
+
+**Other improvements:**
+
+- Delegation checklist gate for pipeline and ensemble-team orchestrators
+- Named-team-only rule (no anonymous agents for team work)
+- File-based communication as universal principle in agent-coordination
+- GREEN phase 10-line heuristic and iterative evidence requirement
+- Crash recovery reliability (gate checklist as single source of truth)
+- Rework loop detection (identical failures escalate after 2 cycles)
+- Quick formation option for ensemble-team (3 essential topics)
+- Token budget and cross-skill consistency verification scripts
+
+**Update commands:**
+
+```bash
+npx skills add jwilger/agent-skills --all
+```
 
 ## Migrating from v4.0 to v4.1
 
