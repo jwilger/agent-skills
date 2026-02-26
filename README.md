@@ -139,24 +139,149 @@ when used alone.
 The dependency graph is a DAG (no circular dependencies). Skills reference
 each other by name but never assume internal structure.
 
-## Harness Compatibility
+## Setup by Harness
 
-| Harness | Skills | TDD Strategy | Factory Pipeline | Optional Hardening |
-|---------|--------|--------------|------------------|--------------------|
-| Claude Code | All | Agent teams, serial subagents, chaining | Full (parallel slices in git worktrees, persistent pairs) | Hook templates available |
-| Codex | All | Serial subagents, chaining | Supported (serial execution) | -- |
-| Cursor / Windsurf | All | Chaining, guided | Supported (chaining mode) | -- |
-| OpenCode | All | Chaining, guided | Degraded (advisory gates) | -- |
-| Goose | All | Chaining, guided | Degraded (advisory gates) | -- |
-| Amp | All | Guided | Degraded (advisory gates) | -- |
-| Aider | All | Guided | Degraded (advisory gates) | -- |
+All skills work on every harness. The `tdd` skill auto-detects available
+delegation primitives and selects the best execution strategy automatically.
+What differs is the *level of enforcement* and the available *execution
+strategies*. Choose your harness below for specific setup guidance.
 
-Skills work on every harness. The `tdd` skill auto-detects available
-delegation primitives and selects the best execution strategy. The factory
-pipeline adapts to harness capabilities: full structural enforcement on
-Claude Code, serial execution on Codex, and advisory-mode gate checking
-on harnesses without delegation primitives. Optional hook templates
-provide mechanical enforcement on Claude Code.
+### Claude Code (Full Capability)
+
+Claude Code provides the richest experience: agent teams, serial subagents,
+hooks for mechanical enforcement, and parallel pipeline execution.
+
+**Install skills:**
+```bash
+npx skills add jwilger/agent-skills --all
+```
+
+**Run bootstrap** to detect capabilities and configure your project:
+```
+/bootstrap
+```
+
+Bootstrap will detect Claude Code's full tool set (TeamCreate, Task,
+AskUserQuestion) and recommend automated TDD mode with agent teams.
+
+**Optional: Install plugins for mechanical enforcement.**
+Plugins are separate from skills -- they add hooks and custom agents on
+top of the advisory guidance that skills provide. Skills must be installed
+first; plugins cannot substitute for them.
+
+To use a plugin, point Claude Code at the plugin directory:
+```bash
+claude --plugin-dir ./plugins/tdd-enforcement
+```
+
+Or install multiple plugins:
+```bash
+claude --plugin-dir ./plugins/tdd-enforcement \
+       --plugin-dir ./plugins/pipeline-agents \
+       --plugin-dir ./plugins/session-tools
+```
+
+**What you get:**
+- TDD via persistent ping-pong pair teams (agent teams strategy)
+- Factory pipeline with parallel slice execution in git worktrees
+- Optional hook-based phase boundary enforcement (blocks unauthorized edits)
+- Custom agents with `disallowedTools` for role boundary enforcement
+- Session state auto-save/restore across context compactions
+
+### Codex
+
+Codex supports subagent spawning, giving you isolated per-phase TDD agents.
+
+**Install skills:**
+```bash
+npx skills add jwilger/agent-skills --all
+```
+
+**Run bootstrap** in your Codex session. It will detect the Task tool and
+recommend automated TDD mode with serial subagents.
+
+**What you get:**
+- TDD via serial subagents (each phase runs in an isolated agent)
+- Structural enforcement via handoff schemas (missing evidence blocks
+  the next phase)
+- Factory pipeline in serial execution mode
+- No plugins (Codex does not support Claude Code plugins)
+
+### Cursor / Windsurf
+
+These editors support skill loading but not agent delegation primitives.
+
+**Install skills:**
+```bash
+npx skills add jwilger/agent-skills --all
+```
+
+For Cursor, skills are loaded from `.cursor/rules/`. For Windsurf, check
+your editor's agent skill configuration. Bootstrap will detect the
+harness type and generate the appropriate instruction files.
+
+**Run bootstrap** in your editor's agent chat. It will detect chaining
+mode and recommend either automated (chaining) or guided TDD.
+
+**What you get:**
+- TDD via chaining (agent plays each role sequentially in one context)
+- Advisory enforcement (agent self-enforces phase boundaries by convention)
+- Factory pipeline in chaining mode (quality gates still enforce, but no
+  isolated subagents)
+- Self-verification checklists at each phase transition
+
+**Tip:** Use guided TDD mode (`/tdd red`, `/tdd green`, etc.) if you want
+explicit control over phase transitions. The agent will load phase-specific
+reference files and guide you through each step.
+
+### OpenCode / Goose
+
+These harnesses support skill loading with basic agent capabilities.
+
+**Install skills:**
+```bash
+npx skills add jwilger/agent-skills --all
+```
+
+**Run bootstrap.** It will detect available capabilities and configure
+accordingly (typically chaining or guided mode).
+
+**What you get:**
+- TDD in chaining or guided mode
+- Advisory enforcement only
+- Factory pipeline in degraded mode (advisory gates -- the agent checks
+  quality but cannot structurally prevent violations)
+- All skills provide value as advisory guidance
+
+### Amp / Aider / Other Harnesses
+
+Any harness that supports the [Agent Skills specification](https://agentskills.io/specification)
+can use these skills.
+
+**Install skills:**
+```bash
+npx skills add jwilger/agent-skills --all
+```
+
+**Run bootstrap** if your harness supports it, or manually load skills
+by referencing the SKILL.md files.
+
+**What you get:**
+- TDD in guided mode (`/tdd red`, `/tdd green`, `/tdd domain`, `/tdd commit`)
+- Advisory enforcement (practices by convention, self-check checklists)
+- Factory pipeline in advisory mode
+- Full value from all skill content -- the practices, checklists, and
+  domain modeling guidance work regardless of enforcement level
+
+### Capability Summary
+
+| Harness | TDD Strategy | Pipeline Mode | Enforcement Level |
+|---------|-------------|---------------|-------------------|
+| Claude Code | Agent teams | Full (parallel worktrees) | Mechanical (hooks) + Structural + Advisory |
+| Codex | Serial subagents | Serial | Structural (handoff schemas) + Advisory |
+| Cursor / Windsurf | Chaining | Chaining | Advisory (self-enforcement) |
+| OpenCode / Goose | Chaining / Guided | Advisory gates | Advisory |
+| Amp / Aider | Guided | Advisory gates | Advisory |
 
 ## Factory Pipeline (v4.0+)
 
@@ -360,8 +485,10 @@ tools.
 | `session-tools` | PreCompact auto-save, SessionStart context restore, Stop session reflection |
 
 Plugins live in the `plugins/` directory with a marketplace manifest at
-`.claude-plugin/marketplace.json`. Skills remain the single source of
-truth -- plugins add mechanical enforcement on top of advisory guidance.
+`.claude-plugin/marketplace.json`. **Plugins are separate from skills** --
+they add mechanical enforcement on top of advisory skill guidance but do
+not install or replace skills. Install skills first via `npx skills add`,
+then optionally add plugins for enforcement hardening.
 
 ## Installing Individual Skills
 
