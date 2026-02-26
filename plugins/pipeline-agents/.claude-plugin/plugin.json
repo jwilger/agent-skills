@@ -8,6 +8,5 @@
   },
   "repository": "https://github.com/jwilger/agent-skills",
   "license": "CC0-1.0",
-  "keywords": ["pipeline", "agents", "factory", "role-boundaries"],
-  "agents": "./agents/"
+  "keywords": ["pipeline", "agents", "factory", "role-boundaries"]
 }
