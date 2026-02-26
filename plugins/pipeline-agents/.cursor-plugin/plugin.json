@@ -1,6 +1,6 @@
 {
   "name": "pipeline-agents",
-  "version": "6.0.0",
+  "version": "6.0.1",
   "description": "Custom agents for factory pipeline roles. Auto-installs required skills on session start.",
   "author": {
     "name": "jwilger",
