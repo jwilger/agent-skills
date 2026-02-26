@@ -1,0 +1,17 @@
+{
+  "version": 1,
+  "hooks": {
+    "sessionStart": [
+      {
+        "type": "command",
+        "command": "cd \"${CURSOR_PROJECT_DIR:-$CLAUDE_PROJECT_DIR}\" && m=\"\"; for s in ensemble-team task-management agent-coordination; do [ -f \"skills/$s/SKILL.md\" ] || m=\"$m --skill $s\"; done; [ -z \"$m\" ] && echo '{\"additional_context\":\"ensemble-coordinator: all required skills present.\"}' || { npx skills add jwilger/agent-skills $m >&2 2>&1 || true; echo '{\"additional_context\":\"ensemble-coordinator: auto-installed missing skills.\"}'; }",
+        "timeout": 60
+      },
+      {
+        "type": "command",
+        "command": "cd \"${CURSOR_PROJECT_DIR:-$CLAUDE_PROJECT_DIR}\" && if [ -f .team/coordinator-instructions.md ]; then echo '{\"additional_context\": \"Ensemble team detected. Read .team/coordinator-instructions.md before taking any action. You are the coordinator — you facilitate, you do not implement.\"}'; else echo '{}'; fi",
+        "timeout": 10
+      }
+    ]
+  }
+}
