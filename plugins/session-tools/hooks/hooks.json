@@ -19,6 +19,12 @@
         "hooks": [
           {
             "type": "command",
+            "command": "cd \"$CLAUDE_PROJECT_DIR\" && ${CLAUDE_PLUGIN_ROOT}/scripts/ensure-skills.sh",
+            "statusMessage": "Checking required skills for session-tools...",
+            "timeout": 60
+          },
+          {
+            "type": "command",
             "command": "${CLAUDE_PLUGIN_ROOT}/scripts/restore-state.sh",
             "statusMessage": "Restoring session context...",
             "timeout": 30

@@ -1,0 +1,17 @@
+{
+  "hooks": {
+    "SessionStart": [
+      {
+        "matcher": "startup|resume",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "cd \"$CLAUDE_PROJECT_DIR\" && ${CLAUDE_PLUGIN_ROOT}/scripts/ensure-skills.sh",
+            "statusMessage": "Checking required skills for pipeline-agents...",
+            "timeout": 60
+          }
+        ]
+      }
+    ]
+  }
+}
