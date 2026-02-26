@@ -95,10 +95,11 @@ If the script fails (non-zero exit), **stop immediately** and report the error.
 
 ## Step 9: Stage and Commit
 
-Stage the VERSION file:
+Stage all files modified by the bump script:
 
 ```bash
 git add VERSION
+git add -u .claude-plugin/ plugins/
 ```
 
 Commit with the message:
