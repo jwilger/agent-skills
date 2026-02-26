@@ -18,6 +18,12 @@
         "hooks": [
           {
             "type": "command",
+            "command": "cd \"$CLAUDE_PROJECT_DIR\" && ${CLAUDE_PLUGIN_ROOT}/scripts/ensure-skills.sh",
+            "statusMessage": "Checking required skills for ensemble-coordinator...",
+            "timeout": 60
+          },
+          {
+            "type": "command",
             "command": "cd \"$CLAUDE_PROJECT_DIR\" && if [ -f .team/coordinator-instructions.md ]; then echo '{\"systemMessage\": \"Ensemble team detected. Read .team/coordinator-instructions.md before taking any action. You are the coordinator — you facilitate, you do not implement.\"}'; else echo '{}'; fi",
             "timeout": 10
           }

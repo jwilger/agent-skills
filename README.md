@@ -165,9 +165,9 @@ Bootstrap will detect Claude Code's full tool set (TeamCreate, Task,
 AskUserQuestion) and recommend automated TDD mode with agent teams.
 
 **Optional: Install plugins for mechanical enforcement.**
-Plugins are separate from skills -- they add hooks and custom agents on
-top of the advisory guidance that skills provide. Skills must be installed
-first; plugins cannot substitute for them.
+Plugins add hooks and custom agents on top of the advisory guidance that
+skills provide. Each plugin auto-installs its required skills on session
+start — you don't need to install skills separately when using plugins.
 
 To use a plugin, point Claude Code at the plugin directory:
 ```bash
@@ -485,10 +485,18 @@ tools.
 | `session-tools` | PreCompact auto-save, SessionStart context restore, Stop session reflection |
 
 Plugins live in the `plugins/` directory with a marketplace manifest at
-`.claude-plugin/marketplace.json`. **Plugins are separate from skills** --
-they add mechanical enforcement on top of advisory skill guidance but do
-not install or replace skills. Install skills first via `npx skills add`,
-then optionally add plugins for enforcement hardening.
+`.claude-plugin/marketplace.json`.
+
+**Automatic skill installation:** Each plugin includes a `SessionStart`
+hook that checks for its required skills on every session start. If any
+skills are missing, the plugin auto-installs them via `npx skills add`.
+You do not need to install skills manually when using a plugin — the
+plugin handles it.
+
+**Without plugins (all other harnesses):** Install skills manually via
+`npx skills add`. Skills check for dependencies at activation time and
+recommend installation commands for any missing dependencies, but cannot
+auto-install on harnesses without hook support.
 
 ## Installing Individual Skills
 
