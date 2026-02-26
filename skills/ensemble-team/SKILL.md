@@ -185,15 +185,21 @@ location based on the type of decision:
 
 **The 10 topics** (non-exhaustive — team may add more):
 1. How do we decide what to build?
-2. How does the Driver-Reviewer mob model work?
-3. When is a piece of work "done"?
+2. How does the Driver-Reviewer mob model work? *(essential)*
+3. When is a piece of work "done"? *(essential)*
 4. What is our commit and integration pipeline?
 5. How do we resolve disagreements?
-6. What are our code conventions?
+6. What are our code conventions? *(essential)*
 7. When and how do we hold retrospectives?
 8. What are our architectural principles?
 9. How do we communicate as a team?
 10. What tooling and repository conventions do we follow?
+
+**Quick formation option:** For projects where the 10-topic session would
+consume too much context before any code is written, offer the user a
+"quick formation" that covers only the 3 essential topics (2, 3, 6). The
+remaining topics defer to the first retrospective. Quick formation is
+recommended for solo-plus presets and spike/prototype work.
 
 Each topic includes the **problem** it addresses and **sub-questions** to guide
 discussion. The team's answers become their conventions and decisions — not pre-canned
@@ -273,8 +279,12 @@ Non-negotiable aspects baked in from production experience.
 
 **PREREQUISITE**: Read `references/lessons-learned.md` before proceeding.
 
-- Named team members only: every agent spawned for team work MUST be a named
-  member from `.team/`. Never use generic background agents for team activities.
+- **Named team members only (HARD RULE):** When `.team/` directory exists
+  with member profiles, every agent spawned for team work MUST be a named
+  member created via TeamCreate, not a generic Task agent. Never spawn
+  anonymous background agents for team activities (retros, reviews, coding,
+  facilitated sessions). Violation of this rule is the most common failure
+  mode observed in practice.
 - Consensus before push (review locally, then push)
 - Refactor step is mandatory every commit
 - CI wait rule (never queue multiple CI runs)
@@ -293,6 +303,12 @@ Non-negotiable aspects baked in from production experience.
 - Compressed active-context form on every profile
 - Stand-aside means deference, not disapproval
 - File-based reviews survive context compaction (messaging supplements, not replaces)
+- Phase discipline in facilitated sessions: when a team member is facilitating
+  a multi-phase process (event modeling, design sessions), other team members
+  MUST stay in the current phase. The facilitator gates transitions.
+- Selective activation during build phase: activate only the TDD pair and
+  domain reviewer during implementation. Full team activation is reserved for
+  planning, formation, review, and retrospectives.
 
 ## Factory Mode (Optional)
 

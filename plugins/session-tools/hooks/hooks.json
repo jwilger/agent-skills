@@ -1,0 +1,41 @@
+{
+  "hooks": {
+    "PreCompact": [
+      {
+        "matcher": "auto|manual",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "${CLAUDE_PLUGIN_ROOT}/scripts/auto-save-state.sh",
+            "statusMessage": "Saving session state before compaction...",
+            "timeout": 30
+          }
+        ]
+      }
+    ],
+    "SessionStart": [
+      {
+        "matcher": "startup|resume",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "${CLAUDE_PLUGIN_ROOT}/scripts/restore-state.sh",
+            "statusMessage": "Restoring session context...",
+            "timeout": 30
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "prompt",
+            "prompt": "SESSION REFLECTION CHECK\n\nBefore ending this session, consider:\n\n1. Were there 3+ user corrections on any topic? If yes, update the system prompt.\n2. Is WORKING_STATE.md current? If not, update it now.\n3. Are there any uncommitted changes? If yes, commit or stash them.\n4. Were there any recurring patterns worth adding to memory?\n\nTake appropriate action, then respond with: {\"ok\": true}",
+            "timeout": 120
+          }
+        ]
+      }
+    ]
+  }
+}

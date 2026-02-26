@@ -77,6 +77,21 @@ response. If the harness provides task completion notifications, use those.
 - Periodically re-read a file to see if it changed
 - Set arbitrary timeouts after which you "check in"
 
+### Patience Is Non-Negotiable
+
+After dispatching an agent to do work, the orchestrator MUST NOT:
+- Read the agent's output files to "check progress"
+- Compile the agent's code to "verify"
+- Re-read state files to "see what happened"
+- Narrate ongoing status to the user
+- Attempt any action related to the dispatched work
+
+Wait for the explicit completion message. Silence means working. Even
+if you receive many idle notifications, take no action. Even if you feel
+anxious that "enough time has passed," take no action. Even if a loop
+cycles you back, check whether agents are still active before doing
+anything.
+
 ### Intervention Criteria
 
 Explicit rules for when to act versus when to wait.
@@ -94,6 +109,25 @@ Explicit rules for when to act versus when to wait.
 - Wanting to help or feeling anxious about progress
 - Silence (silence means working, not stuck)
 
+### File-Based Communication as Default
+
+Any substantive data exchange between agents (review feedback, handoff
+evidence, retrospective notes, TDD phase evidence) MUST be file-based.
+Messages are coordination signals only (e.g., "review ready at
+`.reviews/alice-task.md`"). This protects against context compaction
+destroying inter-agent communication history.
+
+**Do:**
+- Write review findings to `.reviews/<reviewer>-<task>.md`
+- Write retrospective observations to `.reviews/retro/<member>.md`
+- Write handoff evidence to audit trail files
+- Use messages to signal "file is ready" or "please review"
+
+**Do not:**
+- Send large code snippets or review feedback as message content
+- Rely on message history surviving context compaction
+- Use messages as the primary record of decisions or findings
+
 ### Sequential Agent Spawning
 
 When creating multiple agents, spawn one at a time. Wait for each agent to
@@ -102,12 +136,23 @@ agents compete for shared resources (files, ports, database state).
 
 **Exception:** Truly independent agents with no shared state may be spawned
 in parallel. "Independent" means no shared files, no shared database, no
-shared network ports, and no shared git working tree.
+shared network ports, and no shared git working tree. Profile generation,
+independent research, and isolated file creation are all parallelizable.
+
+### Agent Identity Resolution
+
+When spawning agents that need to communicate with each other, always
+include each agent's exact registered name (case-sensitive) in the other
+agent's initial context. Mismatched names silently fail to deliver messages.
+
+Include a line in each agent's spawn context:
+"Your partner's exact SendMessage name is: [Name Here]"
 
 ### Agent Lifecycle Management
 
 Never prematurely shut down an agent. Never shut down an agent that has
-undelivered work.
+undelivered work. Agents that create PRs do NOT have merge authority by
+default — only the orchestrator or pipeline controller merges.
 
 **Shutdown protocol:**
 1. Send a shutdown request through the proper harness mechanism
@@ -154,9 +199,12 @@ After completing work guided by this skill, verify:
 - [ ] No follow-up messages sent before receiving a reply
 - [ ] No action taken on idle notifications alone
 - [ ] No polling loops or sleep-check patterns used
-- [ ] Agents spawned sequentially with acknowledgment between each
+- [ ] Agents spawned sequentially with acknowledgment between each (parallel only for truly independent work)
 - [ ] No agent shut down prematurely or with undelivered work
 - [ ] Shutdown used proper request/response protocol
+- [ ] Substantive data exchanges were file-based (not message-only)
+- [ ] Agent spawn contexts included exact recipient names for communication partners
+- [ ] No status checking or file reading while agents were actively working
 
 If any criterion is not met, revisit the relevant practice before proceeding.
 

@@ -54,6 +54,13 @@ Each team member writes their observations independently to
 - Proposals must be concrete ("add X check to review checklist") not
   abstract ("improve code quality").
 
+**File count gate:** The coordinator MUST verify that at least N distinct
+team members wrote observation files to `.reviews/retro/` before
+proceeding to Phase 3. Count the files: `ls .reviews/retro/*-<date>.md`.
+If fewer than the expected number of members contributed, the coordinator
+prompts the missing members before synthesizing. A single-agent summary
+masquerading as a team retrospective is a protocol violation.
+
 **Anti-pattern: Single-agent retro.** One agent reading all profiles and
 generating "observations" for each member. This produces bland, uniform
 observations that lack the creative tension of real disagreement.

@@ -46,12 +46,27 @@ rework budget. No gate may be skipped or softened.
 }
 ```
 
-**Boundary validation rule:** Missing or empty `boundary_type` = gate FAIL.
-A `boundary_type` that describes only internal function calls (e.g., calling
-a handler or service method directly without going through an external
-boundary) = gate FAIL. The `boundary_evidence` field must describe a
-concrete external interaction (HTTP request, CLI invocation, message
-published, browser action, etc.).
+**Boundary validation rules:**
+
+- Missing or empty `boundary_type` = gate FAIL.
+- A `boundary_type` describing only internal function calls = gate FAIL.
+- The `boundary_evidence` must describe a concrete external interaction.
+
+**Web app boundary rule:** When the slice has `ui_components_referenced`
+(i.e., it touches the UI), `boundary_type: "HTTP"` with evidence describing
+only API calls = gate FAIL. The boundary MUST be `"Browser"` or
+`"UI Automation"`, and `boundary_evidence` MUST describe browser automation
+that renders the page, performs user interactions, and asserts on visible
+DOM state. An HTTP-only test does not verify that the UI was built or is
+navigable.
+
+Required evidence for web app slices:
+```json
+{
+  "boundary_type": "Browser",
+  "boundary_evidence": "Opens order form in browser, fills item/quantity fields, clicks Submit, waits for confirmation message in DOM"
+}
+```
 
 **Failure routing:** Back to the TDD pair with the failing test output and
 domain review concerns. The pair resumes from the failing phase (RED if the
@@ -68,7 +83,13 @@ concerns).
 - Stage 1 (Spec Compliance): PASS -- every acceptance criterion mapped to code
   and tests, no FAIL or unresolved CONCERN items
 - Stage 2 (Code Quality): PASS -- no CRITICAL findings, all IMPORTANT findings
-  addressed
+  addressed. **If the slice touches UI**, additionally verify:
+  - No hard-coded color, spacing, or sizing values in components (all
+    must reference design tokens)
+  - Component names match the design system catalog
+  - Components compose atoms/molecules/organisms from the catalog (no
+    raw unsystematized markup)
+  - Findings on design token violations are severity IMPORTANT
 - Stage 3 (Domain Integrity): PASS -- no domain boundary violations flagged as
   blocking
 

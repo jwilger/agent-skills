@@ -68,6 +68,12 @@ changes only, separate commit).
 A compilation failure IS a test failure. Do not pre-create types to avoid
 compilation errors. Types flow FROM tests, never precede them.
 
+**Unexpected failures trigger debugging.** When a test fails in GREEN phase
+with an error you did NOT expect, switch to the `debugging-protocol`
+skill's Phase 1 before making any code change. The expected failure (from
+RED) is not the same as an unexpected failure. Expected failures guide
+implementation; unexpected failures require investigation.
+
 Domain review has veto power over primitive obsession and invalid-state
 representability. Vetoes escalate to the human after two rounds.
 
@@ -98,15 +104,10 @@ When automated mode activates, detect available primitives in this order:
 Select the most capable strategy available. Do not attempt a higher strategy
 when its primitives are missing.
 
-**You are the orchestrator.** The agent reading this file performs capability
-detection and dispatches directly. Do NOT spawn a single "orchestrator"
-subagent to do it for you -- that hides work, bypasses strategy detection,
-and pre-selects the wrong strategy. Whether you were invoked by `/tdd`, by
-the pipeline, or by any other caller: you detect capabilities, you choose
-the strategy, you create the team or spawn the phase agents yourself.
-
-**After determining your strategy, read ONLY the entry-point file for that
-strategy:**
+**You are the orchestrator.** Detect capabilities and dispatch directly.
+Do NOT spawn a separate "orchestrator" subagent — that hides work and
+bypasses strategy detection. Read ONLY the entry-point file for your
+chosen strategy:
 
 | Strategy | Entry-point file |
 |----------|-----------------|
@@ -114,15 +115,8 @@ strategy:**
 | Serial subagents | `references/orchestrator.md` |
 | Chaining | (no entry file -- follow the chaining section below) |
 
-Do NOT read `orchestrator.md` when using agent teams. Do NOT read
-`ping-pong-pairing.md` when using serial subagents. Each file assumes its
-own strategy's execution model.
-
-Both `orchestrator.md` and `ping-pong-pairing.md` reference
-`references/shared-rules.md` for rules that apply to all strategies (domain
-veto, outside-in progression, pipeline integration, pre-implementation
-context checklist). Read `shared-rules.md` when directed by your strategy's
-entry-point file.
+Read only YOUR strategy's entry-point. Both reference `shared-rules.md`
+for cross-strategy rules (domain veto, outside-in, pipeline integration).
 
 ### Execution Strategy: Chaining (Fallback)
 
@@ -142,35 +136,17 @@ boundaries: only edit file types permitted by the current phase (see
 
 ### Execution Strategy: Serial Subagents
 
-Used when the Task tool is available for spawning focused subagents. Each
-phase runs in an isolated subagent with constrained scope.
-
-- Spawn each phase agent using the prompt template in `references/{phase}-prompt.md`.
-- The orchestrator follows `references/orchestrator.md` for coordination rules.
-- **Structural handoff schema** (`references/handoff-schema.md`): every phase
-  agent must return evidence fields (test output, file paths changed, domain
-  concerns). Missing evidence fields = handoff blocked. The orchestrator does
-  not proceed to the next phase until the schema is satisfied.
-- Context isolation provides structural enforcement: each subagent receives
-  only the files relevant to its phase.
+Used when the Task tool is available. Each phase runs in an isolated
+subagent. The orchestrator follows `references/orchestrator.md`. Handoff
+schema (`references/handoff-schema.md`) requires evidence fields at each
+transition — missing evidence blocks the next phase.
 
 ### Execution Strategy: Agent Teams
 
-Used when TeamCreate is available for persistent agent sessions. Maximum
-enforcement through role specialization and persistent team context.
-
-- Follow `references/ping-pong-pairing.md` for three-member team lifecycle
-  (ping, pong, domain reviewer), sequential spawning, structured handoffs,
-  and iterative GREEN discipline.
-- All three members persist for the entire TDD cycle of a vertical slice.
-  Handoffs happen via lightweight structured messages, not agent recreation.
-- Track pairing history in `.team/pairing-history.json`. Do not repeat either
-  of the last 2 ping/pong combinations. Domain reviewer may repeat.
-- Spawn agents sequentially: ping first (wait for RED evidence), then domain
-  reviewer (wait for review), then pong (wait for GREEN). Never spawn all
-  at once.
-- The orchestrator monitors and intervenes only for external clarification
-  routing or blocking disagreements.
+Used when TeamCreate is available. Three-member team (ping, pong, domain
+reviewer) persists for the entire slice. Follow
+`references/ping-pong-pairing.md` for lifecycle, sequential spawning,
+and structured handoffs. Spawn agents sequentially — never all at once.
 
 ### Phase Boundary Rules
 
@@ -205,30 +181,17 @@ acceptance test passes.
 A test that calls internal functions directly is a unit test, not an acceptance
 test -- even if it asserts on user-visible behavior.
 
-**Boundary enforcement by mode:**
-- **Pipeline mode:** The CYCLE_COMPLETE evidence must include `boundary_type`
-  and `boundary_evidence` on the acceptance test. The pipeline's TDD gate
-  rejects evidence where the acceptance test calls internal functions directly.
-- **Automated mode (non-pipeline):** The orchestrator checks boundary scope
-  and re-delegates if the first test is not a boundary test. Advisory -- no
-  gate blocks progression.
-- **Guided mode:** The human is responsible for ensuring boundary-level tests.
-  The skill text instructs correct behavior but cannot enforce it.
+Boundary enforcement scales with mode: pipeline mode mechanically gates on
+`boundary_type` evidence, automated mode advises, guided mode relies on
+the human. See `references/shared-rules.md` for boundary identification
+by project type.
 
 ### Cycle-Complete Evidence
 
-At the end of each complete RED-DOMAIN-GREEN-DOMAIN-COMMIT cycle, produce
-a CYCLE_COMPLETE evidence packet containing: slice_id, acceptance_test
-{file, name, output, boundary_type, boundary_evidence}, unit_tests
-{count, all_passing, output}, domain_reviews [{phase, verdict, concerns}],
-commits [{hash, message}], rework_cycles, team {ping, pong, domain_reviewer}.
-
-When `pipeline-state` is provided in context metadata, the TDD skill
-operates in **pipeline mode**: it receives a `slice_id` and stores
-evidence to `.factory/audit-trail/slices/<slice-id>/tdd-cycles/cycle-NNN.json`.
-When running standalone, the evidence is informational only (not stored).
-
-See `references/cycle-evidence.md` for full schema.
+At the end of each cycle, produce a CYCLE_COMPLETE evidence packet. When
+`pipeline-state` is provided, store evidence to
+`.factory/audit-trail/slices/<slice-id>/tdd-cycles/`. See
+`references/cycle-evidence.md` for the full schema.
 
 ### Harness-Specific Guidance
 
@@ -268,8 +231,10 @@ After completing a cycle, verify:
 - [ ] Evidence (test output) was provided at each handoff
 - [ ] Commit exists for every completed RED-GREEN cycle
 - [ ] GREEN phase iterated one failure at a time (not full implementation in one pass)
+- [ ] GREEN evidence includes intermediate test outputs showing progression (not a single jump)
 - [ ] Working tree clean after every COMMIT (`git status` verified)
 - [ ] Walking skeleton completed first (first vertical slice)
+- [ ] Walking skeleton acceptance test exercises the actual application boundary (not internal function calls)
 
 **HARD GATE -- COMMIT (must pass before any new RED phase):**
 

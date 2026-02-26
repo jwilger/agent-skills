@@ -38,6 +38,12 @@ corrections from the user, session restart or crash recovery, every 5
 completed tasks, and on explicit user request. Do not wait for a "good time"
 -- reflect when triggered.
 
+**The 3-correction trigger is a HARD REQUIREMENT, not a suggestion.** If
+the user has corrected you 3 times on any topic, IMMEDIATELY invoke
+session-reflection. Count explicit corrections (user telling you to do
+something differently) and implicit corrections (user interrupting to do
+something themselves). Do not defer because "now is not a good time."
+
 ### Analyze Session History
 
 Examine conversation history, git log, memory files, WORKING_STATE.md, and
@@ -93,6 +99,20 @@ root (standalone). See `references/working-state-schema.md` for format.
 - Guess state from memory after a compaction or restart
 - Use as a journal -- keep it concise and current
 - Skip updates because "nothing important changed"
+
+### Context Budget Awareness
+
+When beginning a task with more than 10 discrete items, proactively write
+incremental status to a scratch file (e.g., `.factory/session-status.md`)
+after every 3-5 completed items. This enables continuation sessions to
+resume efficiently without re-reading all completed work.
+
+### Continuation Summary Requirements
+
+When generating or reading a continuation summary, verify it includes:
+current role and its constraints, active team members and their tasks,
+the specific gate/stage the pipeline is at. If the summary omits role
+constraints, re-derive them from the skill files before proceeding.
 
 ### Post-Session Learning Loop
 

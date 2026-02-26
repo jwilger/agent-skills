@@ -86,6 +86,34 @@ For each user interaction point, create an ASCII wireframe showing:
 Every wireframe field must trace to an event field (displays) or a command
 input (inputs). If you cannot trace a field, something is missing.
 
+### Wireframe-to-Component Mapping
+
+When a design system exists (or will be created), map each wireframe element
+to design system components:
+
+1. **Identify every interactive and display element** in the wireframe
+   (buttons, inputs, labels, lists, cards, forms, etc.)
+2. **Map each element to a design system component** (or note if a new
+   component is needed): which atoms (Button, Input, Label), molecules
+   (FormField, SearchBar), and organisms (Form, Table, Card)?
+3. **Create a component checklist** for the slice:
+   ```
+   Components for OrderForm wireframe:
+   - [ ] OrderItemList (organism) ← displays Order read model items
+   - [ ] PriceInput (molecule) ← captures price for PlaceOrder command
+   - [ ] SubmitButton (atom) ← triggers PlaceOrder command
+   Status: All exist in design system ✓ / NewComponentNeeded ✗
+   ```
+4. **Verify component traceability:**
+   - Every wireframe field displaying data traces to a read model AND a
+     named component
+   - Every wireframe field accepting input feeds a command AND uses a
+     named component
+   - Every component exists in the design system or is flagged as new
+
+If no design system exists yet, flag components as "to-be-designed" and note
+them as a prerequisite before implementation.
+
 ### Concurrency Check
 
 If the domain supports concurrent instances (e.g., multiple orders, multiple
@@ -240,6 +268,15 @@ List all vertical slices grouped by pattern type:
 
 A good slice is: a complete user interaction, independently valuable,
 testable in isolation, small enough for 1-2 days of work.
+
+**For slices with a presentation layer**, the slice definition MUST include:
+- **Component list:** Which design system components implement the wireframe
+- **Data binding:** Which component fields bind to which read model fields
+- **User actions:** Which components trigger which commands
+- **New components needed:** Which components are not yet in the design system
+
+A slice that specifies backend behavior without specifying its UI components
+is incomplete — implementation agents will build the API and skip the front-end.
 
 Bad slices: "Set up database" (technical, no user value), "Implement order
 system" (too broad), "Create Order table" (implementation detail).

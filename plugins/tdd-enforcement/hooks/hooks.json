@@ -1,0 +1,49 @@
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "agent",
+            "prompt": "TDD PHASE BOUNDARY ENFORCEMENT\n\nYou are enforcing TDD phase boundaries. The hook input is: $ARGUMENTS\n\n1. Extract file_path from tool_input.\n2. Determine the current TDD phase by examining the conversation context:\n   - Look for phase indicators: 'RED phase', 'GREEN phase', 'DOMAIN phase', 'COMMIT phase'\n   - Look for agent role indicators: 'red agent', 'green agent', 'domain agent'\n3. Apply phase boundary rules:\n\n   RED phase: ALLOW only test files (paths containing tests/, __tests__/, spec/, test/ or files matching *_test.*, *.test.*, test_*.*, *_spec.*). DENY all other files.\n\n   GREEN phase: ALLOW only production/implementation files (paths in src/, lib/, app/ or clearly implementation code). DENY test files and type-only definition files.\n\n   DOMAIN phase: ALLOW only type definition files (structs, enums, traits, interfaces with stub bodies). DENY test files and files with real implementation logic.\n\n   COMMIT phase: DENY all file edits. Commit phase is git operations only.\n\n4. If you cannot determine the current phase, ALLOW the edit (do not block when uncertain).\n\nRespond with JSON:\n- Allow: {\"hookSpecificOutput\": {\"hookEventName\": \"PreToolUse\", \"permissionDecision\": \"allow\"}}\n- Deny: {\"hookSpecificOutput\": {\"hookEventName\": \"PreToolUse\", \"permissionDecision\": \"deny\", \"permissionDecisionReason\": \"[phase] agent can only edit [allowed file types]. This file is [file type].\"}}",
+            "timeout": 60
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "prompt",
+            "prompt": "POST-EDIT TEST EVIDENCE GATE\n\nA file was just edited or created. You MUST run the test suite and paste the output before proceeding.\n\n- 'I expect it to fail' is not evidence.\n- 'Tests should pass now' is not evidence.\n- Run the tests. Paste the actual output.\n\nRespond with: {\"ok\": true}"
+          }
+        ]
+      }
+    ],
+    "SubagentStop": [
+      {
+        "matcher": ".*",
+        "hooks": [
+          {
+            "type": "prompt",
+            "prompt": "DOMAIN REVIEW CHECKPOINT\n\nA subagent just completed. Check the TDD cycle state:\n\n- If RED just completed: Domain review is MANDATORY before GREEN. The orchestrator must launch the domain reviewer next.\n- If GREEN just completed: Domain review is MANDATORY before COMMIT. The orchestrator must launch the domain reviewer next.\n- If DOMAIN just completed: Proceed normally.\n- If another agent type completed: Proceed normally.\n\nAlso verify: The orchestrator MUST NOT use Edit or Write tools directly. All file modifications go through phase agents.\n\nRespond with: {\"ok\": true}"
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "cd \"$CLAUDE_PROJECT_DIR\" && if [ -n \"$(git status --porcelain 2>/dev/null)\" ]; then echo '{\"decision\": \"block\", \"reason\": \"Working tree is not clean. Commit or stash changes before ending the session.\"}'; else echo '{\"continue\": true}'; fi",
+            "timeout": 10
+          }
+        ]
+      }
+    ]
+  }
+}

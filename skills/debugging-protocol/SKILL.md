@@ -98,6 +98,19 @@ Fix with confidence because you understand the root cause.
 
 **Output:** A fix backed by a test, with all tests green.
 
+### Schema and Configuration Debugging
+
+When debugging schema validation, configuration format, or tool integration
+issues, read the canonical documentation or source code FIRST. Do not rely
+on training-data assumptions about file formats, config schemas, or API
+signatures. Verify the fix works BEFORE committing — do not push potentially
+broken fixes.
+
+**TDD integration trigger:** When a test fails in the GREEN phase with an
+error you did NOT expect, switch to Phase 1 of this protocol before making
+any code change. The expected failure from RED is not an unexpected failure.
+If the failure surprises you, investigate before fixing.
+
 ### Escalation: Three Strikes Rule
 
 If three fix attempts fail, stop. The problem is not what you think it is.

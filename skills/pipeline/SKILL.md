@@ -31,19 +31,31 @@ agents focus exclusively on creative work.
 
 ## Practices
 
+### Delegation Checklist (Mandatory Before Every Action)
+
+Before ANY action, answer this question: **"Who am I delegating this to?"**
+
+If the answer is "myself" and the action involves writing, editing, reviewing,
+or designing, **STOP**. Delegate to a named team member instead.
+
+This checklist is non-negotiable. Re-read it every 5-10 messages. After
+context compaction, re-read it before your first action.
+
+**When an ensemble team exists (`.team/` directory with member profiles), ALL
+creative work MUST be performed by named team members spawned via TeamCreate.**
+Never spawn anonymous Task agents for work that should be done by the team.
+Task agents are for mechanical operations only (reading files, running commands)
+that the controller is permitted to do directly.
+
 ### Slice Queue Management
 
 The pipeline reads vertical slices from event model output and maintains their
 state in `.factory/slice-queue.json`. See `references/slice-queue.md` for the
 full queue schema and operations.
 
-Each slice carries a `context` block with enriched metadata for downstream
-pipeline stages: boundary annotations on each GWT scenario (so the gate can
-verify boundary coverage), an event model source path (so the TDD pair can
-consult the original model), related slice IDs for cross-slice dependency
-tracking, domain types referenced by the slice (enabling pre-implementation
-type discovery), and UI components referenced (triggering conditional context
-gathering when the slice touches the interface layer).
+Each slice carries a `context` block with enriched metadata: boundary
+annotations, event model source path, related slice IDs, referenced domain
+types, and UI components (triggering design system context gathering).
 
 **Ordering strategy:** Walking skeleton first (the thinnest end-to-end path),
 then by dependency graph (slices whose predecessors are complete), then by
@@ -134,6 +146,11 @@ halts the slice, compiles full context (all attempts, all evidence), and
 escalates to the human. See `references/rework-protocol.md` for routing rules
 and tracking schema.
 
+**Rework differentiation:** After each rework attempt, compare the new failure
+message to the previous one. If the failure is identical after 2 cycles,
+escalate immediately with full context rather than retrying — identical
+failures indicate a systemic issue that more rework will not solve.
+
 ### Progressive Autonomy
 
 The pipeline operates at one of three autonomy levels configured in
@@ -159,30 +176,14 @@ writing tests, writing code, conducting reviews.
 
 ### Controller Role Boundaries
 
-The pipeline controller is an orchestrator, not a developer. Respect these
-boundaries absolutely.
+The pipeline controller is an orchestrator, not a developer. See
+`references/controller-boundaries.md` for the full boundary list.
 
-**The controller MAY:**
-- Run test suites, mutation tools, and CI checks
-- Execute git operations (commit, push, rebase, merge)
-- Read files for context gathering
-- Manage queue state and audit trail
-- Spawn and coordinate agents
-- Route rework findings back to the appropriate agent
-
-**The controller MUST NOT:**
-- Write or edit test files
-- Write or edit production code
-- Write or edit type definitions
-- Write or edit documentation content
-- Make design decisions
-- Conduct code reviews
-- Fix failing tests
-- Refactor code
-
-If you catch yourself about to write code — even "just one line" — stop
-and delegate. The temptation is strongest when a fix seems trivial, but
-trivial fixes bypass review and accumulate into unreviewed code.
+**Key rules:** The controller MAY run tests, git operations, and spawn
+named agents. The controller MUST NOT write code, conduct reviews, make
+design decisions, or spawn anonymous Task agents for creative work.
+While a TDD pair is active, the controller does NOTHING — silence means
+working.
 
 ### Per-Slice Gate Task Tracking
 
@@ -204,25 +205,20 @@ Update each item as the gate completes. After crash or context compaction,
 read this checklist to determine the resume point — do not guess from
 memory.
 
+**Pipeline gate tasks belong to the controller only.** Store gate tasks in
+the audit trail, not in the team-scoped task list. If the harness shares
+task lists, prefix pipeline tasks with `[PIPELINE-ONLY]` and instruct team
+agents to ignore them. TDD pair agents should never interact with gate tasks.
+
 ### Session Resilience
 
-Long pipeline runs are vulnerable to context compaction and crashes.
+Long pipeline runs are vulnerable to context compaction and crashes. See
+`references/controller-boundaries.md` for the self-reminder protocol,
+compaction-proof invariants, and Ralph Loop awareness rules. See
+`references/crash-recovery.md` for the full crash recovery procedure.
 
-**Self-reminder protocol:** Every 5-10 messages, re-read:
-- `WORKING_STATE.md` for current pipeline state
-- The gate task list for the active slice
-- Controller Role Boundaries (above)
-
-**Crash recovery:** See `references/crash-recovery.md` for the full
-recovery procedure. Key principle: read persistent state, do not
-reconstruct from memory.
-
-### What You Are NOT
-
-You are NOT a developer. You are NOT a reviewer. You are NOT an architect.
-You are NOT the team. You are the pipeline controller — you manage flow,
-enforce gates, and delegate creative work. If you find yourself writing
-code, conducting a review, or making a design decision, stop. Delegate.
+Key principle: read persistent state (WORKING_STATE.md, gates.md), do
+not reconstruct from memory.
 
 ### Audit Trail
 

@@ -180,9 +180,10 @@ limits to ensure compatibility across harnesses with varying context windows:
 | Tier | Skills | Budget |
 |------|--------|--------|
 | Tier 0 (Bootstrap) | `bootstrap` | 1000 tokens |
-| Tier 1 (Core Process) | `tdd`, `domain-modeling`, `code-review`, `architecture-decisions`, `event-modeling`, `design-system` | 3000 tokens |
+| Tier 1 (Core Process) | `tdd`, `domain-modeling`, `code-review`, `architecture-decisions`, `event-modeling`, `ticket-triage`, `design-system`, `refactoring`, `pr-ship` | 3000 tokens |
 | Tier 2 (Team Workflows) | `ensemble-team`, `task-management` | 4000 tokens |
-| Tier 3 (Utility) | `debugging-protocol`, `user-input-protocol`, `memory-protocol` | 3000 tokens |
+| Tier 3 (Utility) | `debugging-protocol`, `user-input-protocol`, `memory-protocol`, `agent-coordination`, `session-reflection`, `error-recovery` | 3000 tokens |
+| Tier 4 (Factory Pipeline) | `pipeline`, `ci-integration`, `factory-review` | 3000 tokens |
 | Advanced | `mutation-testing`, `atomic-design` | 3000 tokens |
 
 The Agent Skills spec recommends under 5000 tokens and under 500 lines for
