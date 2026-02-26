@@ -1,6 +1,6 @@
 {
   "name": "session-tools",
-  "version": "1.0.0",
+  "version": "6.0.0",
   "description": "Session state management with auto-save and restore. Auto-installs required skills on session start.",
   "author": {
     "name": "jwilger",
@@ -8,6 +8,11 @@
   },
   "repository": "https://github.com/jwilger/agent-skills",
   "license": "CC0-1.0",
-  "keywords": ["session", "state", "reflection", "memory"],
+  "keywords": [
+    "session",
+    "state",
+    "reflection",
+    "memory"
+  ],
   "hooks": "./hooks/cursor-hooks.json"
 }

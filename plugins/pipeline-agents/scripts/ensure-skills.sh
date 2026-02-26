@@ -2,7 +2,7 @@
 # Verify required skills are installed; install missing ones.
 set -euo pipefail
 
-REQUIRED_SKILLS=(tdd pipeline code-review mutation-testing task-management ci-integration)
+REQUIRED_SKILLS=(tdd domain-modeling pipeline code-review mutation-testing task-management ci-integration debugging-protocol)
 MISSING=()
 
 for skill in "${REQUIRED_SKILLS[@]}"; do

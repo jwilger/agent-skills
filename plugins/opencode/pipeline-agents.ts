@@ -3,11 +3,13 @@ import type { Plugin } from "@opencode-ai/plugin"
 export const PipelineAgents: Plugin = async ({ $, directory }) => {
   const required = [
     "tdd",
+    "domain-modeling",
     "pipeline",
     "code-review",
     "mutation-testing",
     "task-management",
     "ci-integration",
+    "debugging-protocol",
   ]
   const missing: string[] = []
 

@@ -25,17 +25,6 @@
         ]
       }
     ],
-    "PostToolUse": [
-      {
-        "matcher": "Edit|Write",
-        "hooks": [
-          {
-            "type": "prompt",
-            "prompt": "POST-EDIT TEST EVIDENCE GATE\n\nA file was just edited or created. You MUST run the test suite and paste the output before proceeding.\n\n- 'I expect it to fail' is not evidence.\n- 'Tests should pass now' is not evidence.\n- Run the tests. Paste the actual output.\n\nRespond with: {\"ok\": true}"
-          }
-        ]
-      }
-    ],
     "SubagentStop": [
       {
         "matcher": ".*",

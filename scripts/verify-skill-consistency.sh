@@ -50,18 +50,22 @@ fi
 echo ""
 echo "--- Check 2: Required body sections ---"
 
-REQUIRED_SECTIONS=("Value" "Purpose" "Practices" "Enforcement Note" "Verification" "Dependencies")
+REQUIRED_HEADING_SECTIONS=("Purpose" "Practices" "Enforcement Note" "Verification" "Dependencies")
 
 for SKILL_NAME in "${SKILL_NAMES[@]}"; do
   SKILL_FILE="${REPO_ROOT}/skills/${SKILL_NAME}/SKILL.md"
 
-  for SECTION in "${REQUIRED_SECTIONS[@]}"; do
-    if ! grep -q "## ${SECTION}" "$SKILL_FILE" 2>/dev/null; then
-      # Some sections may use different heading formats
-      if ! grep -qi "${SECTION}" "$SKILL_FILE" 2>/dev/null; then
-        echo "  WARN: ${SKILL_NAME} may be missing section '${SECTION}'"
-        WARNINGS=$((WARNINGS + 1))
-      fi
+  # Check for **Value:** inline bold (not a heading per template)
+  if ! grep -q '\*\*Value' "$SKILL_FILE" 2>/dev/null; then
+    echo "  WARN: ${SKILL_NAME} may be missing '**Value:**' statement"
+    WARNINGS=$((WARNINGS + 1))
+  fi
+
+  # Check for ## heading sections
+  for SECTION in "${REQUIRED_HEADING_SECTIONS[@]}"; do
+    if ! grep -q "^## ${SECTION}" "$SKILL_FILE" 2>/dev/null; then
+      echo "  WARN: ${SKILL_NAME} may be missing section '## ${SECTION}'"
+      WARNINGS=$((WARNINGS + 1))
     fi
   done
 done

@@ -1,6 +1,6 @@
 {
   "name": "tdd-enforcement",
-  "version": "1.0.0",
+  "version": "6.0.0",
   "description": "Mechanical enforcement of TDD phase boundaries via hooks. Blocks file edits outside the current phase, verifies test output after edits, and enforces domain review gates.",
   "author": {
     "name": "jwilger",
@@ -8,6 +8,5 @@
   },
   "repository": "https://github.com/jwilger/agent-skills",
   "license": "CC0-1.0",
-  "keywords": ["tdd", "hooks", "enforcement", "phase-boundaries"],
-  "hooks": "./hooks/hooks.json"
+  "keywords": ["tdd", "hooks", "enforcement", "phase-boundaries"]
 }
