@@ -23,11 +23,16 @@ metadata:
 
 # Ensemble Team Setup
 
+**Value:** Communication and respect -- structured team collaboration with
+consensus-based decisions and continuous retrospectives.
+
+## Purpose
+
 Set up an AI ensemble programming team for any software project. Creates the full
 structure for a team of expert agents working in a single-driver mob programming style
 with consensus-based decisions, TDD, and continuous retrospectives.
 
-## Workflow
+## Practices
 
 ### Phase 1: Project Discovery
 
@@ -243,7 +248,7 @@ for its operating instructions. Suggest telling the coordinator what to build.
 - Harness config pointer (e.g., `CLAUDE.md`) — directs coordinator to read
   `.team/coordinator-instructions.md`
 
-## Retrospective Protocol
+### Retrospective Protocol
 
 A single agent writing all perspectives is NOT a retrospective — it is a
 summary. Every agent spawned for a retrospective MUST be a named team member
@@ -273,7 +278,7 @@ improvements that makes retros feel pointless.
 checkpoint (did we follow the pipeline? was the commit atomic?) and do not
 require human consent. They are observational, not prescriptive.
 
-## Key Principles
+### Key Principles
 
 Non-negotiable aspects baked in from production experience.
 
@@ -310,7 +315,7 @@ Non-negotiable aspects baked in from production experience.
   domain reviewer during implementation. Full team activation is reserved for
   planning, formation, review, and retrospectives.
 
-## Factory Mode (Optional)
+### Factory Mode (Optional)
 
 When the `pipeline` skill is installed alongside `ensemble-team`, the coordinator
 detects this during setup and enables **factory mode**. This adds a Phase 1.5
@@ -323,7 +328,7 @@ The full team still reviews before any push.
 
 See `references/factory-mode.md` for coordinator handoff details.
 
-### Factory Mode vs. Supervised Mode
+#### Factory Mode vs. Supervised Mode
 
 - **Supervised mode** (default): The coordinator manages the build phase. All
   decisions use the Robert's Rules consensus protocol. The coordinator facilitates
@@ -332,3 +337,18 @@ See `references/factory-mode.md` for coordinator handoff details.
   phase. Quality gates replace consensus for build-time decisions. The coordinator
   remains active for planning, factory configuration, and post-build review. The
   full team participates in pre-push review and retrospectives as before.
+
+## Enforcement Note
+
+Advisory on all harnesses. Structural enforcement where TeamCreate exists.
+
+## Verification
+
+- [ ] Team profiles created with AI-approximation disclaimer
+- [ ] Coordinator instructions generated and referenced from harness config
+- [ ] Formation session covered essential topics (at minimum 2, 3, 6)
+- [ ] Named team members used for all creative work (no anonymous agents)
+
+## Dependencies
+
+Standalone. Enhanced with **pipeline** (factory mode) and **agent-coordination** (multi-agent communication). Install: `npx skills add jwilger/agent-skills --skill pipeline`

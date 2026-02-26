@@ -1,6 +1,6 @@
 {
   "name": "tdd-enforcement",
-  "version": "1.0.0",
+  "version": "6.0.0",
   "description": "Mechanical enforcement of TDD phase boundaries via hooks. Auto-installs required skills on session start.",
   "author": {
     "name": "jwilger",
@@ -8,6 +8,11 @@
   },
   "repository": "https://github.com/jwilger/agent-skills",
   "license": "CC0-1.0",
-  "keywords": ["tdd", "hooks", "enforcement", "phase-boundaries"],
+  "keywords": [
+    "tdd",
+    "hooks",
+    "enforcement",
+    "phase-boundaries"
+  ],
   "hooks": "./hooks/cursor-hooks.json"
 }

@@ -508,7 +508,7 @@ management, and automatic skill installation.
 
 | Plugin | What it adds | Harness support |
 |--------|-------------|-----------------|
-| `tdd-enforcement` | PreToolUse hooks blocking edits outside TDD phase; PostToolUse test evidence gates; Stop clean-tree check | Claude Code, Cursor |
+| `tdd-enforcement` | PreToolUse hooks blocking edits outside TDD phase; SubagentStop domain review checkpoints; Stop clean-tree check | Claude Code, Cursor |
 | `pipeline-agents` | Custom agents for pipeline roles with `disallowedTools` role boundaries | Claude Code, Cursor |
 | `ensemble-coordinator` | Coordinator agent with retrospective enforcement hooks | Claude Code, Cursor |
 | `session-tools` | PreCompact auto-save, SessionStart context restore, Stop session reflection | Claude Code, Cursor |

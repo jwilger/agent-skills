@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-Agent Skills (v5.0.0) is a portable library of Markdown-based skills that encode professional software development practices for any AI coding agent. Skills are harness-agnostic — they work on Claude Code, Codex, Cursor, Windsurf, OpenCode, Goose, Amp, Aider, and any Agent Skills-compatible harness.
+Agent Skills (v6.0.0) is a portable library of Markdown-based skills that encode professional software development practices for any AI coding agent. Skills are harness-agnostic — they work on Claude Code, Codex, Cursor, Windsurf, OpenCode, Goose, Amp, Aider, and any Agent Skills-compatible harness.
 
 This is a **content-only repository**: no build system, no test runner, no compiled artifacts. The deliverables are SKILL.md files and their reference documentation, installed via `npx skills add jwilger/agent-skills`.
 

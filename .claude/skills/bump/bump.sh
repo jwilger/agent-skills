@@ -46,7 +46,14 @@ if [[ -d "${PLUGIN_DIR}" ]]; then
     if [[ -f "${PLUGIN_JSON}" ]]; then
       PLUGIN_NAME=$(basename "$(dirname "$(dirname "${PLUGIN_JSON}")")")
       sed -i "s/\"version\": \"[0-9]*\.[0-9]*\.[0-9]*\"/\"version\": \"${NEW_VERSION}\"/g" "${PLUGIN_JSON}"
-      echo "  Updated: ${PLUGIN_NAME}"
+      echo "  Updated: ${PLUGIN_NAME} (claude)"
+    fi
+  done
+  for PLUGIN_JSON in "${PLUGIN_DIR}"/*/.cursor-plugin/plugin.json; do
+    if [[ -f "${PLUGIN_JSON}" ]]; then
+      PLUGIN_NAME=$(basename "$(dirname "$(dirname "${PLUGIN_JSON}")")")
+      sed -i "s/\"version\": \"[0-9]*\.[0-9]*\.[0-9]*\"/\"version\": \"${NEW_VERSION}\"/g" "${PLUGIN_JSON}"
+      echo "  Updated: ${PLUGIN_NAME} (cursor)"
     fi
   done
 
@@ -79,7 +86,14 @@ if [[ -d "${PLUGIN_DIR}" ]]; then
     if [[ -f "${PLUGIN_JSON}" ]]; then
       PLUGIN_NAME=$(basename "$(dirname "$(dirname "${PLUGIN_JSON}")")")
       PV=$(grep -o '"version": "[^"]*"' "${PLUGIN_JSON}" | head -1 | sed 's/"version": "//;s/"//')
-      echo "  Plugin ${PLUGIN_NAME}: ${PV}"
+      echo "  Plugin ${PLUGIN_NAME} (claude): ${PV}"
+    fi
+  done
+  for PLUGIN_JSON in "${PLUGIN_DIR}"/*/.cursor-plugin/plugin.json; do
+    if [[ -f "${PLUGIN_JSON}" ]]; then
+      PLUGIN_NAME=$(basename "$(dirname "$(dirname "${PLUGIN_JSON}")")")
+      PV=$(grep -o '"version": "[^"]*"' "${PLUGIN_JSON}" | head -1 | sed 's/"version": "//;s/"//')
+      echo "  Plugin ${PLUGIN_NAME} (cursor): ${PV}"
     fi
   done
 fi

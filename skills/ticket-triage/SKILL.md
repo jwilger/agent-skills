@@ -21,9 +21,15 @@ metadata:
 
 # Ticket Triage
 
+**Value:** Feedback — fast, specific feedback on ticket quality before development begins.
+
+## Purpose
+
 Evaluate a single ticket against six readiness criteria and produce a clear verdict with actionable remediation guidance.
 
-## How to Get the Ticket
+## Practices
+
+### How to Get the Ticket
 
 The user might provide the ticket in several ways. Adapt accordingly:
 
@@ -34,7 +40,7 @@ The user might provide the ticket in several ways. Adapt accordingly:
 
 If the ticket content is ambiguous or incomplete (e.g., just a title with no description), note that in your assessment but still evaluate what's there.
 
-## Evaluation Posture
+### Evaluation Posture
 
 Before diving into the criteria, understand the right mindset for this evaluation. The question you are answering is: **"Could a developer pick up this ticket and build the right thing without needing to ask clarifying questions?"**
 
@@ -42,11 +48,11 @@ You are not looking for perfection. You are looking for sufficiency. A ticket wi
 
 When in doubt, pass the criterion and note an optional improvement. Reserve failures for genuine problems that would block development or lead to incorrect implementations.
 
-## The Six Readiness Criteria
+### The Six Readiness Criteria
 
 A ticket is **Ready for Development** only if it passes ALL six criteria. Failing even one makes it not ready.
 
-### 1. Specific Acceptance Criteria
+#### 1. Specific Acceptance Criteria
 
 The ACs must communicate what the feature does concretely enough that a developer knows what to build. They should describe behaviors, not just restate the feature name.
 
@@ -60,7 +66,7 @@ The ACs must communicate what the feature does concretely enough that a develope
 
 The bar is "would a developer know what to build?" not "is every edge case documented?" ACs that clearly communicate the expected behavior pass even if they could be more detailed.
 
-### 2. Appropriately Sliced
+#### 2. Appropriately Sliced
 
 The ticket is a single, deliverable unit of work. Not an epic disguised as a story, nor an artificial slice that separates tightly coupled concerns (like creating a model in one ticket and adding its validations in another).
 
@@ -70,7 +76,7 @@ The ticket is a single, deliverable unit of work. Not an epic disguised as a sto
 
 Red flags: 3+ distinct capabilities listed, "and" in the title joining unrelated concerns, question marks in the description suggesting the scope isn't decided.
 
-### 3. Verifiable and Specific ACs
+#### 3. Verifiable and Specific ACs
 
 Each AC must be testable -- a QA engineer could determine pass or fail from the AC text. The key question is whether the AC contains subjective language that makes the pass/fail determination a matter of opinion.
 
@@ -84,7 +90,7 @@ Each AC must be testable -- a QA engineer could determine pass or fail from the 
 
 Subjective red-flag words that typically cause failures: "appropriately", "reasonably", "correctly", "clearly", "feels", "perceived", "intuitive", "meaningful". However, context matters -- "User can toggle theme" is fine even though "toggle" is slightly informal, because the behavior is obvious.
 
-### 4. User-Verifiable Through the UI
+#### 4. User-Verifiable Through the UI
 
 The ticket as a whole must be verifiable by a user interacting with the application. Evaluate this at the **ticket level**, not per-AC.
 
@@ -94,7 +100,7 @@ The ticket as a whole must be verifiable by a user interacting with the applicat
 
 The question is: "Can a user verify this ticket is done by using the app?" If yes, it passes. Period.
 
-### 5. Not Infrastructure-Only
+#### 5. Not Infrastructure-Only
 
 The ticket delivers value that a user of the application can experience. Pure infrastructure, tooling, or devops tickets should be typed as "Chores" or "Tasks", not "Stories."
 
@@ -104,7 +110,7 @@ The ticket delivers value that a user of the application can experience. Pure in
 
 Infrastructure work is necessary and valid. The criterion is about typing and framing, not dismissing the work. If a ticket is purely infrastructure, recommend reclassifying it as a Chore or merging it with a user-facing ticket so they ship together.
 
-### 6. Validation Criteria for Data Models
+#### 6. Validation Criteria for Data Models
 
 This criterion applies when a ticket **introduces a new data model** (a new database table / entity) or **adds user-facing fields** to an existing model. When it applies, every user-facing field must have explicit validation rules: type, required/optional, min/max length or value, format, allowed values, default value.
 
@@ -126,7 +132,7 @@ The criterion only triggers when the ticket says something like "create a Commen
 
 Watch for: tickets that mention data fields in the description but have no validation section, enum fields that list values without specifying the default, and fields whose validation rules are defined in a different ticket (this means the ticket isn't self-contained).
 
-## Evaluation Process
+### Evaluation Process
 
 For each ticket:
 
@@ -136,7 +142,7 @@ For each ticket:
 4. **Identify specific gaps**: What exactly is missing or vague, with direct quotes from the ticket
 5. **Provide remediation guidance**: Concrete steps the team needs to take, not generic advice
 
-## Output Format
+### Output Format
 
 Present the assessment in a clear, scannable format:
 
@@ -173,18 +179,9 @@ Then, based on the verdict:
 - Replace AC "Status is stored in the database" with: "When a user changes a task's status, the new status badge is visible immediately and persists after page refresh"
 - Split this ticket into: (1) Status filtering, (2) Due date filtering, (3) Keyword search
 
-**Remediated Example** -- Show a before/after for the most impactful section of the ticket. This teaches the team the pattern so they can apply it to other tickets. Format:
+**Remediated Example** -- Show a before/after for the most impactful section. See `references/output-examples.md` for format.
 
-> **Before:**
-> - User can create a task
-> - Tasks persist in the database
->
-> **After:**
-> - When a user fills in the task title and clicks "Create", they are redirected to the task list and the new task appears at the top
-> - When a user creates a task without a title, a validation error "Title is required" appears below the title field
-> - When a user refreshes the task list page, all previously created tasks are still visible
-
-## Judgment Calls
+### Judgment Calls
 
 **Default to passing.** Only fail a criterion when the gap would cause a
 developer to build the wrong thing. "Could be more detailed" is an optional
@@ -200,6 +197,21 @@ improvement, not a failure.
 - Nearly Ready: exactly 1 failing criterion with < 30 min fix. Two or more
   failures = Not Ready.
 
-## Tone
+### Tone
 
-Be direct and constructive. The goal is to help the team ship better tickets, not to gatekeep. Frame remediation as "here's what would make this ready" rather than "here's what's wrong." When a ticket is well-written, say so -- recognizing good practices helps establish patterns across the team.
+Be direct and constructive. Frame remediation as "here's what would make this ready." Recognize well-written tickets to establish patterns.
+
+## Enforcement Note
+
+Advisory on all harnesses. The agent evaluates criteria but cannot prevent poorly-specified tickets from entering development.
+
+## Verification
+
+- [ ] All six criteria evaluated with specific reasoning
+- [ ] Verdict is Ready, Nearly Ready, or Not Ready
+- [ ] Failing criteria include quoted ticket text and concrete remediation
+- [ ] Remediation steps are specific (not generic "add more detail")
+
+## Dependencies
+
+Standalone. No required dependencies.

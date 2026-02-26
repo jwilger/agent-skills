@@ -1,6 +1,6 @@
 {
   "name": "ensemble-coordinator",
-  "version": "1.0.0",
+  "version": "6.0.0",
   "description": "Ensemble team coordinator agent with retrospective enforcement hooks. Coordinator is restricted to coordination-only tools.",
   "author": {
     "name": "jwilger",
@@ -9,6 +9,5 @@
   "repository": "https://github.com/jwilger/agent-skills",
   "license": "CC0-1.0",
   "keywords": ["ensemble", "team", "coordinator", "retrospective"],
-  "agents": "./agents/",
-  "hooks": "./hooks/hooks.json"
+  "agents": "./agents/"
 }
