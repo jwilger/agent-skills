@@ -1,0 +1,12 @@
+{
+  "version": 1,
+  "hooks": {
+    "sessionStart": [
+      {
+        "type": "command",
+        "command": "cd \"${CURSOR_PROJECT_DIR:-$CLAUDE_PROJECT_DIR}\" && m=\"\"; for s in tdd domain-modeling; do [ -f \"skills/$s/SKILL.md\" ] || m=\"$m --skill $s\"; done; [ -z \"$m\" ] && echo '{\"additional_context\":\"tdd-enforcement: all required skills present.\"}' || { npx skills add jwilger/agent-skills $m >&2 2>&1 || true; echo '{\"additional_context\":\"tdd-enforcement: auto-installed missing skills.\"}'; }",
+        "timeout": 60
+      }
+    ]
+  }
+}

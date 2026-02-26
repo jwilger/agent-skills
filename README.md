@@ -209,7 +209,8 @@ recommend automated TDD mode with serial subagents.
 
 ### Cursor / Windsurf
 
-These editors support skill loading but not agent delegation primitives.
+Cursor has full plugin support with hooks, skill loading, and session
+lifecycle events. Windsurf supports skill loading but not plugins.
 
 **Install skills:**
 ```bash
@@ -223,12 +224,23 @@ harness type and generate the appropriate instruction files.
 **Run bootstrap** in your editor's agent chat. It will detect chaining
 mode and recommend either automated (chaining) or guided TDD.
 
+**Optional: Install Cursor plugins for automatic skill management.**
+Cursor plugins use `sessionStart` hooks to auto-install required skills.
+Install from the `plugins/` directory — each plugin includes both
+`.claude-plugin/` and `.cursor-plugin/` manifests:
+
+```bash
+# Point Cursor at a plugin directory
+cursor --plugin-dir ./plugins/tdd-enforcement
+```
+
 **What you get:**
 - TDD via chaining (agent plays each role sequentially in one context)
 - Advisory enforcement (agent self-enforces phase boundaries by convention)
 - Factory pipeline in chaining mode (quality gates still enforce, but no
   isolated subagents)
 - Self-verification checklists at each phase transition
+- Cursor plugins: automatic skill installation via `sessionStart` hooks
 
 **Tip:** Use guided TDD mode (`/tdd red`, `/tdd green`, etc.) if you want
 explicit control over phase transitions. The agent will load phase-specific
@@ -236,7 +248,8 @@ reference files and guide you through each step.
 
 ### OpenCode / Goose
 
-These harnesses support skill loading with basic agent capabilities.
+OpenCode has a full TypeScript plugin system with lifecycle hooks.
+Goose supports skill loading with basic agent capabilities.
 
 **Install skills:**
 ```bash
@@ -246,12 +259,27 @@ npx skills add jwilger/agent-skills --all
 **Run bootstrap.** It will detect available capabilities and configure
 accordingly (typically chaining or guided mode).
 
+**Optional: Install OpenCode plugins for automatic skill management.**
+Copy the TypeScript plugin files from `plugins/opencode/` to your
+project's `.opencode/plugins/` directory. Each plugin auto-checks and
+installs required skills when the session starts:
+
+```bash
+# Copy the plugins you need
+cp plugins/opencode/tdd-enforcement.ts .opencode/plugins/
+cp plugins/opencode/session-tools.ts .opencode/plugins/
+```
+
+Plugins require the `@opencode-ai/plugin` package (available
+automatically in OpenCode projects).
+
 **What you get:**
 - TDD in chaining or guided mode
 - Advisory enforcement only
 - Factory pipeline in degraded mode (advisory gates -- the agent checks
   quality but cannot structurally prevent violations)
 - All skills provide value as advisory guidance
+- OpenCode plugins: automatic skill installation at session start
 
 ### Amp / Aider / Other Harnesses
 
@@ -275,13 +303,15 @@ by referencing the SKILL.md files.
 
 ### Capability Summary
 
-| Harness | TDD Strategy | Pipeline Mode | Enforcement Level |
-|---------|-------------|---------------|-------------------|
-| Claude Code | Agent teams | Full (parallel worktrees) | Mechanical (hooks) + Structural + Advisory |
-| Codex | Serial subagents | Serial | Structural (handoff schemas) + Advisory |
-| Cursor / Windsurf | Chaining | Chaining | Advisory (self-enforcement) |
-| OpenCode / Goose | Chaining / Guided | Advisory gates | Advisory |
-| Amp / Aider | Guided | Advisory gates | Advisory |
+| Harness | TDD Strategy | Pipeline Mode | Enforcement Level | Plugins |
+|---------|-------------|---------------|-------------------|---------|
+| Claude Code | Agent teams | Full (parallel worktrees) | Mechanical (hooks) + Structural + Advisory | Yes (full) |
+| Codex | Serial subagents | Serial | Structural (handoff schemas) + Advisory | No |
+| Cursor | Chaining | Chaining | Advisory + sessionStart hooks | Yes (hooks) |
+| Windsurf | Chaining | Chaining | Advisory (self-enforcement) | No |
+| OpenCode | Chaining / Guided | Advisory gates | Advisory + session plugins | Yes (TS plugins) |
+| Goose | Chaining / Guided | Advisory gates | Advisory | No |
+| Amp / Aider | Guided | Advisory gates | Advisory | No |
 
 ## Factory Pipeline (v4.0+)
 
@@ -470,33 +500,36 @@ changes are always your decision.
 - **CI infra failure:** At standard/full, the pipeline retries once
   automatically. After 2 failures, it escalates.
 
-## Plugin Marketplace (Claude Code Only)
+## Plugin Marketplace
 
-Skills are harness-agnostic by design. For Claude Code users who want
-mechanical enforcement beyond what advisory skills provide, a companion
-plugin marketplace offers hooks, custom agents, and session management
-tools.
+Skills are harness-agnostic by design. For harnesses that support
+plugins, a companion plugin set offers hooks, custom agents, session
+management, and automatic skill installation.
 
-| Plugin | What it adds |
-|--------|-------------|
-| `tdd-enforcement` | PreToolUse hooks that block file edits outside the current TDD phase; PostToolUse hooks requiring test evidence; Stop hooks verifying clean working tree |
-| `pipeline-agents` | Custom agent definitions for pipeline roles (controller, TDD-red, TDD-green, domain-reviewer) with `disallowedTools` enforcing role boundaries |
-| `ensemble-coordinator` | Coordinator agent with retrospective enforcement hooks |
-| `session-tools` | PreCompact auto-save, SessionStart context restore, Stop session reflection |
+| Plugin | What it adds | Harness support |
+|--------|-------------|-----------------|
+| `tdd-enforcement` | PreToolUse hooks blocking edits outside TDD phase; PostToolUse test evidence gates; Stop clean-tree check | Claude Code, Cursor |
+| `pipeline-agents` | Custom agents for pipeline roles with `disallowedTools` role boundaries | Claude Code, Cursor |
+| `ensemble-coordinator` | Coordinator agent with retrospective enforcement hooks | Claude Code, Cursor |
+| `session-tools` | PreCompact auto-save, SessionStart context restore, Stop session reflection | Claude Code, Cursor |
 
-Plugins live in the `plugins/` directory with a marketplace manifest at
-`.claude-plugin/marketplace.json`.
+Each plugin directory contains manifests for multiple harnesses:
+- `.claude-plugin/plugin.json` — Claude Code manifest
+- `.cursor-plugin/plugin.json` — Cursor manifest
+- `hooks/hooks.json` — Claude Code hooks
+- `hooks/cursor-hooks.json` — Cursor hooks (camelCase events, flat format)
 
-**Automatic skill installation:** Each plugin includes a `SessionStart`
-hook that checks for its required skills on every session start. If any
-skills are missing, the plugin auto-installs them via `npx skills add`.
-You do not need to install skills manually when using a plugin — the
-plugin handles it.
+**OpenCode plugins** are TypeScript files in `plugins/opencode/`. Copy
+the files you need to `.opencode/plugins/` in your project.
 
-**Without plugins (all other harnesses):** Install skills manually via
-`npx skills add`. Skills check for dependencies at activation time and
-recommend installation commands for any missing dependencies, but cannot
-auto-install on harnesses without hook support.
+**Automatic skill installation:** All plugins include session-start hooks
+that check for required skills and auto-install any that are missing via
+`npx skills add`. You do not need to install skills manually when using a
+plugin — the plugin handles it.
+
+**Without plugins (Codex, Windsurf, Goose, Amp, Aider):** Install skills
+manually via `npx skills add`. Skills check for dependencies at activation
+time and recommend installation commands for any missing dependencies.
 
 ## Installing Individual Skills
 
