@@ -80,6 +80,23 @@ Fresh Context Protocol delegation. This ensures each phase agent has full
 domain awareness without relying on conversational memory. Include file
 paths and relevant excerpts -- not just references to document names.
 
+**Git workflow conventions:** Include the project's git workflow conventions
+(from CLAUDE.md or AGENTS.md) in every subagent prompt. At minimum: branch
+naming convention, merge strategy, commit message format, and any prohibited
+commit metadata (e.g., no Co-Authored-By lines).
+
+**Phase boundary in spawn context:** Every subagent prompt MUST include the
+phase boundary table from SKILL.md and an explicit statement: "You are
+performing the [PHASE] phase. You may ONLY edit [allowed file types]. If
+you need to edit other files, STOP and hand off to the appropriate phase."
+
+## Post-Phase Verification
+
+After each phase completes, verify file-type compliance before accepting:
+check `git diff --name-only` against allowed file patterns for the phase.
+If the GREEN agent changed test files, reject the handoff and re-route
+to RED.
+
 ## Serial Subagent Delegation Cycle
 
 The cycle above (RED -> DOMAIN -> GREEN -> DOMAIN -> COMMIT) is executed by

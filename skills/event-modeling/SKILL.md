@@ -104,10 +104,10 @@ vertical slice.
 
 Each slice pattern implies a minimum set of architectural layers. A slice is not complete until all required layers are implemented and wired together.
 
-- **State View**: infrastructure (read events/data from store) + domain (projection/query logic) + presentation (render or return result to caller) + application wiring (connect layers end-to-end)
-- **State Change**: presentation (accept user input or external request) + domain (command validation and business rules) + infrastructure (persist resulting events/data) + application wiring (connect layers end-to-end)
-- **Automation**: infrastructure (detect triggering condition — timer, external event, threshold) + domain (policy/decision logic) + infrastructure (execute resulting action — send message, write data, call service) + application wiring (connect trigger to policy to action)
-- **Translation**: infrastructure (receive from external system) + domain (mapping/transformation logic) + infrastructure (deliver to target system) + application wiring (connect inbound adapter to mapper to outbound adapter)
+- **State View**: infrastructure + domain (projection) + presentation + wiring
+- **State Change**: presentation + domain (validation/rules) + infrastructure + wiring
+- **Automation**: infrastructure (trigger) + domain (policy) + infrastructure (action) + wiring
+- **Translation**: infrastructure (receive) + domain (mapping) + infrastructure (deliver) + wiring
 
 When decomposing a slice, verify that your acceptance criteria and task breakdown cover every required layer. A slice that only implements domain logic without presentation or infrastructure is incomplete — it is a component, not a vertical slice.
 
@@ -136,6 +136,11 @@ Every vertical slice MUST include at least one GWT scenario defined at the appli
 - **Given**: The system is in a known state (prior events, seed data, configuration)
 - **When**: A user (or external caller) interacts through the application's external interface — the specific interface depends on the project (HTTP endpoint, CLI command, message queue consumer, UI action, etc.)
 - **Then**: The result is observable at that same boundary — a response, output, rendered state change, emitted event, etc.
+
+**For web apps**, "observable" means the user can perceive what happened:
+the UI displays a confirmation or state change, errors are visible, and
+the next action is navigable. Automated tests verify via browser
+automation — not just HTTP response codes.
 
 A GWT scenario that can be satisfied entirely by calling an internal function in a unit test describes a unit-level specification, not a slice acceptance criterion. Slice acceptance criteria must exercise the path from external input to observable output.
 
@@ -189,6 +194,13 @@ purpose.
 - Write GWT scenarios for data validation (use the type system)
 - Design multiple workflows simultaneously
 - Proceed with gaps in the model
+- Author the event model alone when facilitating with a team
+
+**Multi-agent facilitation:** When facilitating with a team, solicit
+contributions from each member at each step. The facilitator MUST NOT
+author the model alone and then ask for review. Instead: present the
+prompt, collect input from each member, synthesize, then confirm before
+advancing.
 
 ## Enforcement Note
 

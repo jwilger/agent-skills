@@ -29,126 +29,55 @@ recommends skills. Never silently installs or modifies anything.
 
 ## Practices
 
-### Step 1: Detect the Environment
+Follow steps 0-8 in order. Each step references detailed docs where needed.
 
-Gather project context silently before asking questions:
+**Step 0: Detect Existing Configuration.** Check for existing AGENTS.md,
+CLAUDE.md, `.factory/`, `.team/`. If found, update managed sections only.
+See `references/existing-config-detection.md`.
 
-```
-!test -f package.json && echo "js" || true
-!test -f Cargo.toml && echo "rust" || true
-!test -f pyproject.toml && echo "python" || true
-!test -f go.mod && echo "go" || true
-!test -f mix.exs && echo "elixir" || true
-!git rev-parse --is-inside-work-tree 2>/dev/null && echo "git" || true
-!ls skills/*/SKILL.md 2>/dev/null | sed 's|skills/||;s|/SKILL.md||' || true
-```
+**Step 1: Detect Environment.** Silently gather: languages (package.json,
+Cargo.toml, etc.), git availability, installed skills. Record results.
 
-Record: languages detected, git available, skills already installed.
+**Step 2: Detect Capabilities.** Probe for delegation primitives (Task
+tool, TeamCreate, AskUserQuestion). When AskUserQuestion is available, use
+it for ALL user questions. See `references/capability-detection.md`.
 
-### Step 2: Detect Harness Capabilities
+**Step 3: Detect Harness Type.** Identify harness (Claude Code, Codex,
+Cursor/Windsurf, Generic) from conventions and tools. See
+`references/harness-files.md`.
 
-Probe for delegation primitives. See `references/capability-detection.md`
-for the full detection procedure.
+**Step 4: Configure TDD Mode.** Recommend automated (`/tdd`) when
+subagents or teams are available, guided otherwise. Let the user override.
 
-| Capability | How to detect | Implication |
-|------------|---------------|-------------|
-| Skill chaining | Always available | Guided TDD mode works |
-| Subagents | Task tool present | Serial subagent strategy works |
-| Agent teams | TeamCreate tool present | Ping-pong pairing works |
+**Step 4b: Detect Factory Mode.** If `pipeline` skill is installed, factory
+mode is available — add autonomy level question to Step 5.
 
-### Step 3: Detect Harness Type
+**Step 5: Ask the User.** Three questions max: (1) what are you doing?
+(2) how much structure? (3) autonomy level (pipeline only). After
+confirmation, offer batch skill installation. See
+`references/skill-recommendations.md` and
+`references/existing-config-detection.md`.
 
-Identify the harness to generate the correct instruction files:
+**Step 6: Generate Instruction Files.** Generate harness-appropriate files.
+See `references/agents-md.md` and `references/harness-files.md`.
 
-| Signal | Harness |
-|--------|---------|
-| `CLAUDE.md` convention, Claude Code tools | Claude Code |
-| `AGENTS.md` convention, Codex tools | Codex |
-| `.cursor/rules` directory | Cursor / Windsurf |
-| None of the above | Generic (AGENTS.md only) |
+**Step 6.5: Generate System Prompt (Claude Code + Factory only).** Create
+`.claude/SYSTEM_PROMPT.md` and `bin/ccf` launcher. See
+`references/system-prompt-generation.md`.
 
-### Step 4: Configure TDD Mode
+**Step 7: Optional Ensemble Team.** Offer `ensemble-team` skill if user
+selected team workflow or full structure.
 
-Recommend based on detected capabilities:
+**Step 7b: Verify .gitignore Safety.** Confirm `.claude/skills/` is not
+gitignored. Fix overly broad patterns (use `/skills/` not `skills/`).
 
-- **Subagents or teams available:** Recommend automated mode (`/tdd`).
-- **No delegation primitives:** Recommend guided mode (`/tdd red`, `/tdd green`, etc.).
-- Let the user override. Record the choice.
-
-If Claude Code is detected and the user wants maximum enforcement, offer
-to install optional hook templates from `skills/tdd/references/hooks/`.
-
-### Step 4b: Detect Factory Mode
-
-Check if the `pipeline` skill is installed (`skills/pipeline/SKILL.md` exists). If detected, factory pipeline mode is available and Step 5 includes an additional question.
-
-### Step 5: Ask the User
-
-**Question 1: What are you trying to do?**
-- "Start a new project" -- recommend Understand + Decide + Build phases
-- "Add a feature or fix a bug" -- recommend Build + Ship phases
-- "Set up team workflow" -- recommend all phases plus ensemble team
-
-**Question 2: How much process structure?**
-- "Minimal" -- recommend tdd, domain-modeling
-- "Standard" -- recommend core + ship skills
-- "Full" -- recommend all skills (include factory pipeline skills when pipeline is detected)
-
-**Question 3 (only when pipeline skill is detected): What autonomy level?**
-- "Conservative" (default for new projects) -- human approval at every gate
-- "Standard" (established projects) -- human approval at PR and deploy gates only
-- "Full" (mature projects with comprehensive tests) -- human approval at deploy gate only
-
-When this question is answered, generate `.factory/config.yaml` with the chosen autonomy level and sensible defaults (e.g., max rework cycles, slice timeout, audit trail path).
-
-See `references/skill-recommendations.md` for the full skill list by phase.
-
-### Step 6: Generate Instruction Files
-
-Generate harness-appropriate files. For Claude Code, CLAUDE.md uses
-`@AGENTS.md` references instead of symlinks or content embedding to keep
-a single source of truth and avoid duplication. See
-`references/agents-md.md` for AGENTS.md best practices (small routing
-document, progressive disclosure, managed markers) and
-`references/harness-files.md` for harness-specific generation rules.
-
-### Step 6.5: Generate System Prompt (Claude Code + Factory Mode Only)
-
-Only when BOTH conditions are true: (a) the harness is Claude Code, AND
-(b) the `pipeline` skill is detected and the user selected factory mode:
-
-1. Create `.claude/SYSTEM_PROMPT.md` with: Role and Constraints (controller
-   MAY/MUST NOT boundaries), Startup Procedure (read state files), Common
-   Mistakes (empty initially), and Reminders.
-2. Create `bin/ccf` launcher script that runs
-   `claude --system-prompt .claude/SYSTEM_PROMPT.md "$@"` and
-   `chmod +x bin/ccf`.
-
-On non-Claude-Code harnesses, skip this step entirely — fold critical
-directives into the harness instruction file during Step 6 instead.
-
-See `references/system-prompt-generation.md` for templates and content
-guidelines (keep under 500 tokens, use MUST/NEVER language).
-
-### Step 7: Optional Ensemble Team
-
-If the user selected "Set up team workflow" or "Full" process structure,
-offer to invoke the `ensemble-team` skill for AI team formation. Present
-the three presets (solo-plus, lean, full). If accepted, invoke the skill
-and record the preset in configuration.
-
-### Step 8: Commit and Display
-
-Stage generated files, commit with a descriptive message, and display:
-- What was configured (harness, TDD mode, skills recommended)
-- Next steps (`/tdd` to start a TDD cycle, or phase-specific commands)
-- If ensemble team was configured, note the preset and member count
+**Step 8: Commit and Display.** Stage, commit, show configuration summary
+and next steps.
 
 ## Enforcement Note
 
-This skill is purely advisory. It generates configuration and instruction
-files but cannot install skills or modify harness settings without user
-confirmation.
+Purely advisory. Generates configuration but cannot install skills or modify
+harness settings without user confirmation.
 
 ## Verification
 

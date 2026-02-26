@@ -46,9 +46,19 @@ Decisions that do NOT require human input:
 - Formatting, naming, or style choices covered by project conventions
 - Test structure when requirements are unambiguous
 
+### Prefer Harness-Native Question Tools
+
+Some harnesses provide structured question tools (Claude Code:
+AskUserQuestion). When available, use the native tool instead of the
+text-based AWAITING_USER_INPUT format. The native tool provides a better
+user experience (structured prompts, buttons, built-in wait). Detect
+during bootstrap or at first question. Fall back to AWAITING_USER_INPUT
+only when no native tool exists.
+
 ### Use the AWAITING_USER_INPUT Format
 
-When you need input, output this structured checkpoint:
+When no harness-native question tool is available, output this structured
+checkpoint:
 
 ```
 AWAITING_USER_INPUT

@@ -63,8 +63,9 @@ Spawn team members one at a time, waiting for evidence before proceeding:
 1. **Spawn ping.** Wait for RED evidence (failing test output).
 2. **Spawn domain reviewer.** Provide the failing test for review. Wait for
    domain review verdict.
-3. **Spawn pong.** Provide the reviewed test and domain feedback. Wait for
-   GREEN evidence (passing test output).
+3. **Spawn pong.** Provide the reviewed test and domain feedback AND the
+   COMPLETE RED evidence directly in their spawn context. Do not rely on
+   message routing for the first handoff.
 4. **Domain reviewer reviews implementation.** Provide the GREEN changeset.
    Wait for domain review verdict.
 5. **COMMIT.** Orchestrator commits (or delegates commit).
@@ -84,6 +85,11 @@ idle-wait or work on stale assumptions.
    - Current codebase context (file paths, test output, domain types)
    - Their role assignment (ping, pong, or domain reviewer)
    - The ping-pong-review protocol
+   - The exact SendMessage recipient names (case-sensitive) for all team
+     members: "Your partners' exact SendMessage names are: [Ping Name],
+     [Pong Name], [Domain Reviewer Name]"
+   - The phase boundary table: which file types each role may edit
+   - The project's git workflow conventions (from CLAUDE.md/AGENTS.md)
 3. **Members work and hand off** via structured messages. The orchestrator
    does NOT relay handoffs between members.
 4. **Orchestrator monitors** via task updates and status notifications.
@@ -190,6 +196,14 @@ When pong needs to drill down instead of going green at the current level:
 4. When this level goes green, pop back up with swapped roles.
 
 The person who wrote a failing test never writes its green implementation.
+
+## Task Scope Isolation
+
+Each pair agent has exactly ONE task: write tests (ping) or implement
+(pong). The harness task list may contain other items — those belong to
+the pipeline controller, not to pair agents. Explicitly tell each pair
+agent in their spawn context: "You have ONE task: write [tests /
+implementation]. Ignore any other tasks in the task list."
 
 ## Message Routing
 

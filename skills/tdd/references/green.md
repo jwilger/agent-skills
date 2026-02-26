@@ -5,12 +5,22 @@
 Write the MINIMAL production code to make the current failing test pass.
 Nothing more.
 
+**GREEN MEANS ONE ERROR AT A TIME.** Read the test output. Fix the FIRST
+error only. Run tests again. If a new error appears, fix that one. Never
+write more than ~10 lines of code between test runs. If your change is
+more than 10 lines, you are almost certainly doing too much — break it
+into smaller steps.
+
 ## File Restrictions
 
 **You may ONLY edit production/implementation files.**
 
 Production files live in `src/`, `lib/`, `app/` directories or are
 otherwise clearly implementation code.
+
+**You MUST NOT create, edit, or delete test files.** If the current failure
+requires test changes, STOP and return to the orchestrator with a handoff
+requesting RED phase rework. This is a hard boundary, not a suggestion.
 
 **You must NOT edit:** test files, type-only definition files (those
 with only stubs created by the domain phase), or any file in `tests/`,

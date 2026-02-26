@@ -75,12 +75,20 @@ commit or conversation record before the ADR commit is authored.
 
 ### Maintain the Living Architecture Document
 
-`docs/ARCHITECTURE.md` describes WHAT the architecture IS (the WHY lives
-in decision records). Update it in the MERGE phase of every ADR. A stale
-architecture document is worse than none.
+`docs/ARCHITECTURE.md` describes WHAT the architecture IS. It NEVER
+contains ADR rationale, alternatives considered, decision status, or any
+meta-commentary about the decision-making process. The WHY lives
+exclusively in decision records (PR descriptions or commit messages).
+Update it in the MERGE phase of every ADR. A stale architecture document
+is worse than none.
 
 Required sections: Overview, Key Decisions (linking to ADR PRs/commits),
 Components, Patterns, Constraints.
+
+**The PR description IS the decision record.** Construct the PR body with
+these required sections: `## Context`, `## Decision`, `## Alternatives
+Considered`, `## Status`. A PR with a one-line description is a protocol
+violation.
 
 ### Facilitate Decisions Systematically
 
@@ -117,7 +125,10 @@ After completing work guided by this skill, verify:
 - [ ] HOLD received explicit approval (not silence)
 - [ ] No implementation work began before MERGE completed
 - [ ] `docs/ARCHITECTURE.md` reflects the current architecture
+- [ ] `docs/ARCHITECTURE.md` contains zero ADR rationale, alternatives, or decision status
+- [ ] Every ADR PR has a body with Context, Decision, Alternatives Considered, and Status sections
 - [ ] Decision records are atomic (one decision per record)
+- [ ] ADR PRs were NOT self-merged by the drafter (orchestrator merges)
 
 If any criterion is not met, halt and complete the missing phase.
 

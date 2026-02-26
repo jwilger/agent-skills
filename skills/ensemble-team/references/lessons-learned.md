@@ -140,3 +140,21 @@ into every new team setup from day one.
 - **Fix**: Explicit "MUST NOT" list in the controller's role definition. If the
   controller catches itself about to write code — even "just one line" — it must
   stop and delegate. The temptation is strongest during crash recovery.
+
+### Agent Respawn After Compaction
+- **Problem**: Agents spawned fresh after context compaction are behaviorally blank.
+  They have the team member's expertise profile but none of the process corrections
+  accumulated during the session. Fresh agents immediately violate TDD phase
+  boundaries and role constraints that their predecessors were corrected on.
+- **Fix**: Every spawn prompt after compaction MUST include: (1) current process
+  rules from AGENTS.md, (2) all session-reflection corrections from the system
+  prompt, (3) explicit phase discipline rules for the current workflow stage, and
+  (4) the exact SendMessage names of communication partners (case-sensitive).
+
+### Task Agents vs Team Agents
+- **Problem**: Orchestrators spawn anonymous Task agents for creative work (reviews,
+  coding, retros) instead of using named team members via TeamCreate. This is the
+  single most repeated user frustration across all projects.
+- **Fix**: When `.team/` exists, ALL creative work goes through named team members.
+  Task agents are only for mechanical operations (file reads, command execution) that
+  the orchestrator is permitted to do directly.

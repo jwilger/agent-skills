@@ -123,9 +123,25 @@ review content is in the files."
 `references/file-based-reviews.md`. Send a one-line summary message after posting (if
 messaging is available). Do NOT put substantive review content in messages."
 
+### Profile Loading Strategy
+
+Always load the **compressed context** form first (the `## Compressed Context`
+section at the end of each profile). Only load the full profile when the
+member is actively driving code or conducting a detailed review. This
+reduces token overhead for team discussions where all members need to be
+present but most are in advisory/voting roles.
+
+**Loading rules:**
+- Discussion/voting rounds: compressed context only
+- Driver activation: full profile
+- Detailed code review: full profile
+- Retrospective observations: compressed context only
+- Formation session voting: compressed context only
+
 ### Common Launch Instructions
-- Include the teammate's `.team/` profile content in the activation prompt so the agent
-  embodies that persona.
+- Include the teammate's `.team/` profile content (compressed or full per
+  the loading strategy above) in the activation prompt so the agent embodies
+  that persona.
 - Instruct each teammate to **read `PROJECT.md` and `AGENTS.md`** at the start of
   their session before doing any work.
 - Clearly indicate in each teammate's activation prompt whether they are the **Driver**

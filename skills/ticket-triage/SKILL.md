@@ -186,21 +186,19 @@ Then, based on the verdict:
 
 ## Judgment Calls
 
-**Default to passing.** Your starting assumption should be that a criterion passes. Only fail it when you can point to a specific, concrete problem that would cause a developer to build the wrong thing or be unable to verify their work. "This could be more detailed" is an optional improvement, not a failure.
+**Default to passing.** Only fail a criterion when the gap would cause a
+developer to build the wrong thing. "Could be more detailed" is an optional
+improvement, not a failure.
 
-**Redundant implementation ACs**: If a ticket has a mix of user-facing ACs and one implementation-detail AC (like "saved to the database"), the ticket still passes criteria 4 (user-verifiable). Note the redundant AC as an optional cleanup in your assessment, but do not fail the criterion. Only fail criterion 4 when the ticket has NO user-verifiable ACs.
-
-**Borderline ACs**: If an AC communicates the expected behavior clearly enough that a developer would know what to build, it passes criteria 1 and 3 -- even if the wording is informal or could be more precise. "Dragging changes order in the UI" is clear. "Results update correctly" is not (what does "correctly" mean?).
-
-**Infrastructure + user value**: If a ticket combines infrastructure work with a user-facing deliverable, it passes criterion 5.
-
-**Implied data models**: If the ticket doesn't explicitly say "create a new model" but the feature clearly requires one (e.g., "users can leave comments on tasks" implies a Comment model), flag the missing data model definition under criterion 6.
-
-**Relationships vs. new models**: Adding a foreign key to establish a relationship between existing models (e.g., `user_id` on tasks) does NOT trigger criterion 6. The criterion is about new entities with user-facing fields that need form validation, not about database-level relationship plumbing.
-
-**Artificial splits**: If a ticket references another ticket for essential details (e.g., "Status values are defined in TICKET-4"), flag this under criterion 2. The ticket should be self-contained or explicitly declare the dependency.
-
-**Nearly Ready threshold**: Use this when the ticket fails exactly 1 criterion and the fix is small (< 30 minutes of refinement). Two or more failing criteria means Not Ready, even if each fix is individually small.
+- Mixed ACs (user-facing + implementation detail): still passes criterion 4
+  if any AC is user-verifiable. Note implementation ACs as optional cleanup.
+- Borderline wording: passes if a developer would know what to build.
+- Infrastructure + user value combined: passes criterion 5.
+- Implied data models: flag missing definition under criterion 6.
+- Foreign keys between existing models: does NOT trigger criterion 6.
+- Cross-ticket references for essential details: flag under criterion 2.
+- Nearly Ready: exactly 1 failing criterion with < 30 min fix. Two or more
+  failures = Not Ready.
 
 ## Tone
 
