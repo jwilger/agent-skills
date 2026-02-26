@@ -8,6 +8,5 @@
   },
   "repository": "https://github.com/jwilger/agent-skills",
   "license": "CC0-1.0",
-  "keywords": ["ensemble", "team", "coordinator", "retrospective"],
-  "agents": "./agents/"
+  "keywords": ["ensemble", "team", "coordinator", "retrospective"]
 }
