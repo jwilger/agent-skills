@@ -173,6 +173,20 @@ session management, asking the user questions). It must not have access to file 
 or shell tools. If the harness supports a restricted coordination mode, enable it
 after all teammates have been activated and confirmed working.
 
+### Mechanical Enforcement (Claude Code with ensemble-coordinator plugin)
+
+When the `ensemble-coordinator` plugin is active, a PreToolUse hook blocks all
+Edit/Write/NotebookEdit calls until the team has been activated via TeamCreate.
+The first successful TeamCreate call writes a `.ensemble-team-active` marker file
+to the project root, which unblocks file editing for team members.
+
+This means the coordinator literally **cannot** edit files before activating the
+team. After activation, file editing is allowed (team members need it). The
+coordinator's advisory instructions (this file) handle the secondary constraint
+of not editing while the team is active.
+
+Add `.ensemble-team-active` to `.gitignore` — it is session state, not source.
+
 ## Driver Rotation and Team Persistence
 
 When the Driver role rotates between tasks, **keep all Reviewer agents alive** to

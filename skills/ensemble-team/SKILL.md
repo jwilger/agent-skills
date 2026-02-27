@@ -342,6 +342,14 @@ See `references/factory-mode.md` for coordinator handoff details.
 
 Advisory on all harnesses. Structural enforcement where TeamCreate exists.
 
+On Claude Code with the `ensemble-coordinator` plugin: **mechanical enforcement**.
+A PreToolUse hook blocks all file edits (Edit/Write/NotebookEdit) until the
+coordinator activates the team via TeamCreate. This prevents the main agent from
+bypassing the ensemble workflow and doing implementation work directly. After team
+activation, file editing is unblocked for team members. The coordinator's advisory
+instructions (`.team/coordinator-instructions.md`) handle delegation discipline
+after activation.
+
 ## Verification
 
 - [ ] Team profiles created with AI-approximation disclaimer

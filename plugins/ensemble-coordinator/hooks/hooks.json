@@ -1,17 +1,5 @@
 {
   "hooks": {
-    "PostToolUse": [
-      {
-        "matcher": "Bash",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "cd \"$CLAUDE_PROJECT_DIR\" && LAST_COMMIT=$(git log --oneline -1 2>/dev/null | head -1); if echo \"$LAST_COMMIT\" | grep -qiE '(merge|squash)'; then echo '{\"hookSpecificOutput\": {\"hookEventName\": \"PostToolUse\", \"additionalContext\": \"A merge/commit just happened. If an ensemble team is active, the team should run a mini-retro before starting new work. The coordinator facilitates but does NOT run the retro itself — the team members discuss.\"}}'; else echo '{}'; fi",
-            "timeout": 10
-          }
-        ]
-      }
-    ],
     "SessionStart": [
       {
         "matcher": "startup|resume",
@@ -24,7 +12,41 @@
           },
           {
             "type": "command",
-            "command": "cd \"$CLAUDE_PROJECT_DIR\" && if [ -f .team/coordinator-instructions.md ]; then echo '{\"systemMessage\": \"Ensemble team detected. Read .team/coordinator-instructions.md before taking any action. You are the coordinator — you facilitate, you do not implement.\"}'; else echo '{}'; fi",
+            "command": "cd \"$CLAUDE_PROJECT_DIR\" && if [ -f .team/coordinator-instructions.md ]; then echo '{\"systemMessage\": \"Ensemble team detected. Read .team/coordinator-instructions.md before taking any action. You are the coordinator — you facilitate, you do not implement. You MUST activate the team via TeamCreate before any work begins. File edits are blocked until the team is active.\"}'; else echo '{}'; fi",
+            "timeout": 10
+          }
+        ]
+      }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": "Edit|Write|NotebookEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "${CLAUDE_PLUGIN_ROOT}/scripts/enforce-coordinator-role.sh",
+            "timeout": 10
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "TeamCreate",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "${CLAUDE_PLUGIN_ROOT}/scripts/mark-team-active.sh",
+            "timeout": 10
+          }
+        ]
+      },
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "cd \"$CLAUDE_PROJECT_DIR\" && LAST_COMMIT=$(git log --oneline -1 2>/dev/null | head -1); if echo \"$LAST_COMMIT\" | grep -qiE '(merge|squash)'; then echo '{\"hookSpecificOutput\": {\"hookEventName\": \"PostToolUse\", \"additionalContext\": \"A merge/commit just happened. If an ensemble team is active, the team should run a mini-retro before starting new work. The coordinator facilitates but does NOT run the retro itself — the team members discuss.\"}}'; else echo '{}'; fi",
             "timeout": 10
           }
         ]

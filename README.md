@@ -509,7 +509,7 @@ management, and automatic skill installation.
 |--------|-------------|-----------------|
 | `tdd-enforcement` | Deterministic PreToolUse hooks blocking edits outside TDD phase (via `.tdd-phase` state file); PostToolUse domain review enforcement; Stop clean-tree check | Claude Code, Cursor |
 | `pipeline-agents` | Custom agents for pipeline roles with `disallowedTools` role boundaries | Claude Code, Cursor |
-| `ensemble-coordinator` | Coordinator agent with retrospective enforcement hooks | Claude Code, Cursor |
+| `ensemble-coordinator` | Coordinator agent with delegation enforcement (blocks file edits until team activated via TeamCreate); retrospective hooks | Claude Code, Cursor |
 | `session-tools` | PreCompact auto-save, SessionStart context restore, Stop session reflection | Claude Code, Cursor |
 
 Each plugin directory contains manifests for multiple harnesses:
