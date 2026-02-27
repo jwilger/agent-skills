@@ -114,6 +114,18 @@ current role and its constraints, active team members and their tasks,
 the specific gate/stage the pipeline is at. If the summary omits role
 constraints, re-derive them from the skill files before proceeding.
 
+### Hook Output Is a Directive
+
+When a hook fires and injects a message into the conversation — especially
+Stop hooks at session end — treat it as a **command to execute immediately**.
+Do not relay hook messages to the user and wait for instructions. Do not ask
+permission. The hook already told you what to do. Act on it.
+
+This applies to all hook types: if a PostToolUse hook says "run tests and
+paste output," run the tests. If a Stop hook says "commit or stash changes,"
+commit or stash. The hook message is your instruction, not a status report
+to forward to the user.
+
 ### Post-Session Learning Loop
 
 At session end: identify patterns from this session, update memory files,
