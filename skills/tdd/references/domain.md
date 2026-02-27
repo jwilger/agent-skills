@@ -1,7 +1,7 @@
 # DOMAIN Phase -- Domain Review and Type Definitions
 
 The domain phase runs TWICE per cycle: once after RED and once after
-GREEN. Its focus depends on which mode is active.
+GREEN. Its focus depends on which invocation is active.
 
 ## File Restrictions
 
@@ -26,9 +26,6 @@ Check the test for:
   similar where a domain-specific newtype should exist?
 - **Naming:** Do type and variable names reflect domain language?
 - **Boundary placement:** Is behavior being tested at the right layer?
-- **Event types with runtime state:** If the test references event
-  types, verify their fields contain domain facts only -- no file paths,
-  hostnames, PIDs, or working directories.
 
 ### Pushback Protocol
 
@@ -39,8 +36,7 @@ Pushback rules:
   instead of `String`")
 - Bounded to ONE round -- RED incorporates the suggestion or disagrees
   with rationale
-- If disagreement, the orchestrator decides. No further rounds.
-- Accept whatever RED produces in the revision.
+- If disagreement persists, escalate to the user. No further rounds.
 
 ### Create Minimal Type Definitions
 
@@ -103,7 +99,8 @@ Types are clean, no domain violations found, and all tests still pass.
 
 One of:
 
-- **No violations:** "Reviewed -- no domain violations. Proceed to commit."
+- **No violations:** "Reviewed -- no domain violations. Proceed to
+  commit."
 - **Violation found:** "DOMAIN CONCERN RAISED: [violation], [location],
   [proposed alternative], [rationale]"
 

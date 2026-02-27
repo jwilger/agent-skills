@@ -2,15 +2,14 @@
 name: design-system
 description: >-
   Collaborative design system creation using Atomic Design methodology.
-  Produces a specification artifact with philosophy, tokens, and component
-  hierarchy. Activate when creating a design system, defining visual
-  language, specifying UI tokens, or planning component architecture
-  before implementation begins.
+  Produces a specification with philosophy, tokens, and component hierarchy.
+  Invoke with /design audit | /design tokens | /design hierarchy |
+  /design implementation | /design documentation | /design facilitation |
+  /design artifacts.
 license: CC0-1.0
-compatibility: Designed for any coding agent (Claude Code, Codex, Cursor, OpenCode, etc.)
 metadata:
   author: jwilger
-  version: "1.0"
+  version: "2.0"
   requires: []
   context: [event-model]
   phase: decide
@@ -26,76 +25,106 @@ guessing at intent.
 
 ## Purpose
 
-Facilitates collaborative creation of a design system specification.
-Produces an artifact at `docs/design-system.pen` (if Pencil MCP is
-available) or `docs/design-system.html` (single-file fallback) that
-documents philosophy, tokens, and the full component hierarchy from
-atoms through templates.
+Facilitates collaborative creation of a design system specification
+using Atomic Design methodology. Produces an artifact documenting
+philosophy, tokens, and a full component hierarchy from atoms through
+templates. Each phase is invocable independently via sub-invocations.
 
 ## Practices
 
+### Philosophy-First Design
+
+Every design decision traces back to named principles. Define
+philosophy before any visual work. Philosophy includes brand identity,
+design principles (each with a short identifier like `P1`, `P2`),
+accessibility standard, responsive strategy, and constraints.
+
+If a token or component cannot cite a philosophy principle, either it
+is unnecessary or the philosophy is incomplete. Resolve before
+proceeding.
+
+### Token-Based Visual Properties
+
+No raw values in components. Every color, spacing value, font size,
+radius, shadow, timing, and opacity references a named token. Tokens
+follow the naming convention `{category}-{variant}-{modifier}` (e.g.,
+`color-primary-500`, `spacing-md`, `font-size-lg`).
+
+Token categories: color, typography, spacing, border radius,
+elevation/shadows, motion/animation, breakpoints, opacity. See
+`references/token-categories.md` for the exhaustive category reference.
+
+Each token entry documents: name, value, and which philosophy principle
+it serves.
+
+### Atomic Design Hierarchy
+
+Build components bottom-up through four levels. Never skip a level.
+
+1. **Atoms** -- Indivisible elements (buttons, inputs, labels, icons).
+   Each documents states (default, hover, focus, disabled, error) and
+   references only tokens for visual properties.
+2. **Molecules** -- Functional units composed of atoms (form fields,
+   search bars). Documents composition, interaction pattern, and layout.
+3. **Organisms** -- Distinct UI sections composed of molecules and
+   atoms (headers, forms, data tables). Documents layout behavior at
+   breakpoints and content states (empty, loading, error, populated).
+4. **Templates** -- Page layouts arranging organisms. Defines structure,
+   content slots, and responsive behavior.
+
+Traceability at every level: atoms reference tokens, molecules
+reference atoms, organisms reference molecules and atoms, templates
+reference organisms. No raw markup or unsystematized elements.
+
 ### Detect Artifact Format
 
-Check whether the `mcp__pencil__get_editor_state` tool is available.
+Before generating artifacts, check whether the
+`mcp__pencil__get_editor_state` tool is available.
 
-- **Present:** Use `.pen` format. Follow `references/pencil-workflow.md`.
-- **Absent:** Use HTML format. Follow `references/html-artifact.md`.
+- **Present:** Use `.pen` format. Follow `references/artifacts.md`
+  Pencil section.
+- **Absent:** Use HTML format. Follow `references/artifacts.md` HTML
+  section.
 
-Decide the format before starting any design work. Do not switch formats
+Decide the format before starting artifact work. Do not switch formats
 mid-process.
-
-### Follow the Seven-Phase Collaborative Process
-
-You MUST follow `references/design-phases.md` for the full methodology.
-Each phase completes before the next begins.
-
-**Phases at a glance:**
-
-1. **Philosophy & Constraints** -- Brand, principles, accessibility,
-   responsive strategy, constraints. Every subsequent decision traces here.
-2. **Design Tokens** -- Color, typography, spacing, radii, elevation,
-   motion, breakpoints, opacity. Each token cites a philosophy principle.
-3. **Atoms** -- Indivisible elements (buttons, inputs, labels, icons).
-   Each documents states and references only tokens.
-4. **Molecules** -- Functional units composed of atoms (form fields,
-   search bars). Documents composition and interaction.
-5. **Organisms** -- Distinct UI sections composed of molecules and atoms
-   (headers, forms, data tables). Documents layout behavior.
-6. **Templates** -- Page layouts arranging organisms. Defines structure,
-   content slots, and breakpoint behavior.
-7. **Artifact Assembly** -- Compile into the chosen format with
-   philosophy as the first section.
 
 ### Facilitate, Do Not Assume
 
-You are a facilitator, not a stenographer. Ask probing questions at each
-phase. Challenge choices that conflict with stated philosophy. Use
-`references/facilitation-questions.md` for question banks.
+You are a facilitator, not a stenographer. Ask probing questions at
+each phase. Challenge choices that conflict with stated philosophy.
+Use `references/facilitation.md` for phase-specific question banks.
 
 1. Do not assume visual preferences -- ask
-2. Do not skip ahead when the user gives a partial answer -- probe deeper
+2. Do not skip ahead when the user gives a partial answer -- probe
+   deeper
 3. If event model wireframes exist in `docs/event_model/`, use them to
-   identify required components, but still confirm with the user
+   identify required components, but confirm with the user
 4. Present token proposals informed by the philosophy and ask for
    adjustments
 
-### Enforce Philosophy Traceability
+### Phase Sub-Invocations
 
-Every design decision traces back to the philosophy.
+Each phase can be invoked independently:
 
-- Tokens cite which philosophy principle they serve (e.g., `P1`)
-- Atoms reference which tokens they use
-- Molecules document which atoms they compose
-- Organisms document which molecules and atoms they compose
-- Templates document which organisms they arrange
+| Invocation | Phase | Reference |
+|---|---|---|
+| `/design audit` | Audit existing UI patterns | `references/audit.md` |
+| `/design tokens` | Define design tokens | `references/tokens.md` |
+| `/design hierarchy` | Define component hierarchy | `references/hierarchy.md` |
+| `/design implementation` | Implement components | `references/implementation.md` |
+| `/design documentation` | Create living documentation | `references/documentation.md` |
+| `/design facilitation` | Facilitate design decisions | `references/facilitation.md` |
+| `/design artifacts` | Generate design system artifacts | `references/artifacts.md` |
 
-If a token cannot cite a principle, either the token is unnecessary or
-the philosophy is incomplete. Resolve before proceeding.
+Load the corresponding reference file when a phase is invoked. Phases
+are designed to run in order (audit, tokens, hierarchy, implementation,
+documentation, artifacts) but each provides value standalone.
 
 **Do:**
 - Define philosophy before any visual decisions
 - Use only token references in components -- never raw values
-- Complete each phase before starting the next
+- Complete each phase before starting the next when working sequentially
 - Verify traceability at every level
 - Refer to `references/token-categories.md` for comprehensive token guidance
 
@@ -111,10 +140,10 @@ the philosophy is incomplete. Resolve before proceeding.
 
 This skill provides advisory guidance. The agent tracks phase state and
 halts if the philosophy phase is skipped or if raw values are used
-instead of token references in components. It cannot mechanically prevent
-all violations but will flag traceability gaps when detected. If you
-observe the agent skipping a phase or using hard-coded values, point it
-out.
+instead of token references in components. It cannot mechanically
+prevent all violations but will flag traceability gaps when detected.
+If you observe the agent skipping a phase or using hard-coded values,
+point it out.
 
 ## Verification
 
@@ -135,23 +164,17 @@ After completing work guided by this skill, verify:
       `docs/design-system.html`
 - [ ] Philosophy is the first section in the artifact
 
-If any criterion is not met, revisit the relevant phase before proceeding.
+If any criterion is not met, revisit the relevant phase before
+proceeding.
 
 ## Dependencies
 
-This skill works standalone. For enhanced workflows, it integrates with:
+This skill works standalone. For enhanced workflows, it integrates
+with:
 
 - **event-modeling:** Wireframes from event modeling sessions identify
   which components the design system must include. Run event-modeling
   first for best results.
-- **architecture-decisions:** The design system specification informs
-  technology decisions for UI implementation (CSS framework, component
-  library, build tooling). Run design-system before architecture-decisions.
-- **atomic-design:** The design system specification provides the token
-  definitions, component catalog, and hierarchy that atomic-design
-  implements in code.
-- **tdd:** Token values and component specifications become testable
-  contracts -- visual regression tests verify token compliance.
 
 Missing a dependency? Install with:
 ```

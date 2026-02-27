@@ -1,8 +1,7 @@
 # Phase Boundary Rules -- File-Type Restrictions
 
 Each TDD phase may edit only specific file types. Violations indicate
-drift from the cycle discipline. These rules apply in every mode (guided,
-chaining, serial subagents, agent teams).
+drift from the cycle discipline.
 
 ## RED Phase -- Test Files Only
 
@@ -10,14 +9,14 @@ chaining, serial subagents, agent teams).
 - Files in directories: `tests/`, `test/`, `__tests__/`, `spec/`
 - Files matching: `*_test.*`, `*.test.*`, `*_spec.*`, `*.spec.*`, `test_*.*`
 
-**Forbidden:** Production source files, type definition files, configuration
-files, documentation.
+**Forbidden:** Production source files, type definition files,
+configuration files, documentation.
 
 **Verification checklist:**
 1. Every file edited has a path or name matching a test pattern above.
 2. No `src/`, `lib/`, or `app/` files were modified.
-3. No type definition files (`.d.ts`, trait files, interface modules) were
-   created or changed.
+3. No type definition files (`.d.ts`, trait files, interface modules)
+   were created or changed.
 4. The test was run and failure output was pasted.
 
 ## GREEN Phase -- Production Implementation Only

@@ -2,9 +2,9 @@
 name: skill-name
 description: >-
   What this skill teaches and when to activate it. Include keywords
-  agents use to match tasks. Max 1024 characters.
+  agents use to match tasks. For multi-phase skills, list sub-invocations.
+  Max 1024 characters.
 license: CC0-1.0
-compatibility: Designed for any coding agent (Claude Code, Codex, Cursor, OpenCode, etc.)
 metadata:
   author: jwilger
   version: "1.0"
@@ -57,17 +57,28 @@ Repeat the pattern. Each practice should be independently understandable.
 - Specific anti-pattern and why it fails
 - Another anti-pattern
 
+### Multi-Phase Skills (Sub-Invocations)
+
+For skills with distinct phases, route to reference files via sub-invocations.
+Each phase has its own reference file in `references/` that the agent loads
+when the user invokes that phase.
+
+| Sub-invocation | Reference file | Purpose |
+|----------------|---------------|---------|
+| `/skill-name phase1` | `references/phase1.md` | What phase 1 does |
+| `/skill-name phase2` | `references/phase2.md` | What phase 2 does |
+
+The SKILL.md body describes the overall process and routing. Reference files
+contain detailed instructions for each phase.
+
 ## Enforcement Note
 
 _State honestly what this skill can and cannot guarantee._
 
 This skill provides advisory guidance. It instructs the agent on correct
-behavior but cannot mechanically prevent violations. Enforcement is
-proportional to harness capability: on harnesses with delegation primitives,
-skills use structural enforcement (context isolation, handoff schemas). On
-Claude Code, optional hook templates add mechanical guardrails. On harnesses
-without delegation, the agent follows practices by convention. If you observe
-the agent violating a practice, point it out.
+behavior but cannot mechanically prevent violations. The agent follows
+practices by convention. If you observe the agent violating a practice,
+point it out.
 
 ## Verification
 

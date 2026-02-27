@@ -115,6 +115,22 @@ Views CANNOT reject events. There are no error cases for view scenarios.
 - OrderSummary { customerId: "CUST-123", activeOrders: 1, totalSpent: 59.98 }
 ```
 
+### Automation -- Inventory Reservation
+
+```markdown
+### Scenario: Auto-reserve inventory when order is placed
+
+**Given** (prior events establishing state):
+- ProductStocked { productId: "PROD-42", quantity: 50 }
+- OrderPlaced { orderId: "ORD-789", items: [{productId: "PROD-42", quantity: 2}] }
+
+**When** (trigger event):
+- OrderPlaced { orderId: "ORD-789", items: [{productId: "PROD-42", quantity: 2}] }
+
+**Then** (automation issues command, producing events):
+- InventoryReserved { orderId: "ORD-789", productId: "PROD-42", quantity: 2 }
+```
+
 ## Business Rules vs Data Validation
 
 Before writing an error scenario, apply this test:
@@ -156,3 +172,10 @@ For view scenarios:
 - [ ] When contains exactly one event
 - [ ] Then contains complete projection state after processing
 - [ ] No error cases (views cannot reject)
+
+For automation scenarios:
+- [ ] Given establishes the state the automation reads from
+- [ ] When contains the triggering event
+- [ ] Then describes the resulting events from the automation's command
+- [ ] Includes a scenario where the automation does NOT act (condition
+      not met)

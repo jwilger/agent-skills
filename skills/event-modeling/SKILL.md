@@ -2,14 +2,14 @@
 name: event-modeling
 description: >-
   Event modeling facilitation for discovering and designing event-sourced
-  systems. Four phases: domain discovery, workflow design (9-step process),
-  GWT scenario generation, and model validation. Activate when starting a
-  new project, designing features, modeling domains, writing Given/When/Then
-  scenarios, or discussing event sourcing and domain-driven design.
+  systems. Eight steps from brainstorming domain events through vertical
+  slice decomposition with GWT scenarios. Invoke with /event brainstorm |
+  /event order | /event wireframes | /event commands | /event read-models |
+  /event automations | /event integrations | /event slicing.
 license: CC0-1.0
 metadata:
   author: jwilger
-  version: "1.0"
+  version: "2.0"
   requires: []
   context: [event-model]
   phase: understand
@@ -24,11 +24,11 @@ humans and agents before any code is written.
 
 ## Purpose
 
-Teaches the agent to facilitate event modeling sessions following Martin
-Dilger's "Understanding Eventsourcing" methodology. Produces a complete
-event model (actors, events, commands, read models, automations, slices)
-that drives all downstream implementation. The model lives in
-`docs/event_model/`.
+Teaches the agent to facilitate event modeling sessions following an
+eight-step process from brainstorming domain events through vertical slice
+decomposition. Produces a complete event model (actors, events, commands,
+read models, automations, slices with GWT scenarios) that drives all
+downstream implementation. The model lives in `docs/event_model/`.
 
 ## Practices
 
@@ -42,11 +42,23 @@ actors are, what major processes exist, what external systems integrate, and
 which workflows to model. Ask these questions of the user; do not assume
 answers. Output: `docs/event_model/domain/overview.md`.
 
-**Phase 2 -- Workflow Design.** For each workflow, follow the 9-step
-process. You MUST follow `references/nine-steps.md` for the full methodology. Design
-one workflow at a time. Complete all 9 steps before starting the next
-workflow. Output: `docs/event_model/workflows/<name>/overview.md` plus
-individual slice files in `slices/`.
+**Phase 2 -- Workflow Design.** For each workflow, follow the eight-step
+process. Each step is invoked via `/event <step>` and loads its reference
+file for detailed guidance. Design one workflow at a time. Complete all
+eight steps before starting the next workflow. Output:
+`docs/event_model/workflows/<name>/overview.md` plus individual slice files
+in `slices/`.
+
+The eight steps:
+
+1. `/event brainstorm` -- Brainstorm domain events (see `references/brainstorm.md`)
+2. `/event order` -- Order events chronologically (see `references/ordering.md`)
+3. `/event wireframes` -- Create wireframes for user interactions (see `references/wireframes.md`)
+4. `/event commands` -- Identify commands (see `references/commands.md`)
+5. `/event read-models` -- Design read models (see `references/read-models.md`)
+6. `/event automations` -- Find automations (see `references/automations.md`)
+7. `/event integrations` -- Map external integrations (see `references/integrations.md`)
+8. `/event slicing` -- Decompose into vertical slices (see `references/slicing.md`)
 
 ### The Prime Directive: Not Losing Information
 
@@ -77,78 +89,50 @@ vertical slice.
 1. **State Change:** Command -> Event. The only way to modify state. A
    command may produce multiple events as part of a single operation.
 2. **State View:** Events -> Read Model. How the system answers queries.
-   When the domain supports concurrent instances, use collection types
-   in read model fields, not singular values.
    Commands derive their inputs from user-provided data and the event
-   stream — never from read models. No `ReadModel → Command` edges
-   should appear in diagrams. If a command needs to check whether
-   something already happened (e.g., idempotency), it checks the event
-   stream, not a read model.
-   Read models represent meaningful domain projections. Infrastructure
-   preconditions ("does directory exist?", "is service running?") that
-   are implicit in the command's execution context do not need their own
-   read model.
+   stream -- never from read models. No `ReadModel -> Command` edges.
 3. **Automation:** Event -> Read Model (todo list) -> Process -> Command
    -> Event. Background work triggered by events. Requires all four
    components: triggering event, read model consulted, conditional
    process logic, and resulting command. If there is no read model and
-   no conditional logic, it is NOT an automation — it is a command
-   producing multiple events. Must have clear termination conditions.
+   no conditional logic, it is NOT an automation -- it is a command
+   producing multiple events.
 4. **Translation:** External Data -> Internal Event. Anti-corruption layer
    for workflow-specific external integrations. Generic infrastructure
-   shared by all workflows (event persistence, message transport) is NOT
-   a Translation — it is cross-cutting infrastructure that belongs
-   outside the event model.
-
-### Required Layers Per Slice Pattern
-
-Each slice pattern implies a minimum set of architectural layers. A slice is not complete until all required layers are implemented and wired together.
-
-- **State View**: infrastructure + domain (projection) + presentation + wiring
-- **State Change**: presentation + domain (validation/rules) + infrastructure + wiring
-- **Automation**: infrastructure (trigger) + domain (policy) + infrastructure (action) + wiring
-- **Translation**: infrastructure (receive) + domain (mapping) + infrastructure (deliver) + wiring
-
-When decomposing a slice, verify that your acceptance criteria and task breakdown cover every required layer. A slice that only implements domain logic without presentation or infrastructure is incomplete — it is a component, not a vertical slice.
+   shared by all workflows is NOT a Translation.
 
 ### GWT Scenarios
 
 After workflow design, generate Given/When/Then scenarios for each slice.
-These become acceptance criteria for implementation.
+These become acceptance criteria for implementation. Use
+`references/gwt-template.md` for the full scenario format and examples.
 
-**Command scenarios:** Given = prior events establishing state. When = the
-command with concrete data. Then = events produced OR an error (never both).
+**Command scenarios:** Given = prior events. When = the command. Then =
+events produced OR an error (never both).
 
 **View scenarios:** Given = current projection state. When = one new event.
 Then = resulting projection state. Views cannot reject events.
 
+**Automation scenarios:** Given = prior events. When = trigger event. Then =
+automation issues command, producing events.
+
 **Critical distinction:** GWT scenarios test business rules (state-dependent
 policies), not data validation (format/structure checks that belong in the
-type system). If the type system can make the invalid state unrepresentable,
-it is not a GWT scenario.
-
-You MUST use `references/gwt-template.md` for the full scenario format and examples.
+type system).
 
 ### Application-Boundary Acceptance Scenarios
 
-Every vertical slice MUST include at least one GWT scenario defined at the application boundary:
+Every vertical slice MUST include at least one GWT scenario defined at the
+application boundary:
 
-- **Given**: The system is in a known state (prior events, seed data, configuration)
-- **When**: A user (or external caller) interacts through the application's external interface — the specific interface depends on the project (HTTP endpoint, CLI command, message queue consumer, UI action, etc.)
-- **Then**: The result is observable at that same boundary — a response, output, rendered state change, emitted event, etc.
+- **Given**: The system is in a known state (prior events, seed data)
+- **When**: A user interacts through the application's external interface
+  (HTTP endpoint, CLI command, message queue consumer, UI action, etc.)
+- **Then**: The result is observable at that same boundary (a response,
+  output, rendered state change, emitted event, etc.)
 
-**For web apps**, "observable" means the user can perceive what happened:
-the UI displays a confirmation or state change, errors are visible, and
-the next action is navigable. Automated tests verify via browser
-automation — not just HTTP response codes.
-
-A GWT scenario that can be satisfied entirely by calling an internal function in a unit test describes a unit-level specification, not a slice acceptance criterion. Slice acceptance criteria must exercise the path from external input to observable output.
-
-### Acceptance Test Strategy
-
-Where the application boundary is programmatically testable — HTTP endpoints, CLI output parsing, headless browser automation, message queue assertions, API contract tests, etc. — write automated acceptance tests that exercise the full GWT scenario from external input to observable output. These tests provide fast feedback and serve as living documentation of slice behavior.
-
-Where automated boundary testing is not feasible (complex GUI interactions, hardware-dependent behavior, visual/aesthetic verification), document what the human should manually verify: the specific steps to perform and the expected observable result. This manual verification checklist becomes part of the slice's definition of done.
+A GWT scenario satisfied entirely by calling an internal function describes
+a unit-level specification, not a slice acceptance criterion.
 
 ### Slice Independence
 
@@ -156,19 +140,6 @@ Slices sharing an event schema are independent. The event schema is the
 shared contract. Command slices test by asserting on produced events; view
 slices test with synthetic event fixtures. Neither needs the other to be
 implemented first. No artificial dependency chains between slices.
-
-### Model Validation
-
-After GWT scenarios are written, validate the model for completeness:
-
-1. Every read model field traces to an event
-2. Every event has a triggering command, automation, or translation
-3. Every command has documented rejection conditions (business rules)
-4. Every automation has a termination condition
-5. GWT Given/When/Then clauses do not reference undefined elements
-
-When gaps are found, ask the user to clarify, create the missing element,
-and re-validate. Do not proceed with gaps remaining.
 
 ### Facilitation Mindset
 
@@ -185,8 +156,6 @@ purpose.
 - Use concrete, realistic data in all examples and scenarios
 - Design one workflow at a time
 - Ensure information completeness before proceeding
-- Ask "Can there be more than one of these at the same time?" for read model fields
-- Verify automations have all four components before labeling them as such
 
 **Do not:**
 - Skip steps because you think you know enough
@@ -194,13 +163,6 @@ purpose.
 - Write GWT scenarios for data validation (use the type system)
 - Design multiple workflows simultaneously
 - Proceed with gaps in the model
-- Author the event model alone when facilitating with a team
-
-**Multi-agent facilitation:** When facilitating with a team, solicit
-contributions from each member at each step. The facilitator MUST NOT
-author the model alone and then ask for review. Instead: present the
-prompt, collect input from each member, synthesize, then confirm before
-advancing.
 
 ## Enforcement Note
 
@@ -219,17 +181,19 @@ After completing event modeling work, verify:
       actors, workflows, external integrations, and recommended starting
       workflow
 - [ ] Each designed workflow has `docs/event_model/workflows/<name>/overview.md`
-      with all 9 steps completed
+      with all eight steps completed
 - [ ] All events are past tense, business language, immutable facts
 - [ ] Every read model field traces to a source event
 - [ ] Every event has a trigger (command, automation, or translation)
-- [ ] Automations have all four components (event, read model, conditional logic, command)
-- [ ] Read model fields use collection types when domain supports concurrent instances
+- [ ] Automations have all four components (event, read model, conditional
+      logic, command)
+- [ ] Read model fields use collection types when domain supports concurrent
+      instances
 - [ ] No cross-cutting infrastructure modeled as Translation slices
-- [ ] GWT scenarios exist for each slice (inline in `docs/event_model/workflows/<name>/slices/*.md`) with concrete data
+- [ ] GWT scenarios exist for each slice with concrete data
 - [ ] GWT error scenarios test business rules only, not data validation
-- [ ] Slices sharing an event schema are independently testable (no
-      artificial dependency chains)
+- [ ] Every slice has at least one application-boundary acceptance scenario
+- [ ] Slices sharing an event schema are independently testable
 - [ ] No gaps remain in the model after validation
 
 If any criterion is not met, revisit the relevant practice before proceeding.
@@ -240,10 +204,8 @@ This skill works standalone. For enhanced workflows, it integrates with:
 
 - **domain-modeling:** Events reveal domain types (Email, Money, OrderStatus)
   that the domain modeling skill refines
-- **tdd:** Each vertical slice maps to one TDD cycle
-- **architecture-decisions:** Event model informs architecture; ADRs should
-  not be written during event modeling itself
-- **task-management:** Workflows map to epics, slices map to tasks
+- **tdd:** Each vertical slice maps to one TDD cycle; GWT scenarios become
+  acceptance tests
 
 Missing a dependency? Install with:
 ```

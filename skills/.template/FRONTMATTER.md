@@ -19,13 +19,15 @@ The skill identifier. Must match the parent directory name.
 
 What this skill does and when to activate it. Agents read this at startup
 (~100 tokens budget) to decide whether to activate the skill, so include
-keywords that match relevant tasks.
+keywords that match relevant tasks. For multi-phase skills, list the
+sub-invocations.
 
 - **Type:** string
 - **Constraints:** 1-1024 characters, non-empty
-- **Good:** "Adaptive test-driven development cycle. Detects harness
-  capabilities and routes to guided or automated mode. Activate when writing
-  tests, implementing features, or doing test-driven development."
+- **Good:** "Five-step test-driven development cycle (RED, DOMAIN, GREEN,
+  DOMAIN, COMMIT). Outside-in, one failing test at a time, domain review
+  with veto power. Invoke with /tdd red | /tdd domain | /tdd green |
+  /tdd commit."
 - **Bad:** "TDD stuff."
 
 ## Optional Fields (Agent Skills Spec)
@@ -113,8 +115,6 @@ harness configuration and fleet dispatchers about what to provide.
   - `architecture-decisions` -- needs ADR documents
   - `design-system` -- needs design system specification artifact
   - `git-history` -- needs git log / diff access
-  - `ci-results` -- needs CI/CD pipeline results
-  - `task-state` -- needs task/todo list state
 - **Example:**
   ```yaml
   context: [test-files, domain-types, source-files]
@@ -132,7 +132,7 @@ skills to have run first.
   - `understand` -- discovery, event modeling, requirements
   - `decide` -- architecture decisions, domain modeling
   - `build` -- TDD, implementation, debugging
-  - `ship` -- code review, PR, mutation testing
+  - `ship` -- code review, PR, retrospective
 - **Default:** none (omit if not clearly in one phase)
 - **Example:**
   ```yaml
@@ -158,40 +158,20 @@ from this set.
 ---
 name: tdd
 description: >-
-  Adaptive test-driven development cycle. Detects harness capabilities
-  and routes to guided or automated mode. Invoke with /tdd for automated
-  or /tdd red|domain|green|commit for guided.
+  Five-step test-driven development cycle (RED, DOMAIN, GREEN, DOMAIN,
+  COMMIT). Outside-in, one failing test at a time, domain review with
+  veto power. Invoke with /tdd red | /tdd domain | /tdd green |
+  /tdd commit.
 license: CC0-1.0
 metadata:
   author: jwilger
-  version: "1.0"
+  version: "3.0"
   requires: []
   context: [test-files, domain-types, source-files]
   phase: build
   standalone: true
 ---
 ```
-
-## Token Budgets
-
-The SKILL.md body (everything after frontmatter) must stay within these
-limits to ensure compatibility across harnesses with varying context windows:
-
-| Tier | Skills | Budget |
-|------|--------|--------|
-| Tier 0 (Bootstrap) | `bootstrap` | 1000 tokens |
-| Tier 1 (Core Process) | `tdd`, `domain-modeling`, `code-review`, `architecture-decisions`, `event-modeling`, `ticket-triage`, `design-system`, `refactoring`, `pr-ship` | 3000 tokens |
-| Tier 2 (Team Workflows) | `ensemble-team`, `task-management` | 4000 tokens |
-| Tier 3 (Utility) | `debugging-protocol`, `user-input-protocol`, `memory-protocol`, `agent-coordination`, `session-reflection`, `error-recovery` | 3000 tokens |
-| Tier 4 (Factory Pipeline) | `pipeline`, `ci-integration`, `factory-review` | 3000 tokens |
-| Advanced | `mutation-testing`, `atomic-design` | 3000 tokens |
-
-The Agent Skills spec recommends under 5000 tokens and under 500 lines for
-the SKILL.md body. Our tighter budgets ensure skills work well on harnesses
-with smaller context windows and leave room for project-specific context.
-
-Move detailed reference material, extended examples, and supplementary
-documentation to `references/` files. The agent loads these on demand.
 
 ## Body Section Order
 
@@ -206,3 +186,8 @@ After the frontmatter, the SKILL.md body follows this section order:
 
 Every section is required. Keep Practices as the dominant section. Minimize
 all others to a few sentences each.
+
+The Agent Skills spec recommends under 5000 tokens and under 500 lines for
+the SKILL.md body. Move detailed reference material, extended examples, and
+supplementary documentation to `references/` files. The agent loads these
+on demand.
