@@ -6,7 +6,7 @@
   },
   "metadata": {
     "description": "Advanced Claude Code plugins for the agent-skills library. Provides mechanical enforcement of skill rules via hooks, custom agents for pipeline roles, and session state management.",
-    "version": "6.0.2",
+    "version": "6.0.3",
     "pluginRoot": "./plugins"
   },
   "plugins": [
@@ -14,7 +14,7 @@
       "name": "tdd-enforcement",
       "source": "./plugins/tdd-enforcement",
       "description": "Mechanical enforcement of TDD phase boundaries via hooks. Blocks file edits outside the current phase, verifies test output after edits, and enforces domain review gates.",
-      "version": "6.0.2",
+      "version": "6.0.3",
       "category": "enforcement",
       "tags": ["tdd", "hooks", "enforcement", "phase-boundaries"]
     },
@@ -22,7 +22,7 @@
       "name": "pipeline-agents",
       "source": "./plugins/pipeline-agents",
       "description": "Custom agents for factory pipeline roles with tool restrictions. Pipeline controller cannot edit files; TDD phase agents are restricted to their phase's file types.",
-      "version": "6.0.2",
+      "version": "6.0.3",
       "category": "agents",
       "tags": ["pipeline", "agents", "factory", "role-boundaries"]
     },
@@ -30,7 +30,7 @@
       "name": "ensemble-coordinator",
       "source": "./plugins/ensemble-coordinator",
       "description": "Ensemble team coordinator agent with retrospective enforcement hooks. Coordinator is restricted to coordination-only tools.",
-      "version": "6.0.2",
+      "version": "6.0.3",
       "category": "agents",
       "tags": ["ensemble", "team", "coordinator", "retrospective"]
     },
@@ -38,7 +38,7 @@
       "name": "session-tools",
       "source": "./plugins/session-tools",
       "description": "Session state management hooks for crash recovery. Auto-saves WORKING_STATE.md before compaction, restores context on session start, and runs session reflection on stop.",
-      "version": "6.0.2",
+      "version": "6.0.3",
       "category": "utilities",
       "tags": ["session", "state", "recovery", "compaction"]
     }

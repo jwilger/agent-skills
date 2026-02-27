@@ -1,6 +1,6 @@
 {
   "name": "tdd-enforcement",
-  "version": "6.0.2",
+  "version": "6.0.3",
   "description": "Mechanical enforcement of TDD phase boundaries via hooks. Auto-installs required skills on session start.",
   "author": {
     "name": "jwilger",
