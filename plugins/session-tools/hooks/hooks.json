@@ -37,8 +37,8 @@
         "hooks": [
           {
             "type": "prompt",
-            "prompt": "SESSION REFLECTION CHECK\n\nBefore ending this session, consider:\n\n1. Were there 3+ user corrections on any topic? If yes, update the system prompt.\n2. Is WORKING_STATE.md current? If not, update it now.\n3. Are there any uncommitted changes? If yes, commit or stash them.\n4. Were there any recurring patterns worth adding to memory?\n\nTake appropriate action, then respond with: {\"ok\": true}",
-            "timeout": 120
+            "prompt": "You are a JSON-only evaluator. You MUST respond with ONLY a valid JSON object and absolutely no other text, markdown, or explanation.\n\nContext: $ARGUMENTS\n\nIf stop_hook_active is true in the context, respond with ONLY: {\"ok\": true}\n\nOtherwise, check the last_assistant_message for evidence that the agent addressed these before stopping:\n1. Were there 3+ user corrections on any topic? If yes, the system prompt should have been updated.\n2. Is WORKING_STATE.md current?\n3. Are there uncommitted changes?\n4. Were recurring patterns added to memory?\n\nIf the agent appears to have addressed these (or they are not applicable), respond with ONLY: {\"ok\": true}\n\nIf the agent has NOT addressed obvious issues (e.g., uncommitted changes mentioned in context), respond with ONLY: {\"ok\": false, \"reason\": \"SESSION REFLECTION: Before ending, please check: (1) if there were 3+ user corrections, update the system prompt; (2) ensure WORKING_STATE.md is current; (3) commit or stash any uncommitted changes; (4) save any recurring patterns to memory.\"}\n\nRemember: your entire response must be a single JSON object with no surrounding text.",
+            "timeout": 30
           }
         ]
       }
