@@ -1,5 +1,6 @@
 ---
 name: pipeline-controller
+model: sonnet
 description: >-
   Factory pipeline controller agent. Orchestrates slice queue, TDD pair
   dispatch, code review, mutation testing, CI, and merge decisions.

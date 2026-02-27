@@ -124,6 +124,11 @@ If CHANGES REQUIRED:
   2. [specific required change]
 ```
 
+### Model Selection
+
+When code review is performed by a spawned agent, the recommended model is
+sonnet (judgment tier). See `tdd/references/model-tiers.md` for overrides.
+
 ### Structured Review Evidence
 
 After completing all three stages, produce a REVIEW_RESULT evidence packet

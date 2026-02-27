@@ -1,5 +1,6 @@
 ---
 name: tdd-red
+model: haiku
 description: >-
   TDD RED phase agent. Writes one failing test with one assertion.
   May only edit test files. Must not touch production code or type

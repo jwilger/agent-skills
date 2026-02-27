@@ -99,6 +99,10 @@ quality gate. A gate failure routes back for rework; it never skips forward.
      playing each TDD role sequentially per the TDD skill's chaining
      section.
 
+   **Model selection:** Each phase agent uses a default model tier (haiku
+   for execution roles, sonnet for judgment roles). See
+   `tdd/references/model-tiers.md` for defaults, overrides, and harness support.
+
    The TDD pair then works through red-green-domain-commit cycles without
    consensus rounds. No team discussion during implementation. Output: passing
    tests, committed code, cycle evidence in

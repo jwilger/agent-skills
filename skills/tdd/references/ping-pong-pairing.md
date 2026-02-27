@@ -31,6 +31,24 @@ Each TDD cycle requires three roles:
 - **Domain Reviewer:** Reviews test design and implementation for domain
   integrity (both DOMAIN phases)
 
+## Model Selection for Team Members
+
+Each team role has a recommended default model tier. Check
+`.claude/sdlc.yaml` for `model_tiers` overrides before using defaults.
+
+| Role | Default Model | Override Key |
+|------|---------------|-------------|
+| Ping (RED) | haiku | `model_tiers.tdd_red` |
+| Pong (GREEN) | haiku | `model_tiers.tdd_green` |
+| Domain Reviewer | sonnet | `model_tiers.domain_reviewer` |
+
+**Model follows the role, not the agent.** When roles swap (ping becomes
+pong, pong becomes ping), the model assignment swaps too. On Claude Code,
+agent definitions set the model via frontmatter. On Cursor, use
+`.cursor/agents/*.md` frontmatter. On other harnesses, model tiers are
+advisory — see `references/model-tiers.md` for the full harness support
+matrix.
+
 Track pairing history in `.team/pairing-history.json`. Neither of the last
 2 ping/pong combinations may repeat. The domain reviewer may repeat (domain
 expertise is more important than rotation for this role). If only 2

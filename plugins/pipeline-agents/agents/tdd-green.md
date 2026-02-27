@@ -1,5 +1,6 @@
 ---
 name: tdd-green
+model: haiku
 description: >-
   TDD GREEN phase agent. Makes the failing test pass with minimal code.
   May only edit production/implementation files. Must not touch test

@@ -1,5 +1,6 @@
 ---
 name: ensemble-coordinator
+model: sonnet
 description: >-
   Ensemble team coordinator agent. Facilitates team communication, relays
   information between user and team, manages agent sessions. NEVER writes

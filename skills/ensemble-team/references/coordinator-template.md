@@ -83,12 +83,17 @@ messaging.
 - Only **one Driver at a time**. The coordinator must end the current Driver's session
   before activating a new one or re-designating the role.
 - The Driver rotates by task based on the expertise needed.
+- **Recommended model:** sonnet (or override from `model_tiers.driver` in
+  `.claude/sdlc.yaml`). On harnesses with per-agent model support, specify in the
+  agent config or activation prompt. On others, this is advisory.
 
 ### Reviewers
 - Activated with read-only access **plus write access to `.reviews/` only**. The
   activation prompt must explicitly instruct them NOT to use file-editing or
   file-writing tools on project files. Reviewers operate in read-only mode for the
   codebase but write structured review files to `.reviews/`.
+- **Recommended model:** sonnet (or override from `model_tiers.reviewer` in
+  `.claude/sdlc.yaml`). See `tdd/references/model-tiers.md` for rationale.
 - Each Reviewer writes structured review feedback to `.reviews/` using the format in
   `references/file-based-reviews.md`, then sends a brief one-line coordination message
   to the Driver (e.g., "Review posted — verdict: CHANGES-REQUESTED").
