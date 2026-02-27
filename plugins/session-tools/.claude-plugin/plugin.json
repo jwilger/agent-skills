@@ -1,6 +1,6 @@
 {
   "name": "session-tools",
-  "version": "6.2.0",
+  "version": "6.3.0",
   "description": "Session state management hooks for crash recovery. Auto-saves WORKING_STATE.md before compaction, restores context on session start, and runs session reflection on stop.",
   "author": {
     "name": "jwilger",
