@@ -1,6 +1,6 @@
 {
   "name": "tdd-enforcement",
-  "version": "6.1.0",
+  "version": "6.1.1",
   "description": "Mechanical enforcement of TDD phase boundaries via hooks. Blocks file edits outside the current phase, verifies test output after edits, and enforces domain review gates.",
   "author": {
     "name": "jwilger",
