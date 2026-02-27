@@ -1,6 +1,6 @@
 {
   "name": "pipeline-agents",
-  "version": "6.3.1",
+  "version": "6.3.2",
   "description": "Custom agents for factory pipeline roles with tool restrictions. Pipeline controller cannot edit files; TDD phase agents are restricted to their phase's file types.",
   "author": {
     "name": "jwilger",
