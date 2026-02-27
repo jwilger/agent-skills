@@ -1,6 +1,6 @@
 {
   "name": "session-tools",
-  "version": "6.3.0",
+  "version": "6.3.1",
   "description": "Session state management with auto-save and restore. Auto-installs required skills on session start.",
   "author": {
     "name": "jwilger",
