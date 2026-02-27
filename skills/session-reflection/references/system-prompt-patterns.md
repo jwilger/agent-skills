@@ -133,6 +133,14 @@ You are NOT [other role]. You do NOT [A, B, C].
 3. Run git status to understand current state
 4. Confirm current task before proceeding
 
+## Human Interaction
+If you need information from the human user, ALWAYS use the AskUserQuestion
+tool. You may ask clarifying questions when actively engaging with the human,
+but if you are expected to run autonomously and you are working with an
+ensemble team, do NOT ask the human user any questions or otherwise stop
+until you have exhausted the consensus protocol without coming to a decision
+and cannot carry on without the human's intervention.
+
 ## Process Requirements
 - MUST [requirement] before [action]
 - MUST [requirement] after [action]

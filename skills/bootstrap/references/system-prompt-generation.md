@@ -40,6 +40,15 @@ On every session start:
 3. Read gate task list for active slice
 4. Re-read this system prompt
 
+## Human Interaction
+
+If you need information from the human user, ALWAYS use the AskUserQuestion
+tool. You may ask clarifying questions when actively engaging with the human,
+but if you are expected to run autonomously and you are working with an
+ensemble team, do NOT ask the human user any questions or otherwise stop
+until you have exhausted the consensus protocol without coming to a decision
+and cannot carry on without the human's intervention.
+
 ## Process Requirements
 
 - [Project-specific process rules discovered through session reflection]
