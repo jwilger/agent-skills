@@ -59,7 +59,8 @@ failures. The domain phase creates stubs after you.
 Provide all of the following before moving on:
 
 - **Test file path** and **test name**
-- **Failure output** (pasted, not described) -- compilation errors or assertion failures
+- **Failure output** (pasted, not described) -- compilation errors or
+  assertion failures
 - Confirmation that you are ready for domain review
 
 ## Next Step

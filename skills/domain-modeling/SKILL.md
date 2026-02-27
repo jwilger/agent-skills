@@ -215,8 +215,6 @@ This skill works standalone. For enhanced workflows, it integrates with:
   This skill provides the principles that review checks for.
 - **code-review:** Domain integrity is stage 3 of the three-stage review.
   This skill defines what to look for.
-- **architecture-decisions:** Architectural patterns (event sourcing, CQRS,
-  hexagonal) affect where domain boundaries fall.
 
 Missing a dependency? Install with:
 ```

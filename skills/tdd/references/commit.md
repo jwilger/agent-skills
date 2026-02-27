@@ -34,6 +34,9 @@ committing.
    type definitions created, and the implementation code. Verify nothing
    unrelated is staged.
 
+5. **Verify clean working tree.** Run `git status` after committing to
+   confirm no uncommitted files remain.
+
 ## Hard Gate
 
 **No new `/tdd red` may begin until this commit exists.**
@@ -47,6 +50,12 @@ cycle violates the TDD discipline and risks losing work.
 If refactoring is warranted after this commit, do it in a SEPARATE
 commit. Never mix behavioral changes (the RED-GREEN cycle) with
 structural changes (refactoring) in the same commit.
+
+## Evidence Required
+
+- **Full test suite output** (pasted, not described)
+- **Git commit hash and message**
+- **`git status` output** showing clean working tree
 
 ## Next Step
 

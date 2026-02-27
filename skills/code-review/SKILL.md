@@ -7,10 +7,9 @@ description: >-
   on: "review this code", "prepare PR", "check implementation", "code quality",
   "does this match the spec".
 license: CC0-1.0
-compatibility: Designed for any coding agent (Claude Code, Codex, Cursor, OpenCode, etc.)
 metadata:
   author: jwilger
-  version: "1.1"
+  version: "2.0"
   requires: [domain-modeling]
   context: [source-files, test-files, domain-types, git-history]
   phase: ship
@@ -124,52 +123,6 @@ If CHANGES REQUIRED:
   2. [specific required change]
 ```
 
-### Model Selection
-
-When code review is performed by a spawned agent, the recommended model is
-sonnet (judgment tier). See `tdd/references/model-tiers.md` for overrides.
-
-### Structured Review Evidence
-
-After completing all three stages, produce a REVIEW_RESULT evidence packet
-containing: per-stage verdicts {stage, verdict (PASS/FAIL), findings
-[{severity, description, file, line?, required_change?}]}, overall_verdict,
-required_changes_count, blocking_findings_count.
-
-When `pipeline-state` is provided in context metadata, the code-review skill
-operates in **pipeline mode** and stores the evidence to
-`.factory/audit-trail/slices/<slice-id>/review.json`. When running
-standalone, the evidence is informational only (not stored).
-
-In **factory mode**, the full team reviews before the pipeline pushes code --
-this is the quality checkpoint that replaces consensus-during-build. All
-blocking review feedback must be addressed before push. See
-`references/mob-review.md` for the factory mode review subsection.
-
-### File-Based Review Artifacts
-
-Review findings MUST be written to `.reviews/` files as the default
-persistence mechanism. Messages are supplementary coordination signals
-only — they do not survive context compaction.
-
-- **Naming:** `<reviewer-name>-<task-slug>.md` (e.g., `kent-beck-user-login.md`)
-- **Content:** Full structured review output (all three stages)
-- **Location:** `.reviews/` directory (add to `.gitignore`)
-- Messages say "review posted to .reviews/" — substantive feedback lives in
-  files only
-
-This ensures review findings survive context compaction, agent restarts, and
-harnesses that lack inter-agent messaging.
-
-### Non-Blocking Feedback Escalation
-
-Non-blocking items (SUGGESTION severity) that appear in 2+ consecutive
-reviews of different slices MUST escalate to blocking (IMPORTANT severity).
-Track recurrence by checking previous review files in `.reviews/`.
-
-This prevents persistent quality issues from being perpetually deferred as
-"just a suggestion."
-
 ### User-Facing Behavior Verification
 
 When a GWT scenario describes user-visible behavior (UI elements, displayed
@@ -226,10 +179,8 @@ These are not blocking concerns but should be noted when relevant.
 
 This skill provides advisory guidance. It instructs the agent on correct
 review procedure but cannot mechanically prevent skipping stages or merging
-without review. When used with the `tdd` skill in automated mode, the
-orchestrator can gate PR creation on review completion. In guided mode or
-standalone, the agent follows these practices by convention. If you observe
-stages being skipped, point it out.
+without review. The agent follows these practices by convention. If you
+observe stages being skipped, point it out.
 
 ## Verification
 
@@ -242,8 +193,6 @@ After completing a review guided by this skill, verify:
 - [ ] Convention violations were not downgraded due to matching existing code
 - [ ] A structured summary was produced with clear PASS/FAIL per stage
 - [ ] Any CHANGES REQUIRED items list specific, actionable fixes
-- [ ] Review findings written to `.reviews/` files (not messages only)
-- [ ] Recurring non-blocking items escalated to blocking when seen in 2+ reviews
 - [ ] User-facing behavior verification applied to UI-describing scenarios
 
 If any criterion is not met, revisit the relevant stage before finalizing.
@@ -256,7 +205,6 @@ This skill works standalone. For enhanced workflows, it integrates with:
   principles referenced in Stage 2 and Stage 3
 - **tdd:** Reviews often follow a TDD cycle; this skill validates the
   output of that cycle
-- **mutation-testing:** Can follow code review as an additional quality gate
 
 Missing a dependency? Install with:
 ```
