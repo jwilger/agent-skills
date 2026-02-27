@@ -197,8 +197,8 @@ At the end of each cycle, produce a CYCLE_COMPLETE evidence packet. When
 
 If running on Claude Code, also read `references/claude-code.md` for
 harness-specific rules including hook-based enforcement. For maximum
-mechanical enforcement, ask the bootstrap skill to install optional hooks
-from `references/hooks/claude-code-hooks.json`.
+mechanical enforcement, use the `tdd-enforcement` plugin
+(`--plugin-dir ./plugins/tdd-enforcement`).
 
 ## Enforcement Note
 

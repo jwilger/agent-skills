@@ -116,6 +116,31 @@ check `git diff --name-only` against allowed file patterns for the phase.
 If the GREEN agent changed test files, reject the handoff and re-route
 to RED.
 
+## Phase State File
+
+Before spawning each phase agent, write the current phase to
+`.tdd-phase` in the project root. This file drives deterministic hook
+enforcement (the `tdd-enforcement` plugin reads it to allow/deny edits).
+
+| Before spawning | Write to `.tdd-phase` |
+|-----------------|----------------------|
+| RED agent | `red` |
+| DOMAIN agent (after RED) | `domain-after-red` |
+| GREEN agent | `green` |
+| DOMAIN agent (after GREEN) | `domain-after-green` |
+| COMMIT agent | `commit` |
+
+After a successful commit, delete the file:
+
+```bash
+rm -f .tdd-phase
+```
+
+If the file is missing, hooks gracefully degrade (allow all edits). This
+means enforcement is opt-in: orchestrators that don't write the file get
+no hook interference, while orchestrators that do get deterministic phase
+boundary enforcement.
+
 ## Serial Subagent Delegation Cycle
 
 The cycle above (RED -> DOMAIN -> GREEN -> DOMAIN -> COMMIT) is executed by

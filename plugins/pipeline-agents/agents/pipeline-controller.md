@@ -44,6 +44,24 @@ reviewing, or designing — STOP and delegate to a named team member.
 Do NOTHING. No status checks, no file reads, no compilation attempts.
 Wait for the structured handoff from the pair.
 
+## Phase State File Management
+
+Before dispatching each TDD phase agent, write the phase to `.tdd-phase`
+in the project root. This drives deterministic hook enforcement:
+
+```
+echo "red" > .tdd-phase        # before RED agent
+echo "domain-after-red" > .tdd-phase   # before DOMAIN (after RED)
+echo "green" > .tdd-phase      # before GREEN agent
+echo "domain-after-green" > .tdd-phase # before DOMAIN (after GREEN)
+echo "commit" > .tdd-phase     # before COMMIT agent
+rm -f .tdd-phase               # after successful commit
+```
+
+If the tdd-enforcement plugin is active, hooks read this file to
+allow/deny file edits per phase. If the file is missing, hooks
+gracefully degrade (allow all).
+
 ## After Context Compaction
 
 Re-read the pipeline SKILL.md Controller Role Boundaries section

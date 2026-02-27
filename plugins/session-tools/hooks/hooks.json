@@ -36,9 +36,9 @@
       {
         "hooks": [
           {
-            "type": "prompt",
-            "prompt": "You are a JSON-only evaluator. You MUST respond with ONLY a valid JSON object and absolutely no other text, markdown, or explanation.\n\nContext: $ARGUMENTS\n\nIf stop_hook_active is true in the context, respond with ONLY: {\"ok\": true}\n\nOtherwise, check the last_assistant_message for evidence that the agent addressed these before stopping:\n1. Were there 3+ user corrections on any topic? If yes, the system prompt should have been updated.\n2. Is WORKING_STATE.md current?\n3. Are there uncommitted changes?\n4. Were recurring patterns added to memory?\n\nIf the agent appears to have addressed these (or they are not applicable), respond with ONLY: {\"ok\": true}\n\nIf the agent has NOT addressed obvious issues (e.g., uncommitted changes mentioned in context), respond with ONLY: {\"ok\": false, \"reason\": \"STOP BLOCKED — SESSION HYGIENE INCOMPLETE. You MUST take these actions NOW. Do NOT report this list to the user and wait. Do NOT ask permission. Act immediately: (1) If there were 3+ user corrections on any topic, update the system prompt file NOW. (2) Update WORKING_STATE.md with current state NOW. (3) If there are uncommitted changes, commit or stash them NOW. (4) Save any recurring patterns to memory files NOW. Complete all applicable items, then you may end the session.\"}\n\nRemember: your entire response must be a single JSON object with no surrounding text.",
-            "timeout": 30
+            "type": "command",
+            "command": "cd \"$CLAUDE_PROJECT_DIR\" && if [ -n \"$(git status --porcelain 2>/dev/null)\" ]; then echo 'STOP BLOCKED — DIRTY WORKING TREE. You MUST take action NOW. Do NOT report this to the user and wait for instructions. Do NOT ask permission. (1) Run git status to see what changed. (2) Commit all meaningful work with a descriptive message. (3) If changes are experimental or broken, stash them with git stash -m WIP: description. Only after the working tree is clean may you end the session.' >&2; exit 1; fi",
+            "timeout": 10
           }
         ]
       }

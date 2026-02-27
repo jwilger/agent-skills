@@ -153,18 +153,22 @@ the pipeline-agents plugin. Override via `model_tiers` in
 `.claude/sdlc.yaml`. See `references/model-tiers.md` for full rationale,
 cost comparison, and harness support matrix.
 
-## Optional Hook Enforcement
+## Plugin-Based Hook Enforcement
 
-For maximum mechanical enforcement, install the hook templates from
-`references/hooks/claude-code-hooks.json`. These add:
+For maximum mechanical enforcement, use the `tdd-enforcement` plugin
+(`claude --plugin-dir ./plugins/tdd-enforcement`). It provides:
 
-- **PreToolUse hooks:** Block unauthorized file edits per phase (RED
-  can only edit test files, GREEN only production files, DOMAIN only
-  type definitions).
-- **PostToolUse hooks:** Require running tests and pasting output
-  after every file edit.
-- **SubagentStop hooks:** Enforce mandatory domain review after RED
-  and GREEN, prevent orchestrator from writing files directly.
+- **PreToolUse hook (deterministic):** Reads `.tdd-phase` state file
+  and blocks unauthorized file edits per phase. RED can only edit test
+  files, GREEN and DOMAIN cannot edit test files, COMMIT blocks all
+  edits. No LLM inference — instant, zero false positives.
+- **PostToolUse hook on Task:** After any subagent completes, checks
+  `.tdd-phase` and reminds the orchestrator that domain review is
+  mandatory after RED and GREEN phases.
+
+The orchestrator writes the current phase to `.tdd-phase` before
+spawning each phase agent. See `references/orchestrator.md` for the
+phase state file protocol.
 
 Hooks are optional hardening, not a requirement. The TDD skill works
 without them via structural enforcement (handoff schemas, context

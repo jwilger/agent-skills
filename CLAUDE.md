@@ -43,7 +43,7 @@ Each skill lives in `skills/<name>/` and contains:
 ### Key Design Principles
 
 - **Skills are the single source of truth.** All practices live in SKILL.md files. No separate plugin layer.
-- **Enforcement proportional to capability.** Skills adapt: structural enforcement (context isolation, handoff schemas) on capable harnesses, advisory guidance on simpler ones. Optional hook templates in `skills/tdd/references/hooks/` add mechanical enforcement on Claude Code.
+- **Enforcement proportional to capability.** Skills adapt: structural enforcement (context isolation, handoff schemas) on capable harnesses, advisory guidance on simpler ones. The `tdd-enforcement` plugin adds mechanical enforcement on Claude Code.
 - **Graceful degradation.** Missing dependencies recommend installation but never block execution. Every skill provides value standalone.
 - **Dependencies form a DAG.** Declared in frontmatter `metadata.requires`. No circular dependencies. Skills reference each other by name, never internal structure.
 - **Progressive disclosure.** SKILL.md stays concise (within token budgets). Extended examples and detailed guides live in `references/`.

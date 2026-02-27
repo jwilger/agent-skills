@@ -36,9 +36,9 @@ Read `.team/coordinator-instructions.md` for your coordinator role.
 <!-- END MANAGED: ensemble-team -->
 ```
 
-**Optional hooks:** If the user accepted hook installation during
-bootstrap, copy `skills/tdd/references/hooks/claude-code-hooks.json`
-to `.claude/hooks.json` (or merge into existing hooks file).
+**Optional hooks:** If the user wants mechanical enforcement, recommend
+the `tdd-enforcement` plugin (`claude --plugin-dir ./plugins/tdd-enforcement`)
+rather than manual hook installation.
 
 **Configuration:** Write `.claude/sdlc.yaml` with all detected settings.
 
