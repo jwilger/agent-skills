@@ -37,7 +37,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "cd \"$CLAUDE_PROJECT_DIR\" && if [ -n \"$(git status --porcelain 2>/dev/null)\" ]; then echo 'STOP BLOCKED — DIRTY WORKING TREE. You MUST take action NOW. Do NOT report this to the user and wait for instructions. Do NOT ask permission. (1) Run git status to see what changed. (2) Commit all meaningful work with a descriptive message. (3) If changes are experimental or broken, stash them with git stash -m WIP: description. Only after the working tree is clean may you end the session.' >&2; exit 1; fi",
+            "command": "cd \"$CLAUDE_PROJECT_DIR\" && if [ -n \"$(git status --porcelain 2>/dev/null)\" ]; then echo 'STOP BLOCKED — DIRTY WORKING TREE. Take action before ending the session: (1) Run git status to see what changed. (2) Commit all meaningful work with a descriptive message. (3) If changes are experimental or broken, stash them with git stash -m \"WIP: description\". (4) If you cannot clean the working tree yourself (e.g., due to role constraints), inform the user and ask for guidance. Only after the working tree is clean may you end the session.' >&2; exit 1; fi",
             "timeout": 10
           }
         ]

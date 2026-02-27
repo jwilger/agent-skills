@@ -2,6 +2,16 @@
   "hooks": {
     "SessionStart": [
       {
+        "matcher": "startup",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "MARKER_DIR=\"${HOME}/.claude/ensemble-state\"; MARKER=\"${MARKER_DIR}/${CLAUDE_PROJECT_DIR//\\//__}\"; rm -f \"$MARKER\"",
+            "timeout": 10
+          }
+        ]
+      },
+      {
         "matcher": "startup|resume",
         "hooks": [
           {
