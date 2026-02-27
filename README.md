@@ -103,12 +103,11 @@ isolation, handoff schemas, and role specialization. On harnesses without
 delegation, the agent follows practices by convention with self-verification
 checklists.
 
-**Optional hardening.** On Claude Code, the bootstrap skill can install
-hook templates (`skills/tdd/references/hooks/`) that add mechanical
-enforcement: pre-tool-use hooks that block unauthorized file edits per
-TDD phase, post-tool-use hooks that require pasted test output, and
-subagent-stop hooks that enforce mandatory domain review. These are
-optional recipes, not a separate plugin layer.
+**Optional hardening.** On Claude Code, the `tdd-enforcement` plugin
+adds mechanical enforcement: deterministic pre-tool-use hooks that
+block unauthorized file edits per TDD phase (via `.tdd-phase` state
+file) and post-tool-use hooks that enforce mandatory domain review
+after RED and GREEN phases. Use `claude --plugin-dir ./plugins/tdd-enforcement`.
 
 ### Skill Structure
 
@@ -508,7 +507,7 @@ management, and automatic skill installation.
 
 | Plugin | What it adds | Harness support |
 |--------|-------------|-----------------|
-| `tdd-enforcement` | PreToolUse hooks blocking edits outside TDD phase; SubagentStop domain review checkpoints; Stop clean-tree check | Claude Code, Cursor |
+| `tdd-enforcement` | Deterministic PreToolUse hooks blocking edits outside TDD phase (via `.tdd-phase` state file); PostToolUse domain review enforcement; Stop clean-tree check | Claude Code, Cursor |
 | `pipeline-agents` | Custom agents for pipeline roles with `disallowedTools` role boundaries | Claude Code, Cursor |
 | `ensemble-coordinator` | Coordinator agent with retrospective enforcement hooks | Claude Code, Cursor |
 | `session-tools` | PreCompact auto-save, SessionStart context restore, Stop session reflection | Claude Code, Cursor |
@@ -803,9 +802,9 @@ v3.0 consolidates the skill set and removes the plugin layer.
 - The `plugins/` directory no longer exists. All enforcement is handled
   by skills directly (structural enforcement via handoff schemas and
   context isolation) or by optional hook templates.
-- If you used Claude Code hooks from `plugins/claude-code/hooks/`, the
-  equivalent templates are now at `skills/tdd/references/hooks/claude-code-hooks.json`.
-  Run `bootstrap` to install them.
+- If you used Claude Code hooks from `plugins/claude-code/hooks/`, use the
+  `tdd-enforcement` plugin (`claude --plugin-dir ./plugins/tdd-enforcement`)
+  for mechanical enforcement.
 - Agent definitions (`plugins/claude-code/agents/`) are replaced by
   prompt templates in `skills/tdd/references/` (`red-prompt.md`,
   `domain-prompt.md`, `green-prompt.md`, `commit-prompt.md`).
