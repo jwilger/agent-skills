@@ -176,16 +176,17 @@ after all teammates have been activated and confirmed working.
 ### Mechanical Enforcement (Claude Code with ensemble-coordinator plugin)
 
 When the `ensemble-coordinator` plugin is active, a PreToolUse hook blocks all
-Edit/Write/NotebookEdit calls until the team has been activated via TeamCreate.
-The first successful TeamCreate call writes a `.ensemble-team-active` marker file
-to the project root, which unblocks file editing for team members.
+Edit/Write/NotebookEdit/Task/Bash calls until the team has been activated via
+TeamCreate. The first successful TeamCreate call writes a marker file to
+`~/.claude/ensemble-state/` (outside the git tree), which unblocks tools for
+team members. The marker is automatically cleaned up on fresh session startup
+but preserved across compaction and resume.
 
-This means the coordinator literally **cannot** edit files before activating the
-team. After activation, file editing is allowed (team members need it). The
-coordinator's advisory instructions (this file) handle the secondary constraint
-of not editing while the team is active.
-
-Add `.ensemble-team-active` to `.gitignore` — it is session state, not source.
+This means the coordinator literally **cannot** edit files, spawn agents, or run
+commands before activating the team. After activation, tools are allowed (team
+members need them). The coordinator's advisory instructions (this file) handle
+the secondary constraint of not performing implementation while the team is
+active.
 
 ## Driver Rotation and Team Persistence
 
