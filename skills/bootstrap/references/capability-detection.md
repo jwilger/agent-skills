@@ -82,6 +82,37 @@ Detect presence of CI/CD configuration to inform skill recommendations:
 - When CI is detected, recommend the `ci-integration` skill
 - When CI is detected AND team workflow is selected, recommend the full factory pipeline skill set (`pipeline`, `ci-integration`, `factory-review`)
 
+### 4. Per-Agent Model Selection
+
+Detect whether the harness supports assigning different models to
+different agent roles.
+
+| Harness | Support | Mechanism |
+|---------|---------|-----------|
+| Claude Code | Yes | Agent frontmatter `model` + Task tool `model` param |
+| Codex | Yes | Per-role `config_file` TOML |
+| Cursor | Yes | `.cursor/agents/*.md` frontmatter `model` |
+| OpenCode | Yes | `opencode.json` `agent.<name>.model` |
+| GitHub Copilot | Yes (VS Code only) | `.agent.md` frontmatter `model` |
+| Kiro | Yes | `.kiro/agents/*.json` `model` field |
+| Gemini CLI | Yes (experimental) | `.gemini/agents/*.md` frontmatter `model` |
+| Aider | Partial | `--model`, `--editor-model`, `--weak-model` (3 roles) |
+| Continue.dev | Partial | `config.yaml` role blocks (6 roles) |
+| Goose | Partial | `GOOSE_LEAD_MODEL` / `GOOSE_MODEL` env vars |
+| Cline | Partial | Per-mode provider + model (Plan/Act) |
+| Windsurf | No | Session-level model dropdown |
+| Amp | No | System-managed modes |
+| Roo Code | No | Sticky per-mode at runtime, no declarative config |
+| Amazon Q | No | Single global model |
+| Junie | No | Model at subscription/account level |
+
+Record as `model_selection: true`, `partial`, or `false` in capabilities.
+
+When model selection is available, the TDD skill uses model tier defaults
+(haiku for execution roles, sonnet for judgment roles) unless overridden
+in `.claude/sdlc.yaml`. When unavailable, all agents inherit the session
+model. See `tdd/references/model-tiers.md` for details.
+
 ## Recording the Result
 
 Store the detected capabilities in the configuration so downstream
@@ -95,6 +126,7 @@ harness:
     subagents: true
     agent_teams: true
     skill_chaining: true
+    model_selection: true  # true, partial, or false
 tdd:
   mode: automated  # or guided
   strategy: agent-teams  # or serial-subagents, chaining

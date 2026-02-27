@@ -1,5 +1,6 @@
 ---
 name: domain-reviewer
+model: sonnet
 description: >-
   TDD DOMAIN review agent. Reviews tests and implementations for domain
   integrity: primitive obsession, invalid-state representability, and

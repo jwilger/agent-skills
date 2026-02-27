@@ -97,6 +97,7 @@ harness:
     subagents: true
     agent_teams: true
     skill_chaining: true
+    model_selection: true
 tdd:
   mode: automated
   strategy: agent-teams
@@ -109,7 +110,39 @@ skills_installed:
   - code-review
 ensemble_team:
   preset: none
+
+# Override default model tiers for agent roles.
+# Values depend on harness. Claude Code: haiku, sonnet, opus.
+# Codex: any model ID via config_file. Other harnesses: consult docs.
+# Omit to use defaults (haiku for execution, sonnet for judgment).
+# model_tiers:
+#   tdd_red: haiku
+#   tdd_green: haiku
+#   domain_reviewer: sonnet
+#   commit: haiku
+#   pipeline_controller: sonnet
+#   ensemble_coordinator: sonnet
+#   code_reviewer: sonnet
+#   driver: sonnet
+#   reviewer: sonnet
 ```
+
+### Model Tier Overrides
+
+The `model_tiers` section lets teams customize which model each agent role
+uses. Common use cases:
+
+- **Budget-conscious teams:** Set all roles to `haiku`. Structural
+  enforcement (file restrictions, handoff schemas) maintains quality.
+- **High-stakes projects:** Promote execution-tier roles to `sonnet` for
+  improved test design quality.
+- **Complex pipelines:** Set `pipeline_controller` to `opus` when managing
+  many parallel slices.
+
+On harnesses without per-agent model support (Windsurf, Amp, Roo Code,
+Amazon Q, Junie), model tier values are ignored — all agents inherit the
+session model. The structural constraints still apply. See
+`tdd/references/model-tiers.md` for the full harness support matrix.
 
 ## System Prompt (Claude Code + Factory Mode Only)
 

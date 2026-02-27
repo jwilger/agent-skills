@@ -133,6 +133,26 @@ when all three complete. Shut down the review team after synthesis.
 When `parallel_review` is not set or is `false`, use a single
 code-reviewer agent running all three stages sequentially.
 
+## Model Tier Defaults
+
+Claude Code supports per-agent model selection via the `model` field in
+agent definition frontmatter (`.claude/agents/*.md`) and the `model`
+parameter on the Task tool. Both work for standalone and team-spawned
+agents as of v2.1.47.
+
+Default model tiers for TDD phase agents:
+
+| Agent | Default Model |
+|-------|--------------|
+| tdd-red | haiku |
+| tdd-green | haiku |
+| domain-reviewer | sonnet |
+
+These defaults are set in the agent definition frontmatter shipped with
+the pipeline-agents plugin. Override via `model_tiers` in
+`.claude/sdlc.yaml`. See `references/model-tiers.md` for full rationale,
+cost comparison, and harness support matrix.
+
 ## Optional Hook Enforcement
 
 For maximum mechanical enforcement, install the hook templates from

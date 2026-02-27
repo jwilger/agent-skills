@@ -29,6 +29,24 @@ All file modifications flow through phase agents. Not "quick fixes," not
 | Production code | GREEN agent | `src/`, `lib/`, `app/` |
 | Commit | COMMIT agent | All changed files from this cycle |
 
+## Model Selection for Phase Agents
+
+Each phase agent has a recommended default model tier. Check
+`.claude/sdlc.yaml` for `model_tiers` overrides before using defaults.
+
+| Phase Agent | Default Model | Override Key |
+|-------------|---------------|-------------|
+| RED | haiku | `model_tiers.tdd_red` |
+| DOMAIN | sonnet | `model_tiers.domain_reviewer` |
+| GREEN | haiku | `model_tiers.tdd_green` |
+| COMMIT | haiku | `model_tiers.commit` |
+
+When spawning via the Task tool, pass the `model` parameter (e.g.,
+`model: "haiku"`). On harnesses that do not support per-agent model
+selection, the parameter is ignored and the agent inherits the session
+model. See `references/model-tiers.md` for full rationale and harness
+support matrix.
+
 ## Mandatory Cycle: RED -> DOMAIN -> GREEN -> DOMAIN -> COMMIT
 
 Every phase is mandatory, every time. No exceptions for "trivial" changes.
@@ -68,6 +86,7 @@ CURRENT STATE: What exists, what is passing/failing
 REQUIREMENTS: What "done" looks like
 CONSTRAINTS: Domain types to use, patterns to follow
 ERROR: Exact error message (if applicable)
+MODEL: Recommended model for this phase (from model tiers or override)
 ```
 
 NEVER say "as discussed earlier" or "continue from where we left off."
