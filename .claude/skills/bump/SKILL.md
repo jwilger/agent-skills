@@ -85,20 +85,34 @@ version accordingly.
 Check if the current branch is `main`. If not, **warn** the user but allow them
 to proceed if they confirm.
 
-Run the bump script:
+Run the bump script, passing the bump type and last tag (empty string if no tag):
 
 ```bash
-bash .claude/skills/bump/bump.sh <current_version> <new_version>
+bash .claude/skills/bump/bump.sh <current_version> <new_version> <bump_type> <last_tag>
 ```
+
+For example, if the last tag is `v5.1.0` and bump type is `minor`:
+
+```bash
+bash .claude/skills/bump/bump.sh 5.1.0 5.2.0 minor v5.1.0
+```
+
+If there is no last tag, omit the fourth argument or pass an empty string.
+
+The script will also bump the `version` field in the frontmatter of any
+`skills/*/SKILL.md` files that were modified since the last tag (using the
+same bump type). It prints a `BUMPED_SKILL_FILES:` section listing any updated
+skill files.
 
 If the script fails (non-zero exit), **stop immediately** and report the error.
 
 ## Step 9: Stage and Commit
 
-Stage the VERSION file:
+Stage the VERSION file and any skill files updated by the script:
 
 ```bash
 git add VERSION
+git add skills/*/SKILL.md  # only if skill files were bumped
 ```
 
 Commit with the message:
