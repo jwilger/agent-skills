@@ -38,6 +38,30 @@ engineers exist, the domain reviewer constraint is relaxed — an engineer
 may also serve as domain reviewer for cycles where they are not ping or
 pong.
 
+## Named Team Member Personas (not generic roles)
+
+When using agent teams, ping and pong should embody named team members from the
+project's ensemble roster — not generic "Programmer" or "Engineer" agents.
+
+The orchestrator selects personas based on slice context:
+- TDD / test-first focus → the team's development practice lead
+- Backend / domain / persistence → the team's backend or systems engineer
+- Frontend / component framework → the team's frontend specialist
+- AI / LLM integration → the team's AI architecture specialist
+- Accessibility-focused slice → the team's accessibility specialist
+
+Include the team member's profile file in the spawn prompt (`.team/<name>.md` or
+equivalent). State the persona explicitly: "You are [Name], [Role]. Your job is
+to [write a failing test / implement...]"
+
+## Rotation Rules
+
+- Never assign the same person to both ping and pong in the same cycle.
+- Rotate to avoid the same pair on consecutive slices.
+- Select based on slice context — match expertise to the primary challenge.
+- Record the ping/pong assignment in the Slice Plan so it survives context
+  compaction.
+
 **Schema** (`.team/pairing-history.json`):
 ```json
 {
