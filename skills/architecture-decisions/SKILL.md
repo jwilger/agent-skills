@@ -46,10 +46,30 @@ already decides the question, document it as a constraint, not a
 decision. Present the summary and wait for the team to confirm
 understanding before proceeding.
 
-**DRAFT** — Write the ADR from verified research findings. Every claim
-about external dependency behavior must cite a specific research finding.
-Create the ADR as a PR on a dedicated `adr/<slug>` branch using
-`references/adr-template.md`. The author does NOT merge.
+**DRAFT** — Before writing any ADR prose, produce a numbered **Research
+Critique**:
+1. Assumptions not verified by research
+2. Dependencies not investigated
+3. Questions the research didn't answer
+4. Constraints that may conflict with existing architectural decisions
+
+Present the critique and wait for the human to address each item. Unaddressed
+items block DRAFT from starting.
+
+Once the research critique is addressed: write the ADR from verified research
+findings. Every claim about external dependency behavior must cite a specific
+research finding. Create the ADR as a PR on a dedicated `adr/<slug>` branch
+using `references/adr-template.md`. The author does NOT merge.
+
+After writing the ADR draft, produce a numbered **Draft Critique** before
+moving to HOLD:
+1. Claims that don't cite a research finding
+2. Internal inconsistencies
+3. Missing constraints (what could go wrong that isn't addressed)
+4. Conflicts with other documented architectural decisions
+
+Present the critique and wait for the human to address each item. Unaddressed
+items block HOLD from starting.
 
 **HOLD** — Signal hold and wait for explicit merge authorization.
 Reviewers perform a specification-vs-reality gap check: does the ADR
@@ -64,6 +84,10 @@ and update the Key Decisions table in `docs/ARCHITECTURE.md`.
 **Phase gate enforcement:**
 - DRAFT attempted without RESEARCH findings → halt with warning:
   "RESEARCH phase incomplete. Summarize dependency findings first."
+- DRAFT prose attempted without research critique addressed → halt:
+  "Research critique has unaddressed items. Resolve before drafting."
+- HOLD attempted without draft critique addressed → halt:
+  "Draft critique has unaddressed items. Resolve before moving to HOLD."
 - MERGE attempted without all holds cleared → protocol violation
   regardless of content correctness
 - Prompt the author at each phase transition before proceeding
@@ -113,7 +137,9 @@ After completing work guided by this skill, verify:
 
 - [ ] Every structural change has a corresponding decision record
 - [ ] RESEARCH phase produced a written dependency findings summary
+- [ ] Research critique completed and addressed before draft was written
 - [ ] DRAFT cites specific research findings for dependency claims
+- [ ] Draft critique completed and addressed before HOLD
 - [ ] HOLD received explicit approval (not silence)
 - [ ] No implementation work began before MERGE completed
 - [ ] `docs/ARCHITECTURE.md` reflects the current architecture

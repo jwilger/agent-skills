@@ -38,12 +38,14 @@ state in `.factory/slice-queue.json`. See `references/slice-queue.md` for the
 full queue schema and operations.
 
 Each slice carries a `context` block with enriched metadata for downstream
-pipeline stages: boundary annotations on each GWT scenario (so the gate can
-verify boundary coverage), an event model source path (so the TDD pair can
-consult the original model), related slice IDs for cross-slice dependency
-tracking, domain types referenced by the slice (enabling pre-implementation
-type discovery), and UI components referenced (triggering conditional context
-gathering when the slice touches the interface layer).
+pipeline stages: `acceptance_scenarios` (full-stack GWT scenarios exercising
+the application boundary, human-owned) and `domain_scenarios` (event-model
+unit scenarios for commands and projections), an event model source path (so
+the TDD pair can consult the original model), related slice IDs for cross-slice
+dependency tracking, domain types referenced by the slice (enabling
+pre-implementation type discovery), and UI components referenced (triggering
+conditional context gathering when the slice touches the interface layer). See
+`references/slice-queue.md` for the full two-tier scenario schema.
 
 **Ordering strategy:** Walking skeleton first (the thinnest end-to-end path),
 then by dependency graph (slices whose predecessors are complete), then by
@@ -65,16 +67,21 @@ quality gate. A gate failure routes back for rework; it never skips forward.
 
 2. **Slice Readiness Review** (full ensemble, before first TDD cycle)
    - Convene the full ensemble using the TeamCreate model
-   - Produce an approved Slice Plan document (see `references/slice-readiness-review.md`)
+   - Produce an approved Slice Plan document including the Agent Delivery Contract
+     (see `references/slice-readiness-review.md` and `references/agent-delivery-contract.md`)
    - Gate: the build trio does NOT start until the plan is approved (all members,
-     zero open items)
+     zero open items, human sign-off on Contract Tiers 1–3, zero active-slice
+     domain type or bounded context conflicts)
    - Create Tasks from the plan's Task Breakdown section with `blockedBy` encoding
      component pre-work dependencies
 
 3. **Implement** -- Before dispatching the TDD pair, the pipeline gathers
-   pre-implementation context: architecture docs, glossary, existing domain
-   types matching the slice's referenced types, and event model context from
-   the slice. If the slice touches UI, design system components are included.
+   pre-implementation context scoped to what TDD needs: Contract Tiers 2–3
+   (acceptance scenarios and feature constraints), existing domain types
+   matching the slice's referenced types, and event model context. If the
+   slice touches UI, design system components are included. Do NOT pass full
+   conversation history or all contract tiers — see `references/tokenomics.md`
+   for per-phase context scoping rules.
 
    **TDD dispatch (the pipeline controller IS the orchestrator):**
    The pipeline controller performs capability detection (per TDD skill's
@@ -128,7 +135,7 @@ failure routing.
 
 | Gate | Pass Criteria | Failure Route |
 |------|--------------|---------------|
-| TDD | Acceptance test passes, all units pass, domain review approved | Back to tdd pair |
+| TDD | Acceptance scenario test passes (boundary-level), all units pass, domain review approved | Back to tdd pair |
 | Review | All three stages PASS | Back to tdd pair with findings |
 | Mutation | 100% kill rate on changed files | Back to tdd pair with survivors |
 | CI | Pipeline green | ci-integration triage |
@@ -240,7 +247,10 @@ code, conducting a review, or making a design decision, stop. Delegate.
 Every pipeline action produces structured evidence in `.factory/audit-trail/`.
 See `references/audit-trail-schema.md` for the directory layout and JSON
 schemas. The audit trail enables retrospectives, trend analysis, and
-reproducible escalation context.
+reproducible escalation context. Every agent-generated commit includes a
+provenance footer (`Slice: <id> | Scenario: <id>`) appended by the pipeline
+controller; TDD cycle records include a `provenance` block with agent roles,
+skill version, and scenario ID.
 
 ## Enforcement Note
 

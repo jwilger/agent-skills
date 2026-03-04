@@ -23,14 +23,16 @@ dependency tracking, and queue operations.
       "context": {
         "event_model_path": null,
         "related_slices": [],
-        "gwt_scenarios": [
+        "acceptance_scenarios": [
           {
             "given": "no running application",
             "when": "the deploy pipeline executes",
             "then": "the application serves a health-check endpoint",
-            "boundary": "HTTP"
+            "boundary": "HTTP",
+            "tool": "curl"
           }
         ],
+        "domain_scenarios": [],
         "domain_types_referenced": [],
         "ui_components_referenced": []
       },
@@ -48,12 +50,25 @@ dependency tracking, and queue operations.
       "context": {
         "event_model_path": "docs/event-model/auth.md",
         "related_slices": ["auth-login"],
-        "gwt_scenarios": [
+        "acceptance_scenarios": [
           {
             "given": "a visitor on the registration page",
             "when": "they submit valid email and password",
             "then": "a new user account is created and a confirmation is shown",
-            "boundary": "HTTP"
+            "boundary": "browser",
+            "tool": "playwright"
+          }
+        ],
+        "domain_scenarios": [
+          {
+            "given": "a RegistrationCommand with valid email and password",
+            "when": "the command is processed",
+            "then": "a UserRegistered event is stored"
+          },
+          {
+            "given": "a RegistrationCommand with a duplicate email",
+            "when": "the command is processed",
+            "then": "the command is rejected with a clear error"
           }
         ],
         "domain_types_referenced": ["User", "RegistrationCommand", "UserRegistered"],
@@ -73,12 +88,20 @@ dependency tracking, and queue operations.
       "context": {
         "event_model_path": "docs/event-model/auth.md",
         "related_slices": ["auth-registration"],
-        "gwt_scenarios": [
+        "acceptance_scenarios": [
           {
             "given": "a registered user on the login page",
             "when": "they submit valid credentials",
             "then": "they are authenticated and redirected to the dashboard",
-            "boundary": "HTTP"
+            "boundary": "browser",
+            "tool": "playwright"
+          }
+        ],
+        "domain_scenarios": [
+          {
+            "given": "a LoginCommand with valid credentials",
+            "when": "the command is processed",
+            "then": "a UserAuthenticated event is stored"
           }
         ],
         "domain_types_referenced": ["User", "LoginCommand", "UserAuthenticated"],
@@ -99,12 +122,20 @@ dependency tracking, and queue operations.
       "context": {
         "event_model_path": "docs/event-model/auth.md",
         "related_slices": ["auth-registration", "auth-login"],
-        "gwt_scenarios": [
+        "acceptance_scenarios": [
           {
-            "given": "a registered user",
-            "when": "they request a password reset",
-            "then": "a reset email is sent",
-            "boundary": "HTTP"
+            "given": "a registered user on the password reset page",
+            "when": "they submit their email address",
+            "then": "a reset email is sent and a confirmation is shown",
+            "boundary": "browser",
+            "tool": "playwright"
+          }
+        ],
+        "domain_scenarios": [
+          {
+            "given": "a PasswordResetRequest with a registered email",
+            "when": "the command is processed",
+            "then": "a PasswordResetRequested event is stored"
           }
         ],
         "domain_types_referenced": ["User", "PasswordResetRequested"],
@@ -195,9 +226,10 @@ Add a new slice to the queue.
 - Dependencies must reference existing slice IDs
 - Adding the slice must not create a dependency cycle
 - Priority must be a positive integer
-- The `context` block must be present with at least one GWT scenario that
-  includes a `boundary` field (ensures every slice has boundary annotation
-  for the gate to check against)
+- The `context` block must be present with at least one `acceptance_scenario`
+  that includes `boundary` and `tool` fields (ensures every slice has a
+  full-stack acceptance test as the TDD starting point)
+- `domain_scenarios` are optional at enqueue time but expected before TDD begins
 
 **Effect:** Slice is added with status `blocked` (if it has unmet
 dependencies) or `pending` (if all dependencies are met or it has none).
