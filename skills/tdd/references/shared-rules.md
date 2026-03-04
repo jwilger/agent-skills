@@ -36,6 +36,52 @@ After the first boundary-level acceptance test is established and RED,
 subsequent RED phases within the same slice may write inner unit tests that
 drill down into the implementation.
 
+## Scenario Boundary Classification (required before RED)
+
+Before writing any acceptance test, the orchestrator classifies the scenario:
+- Scan the GWT spec for user-visible behavior ("screen," "panel," "displays,"
+  "viewing," "opens," "types," "clicks," "navigates," "sees")
+  → UI scenario → browser-boundary test (e.g. Playwright)
+- Background, machine-to-machine, no user-facing behavior
+  → API scenario → HTTP-boundary test (e.g. endpoint/integration test)
+- When in doubt, classify as UI — browser tests prove more of the stack
+
+The classification is made by the orchestrator, not the RED agent. It must be
+stated explicitly in the RED agent's spawn prompt. If the spawn prompt omits
+it, the RED agent must stop and ask before writing any test.
+
+## Browser Acceptance Tests: All Then-Clauses in One Test Block
+
+Each GWT scenario maps to ONE test function containing ALL its Then-clauses.
+The "one assertion per test" rule applies to unit tests only. Splitting a
+browser acceptance test by assertion is incorrect — it duplicates setup,
+creates false isolation, and obscures scenario intent.
+
+## No Test Infrastructure in Production Code
+
+Test-only routes, hardcoded test data mappings, and in-memory stubs substituting
+for production infrastructure are architectural violations — even when guarded by
+environment variables or feature flags. Integration tests must use proper isolation
+(transaction rollback, test containers, etc.). Test setup belongs in the test
+harness, not in production code paths.
+
+## PR Branch Before First TDD Cycle
+
+A PR branch must exist before the first RED phase of a slice. No code may be
+committed to the main branch directly. The orchestrator verifies or creates the
+branch before spawning the RED agent.
+
+## Pre-Spawn Context Checklist (orchestrator verifies before spawning RED agent)
+
+- [ ] Architecture document sections relevant to this slice (extracted by orchestrator — non-delegable)
+- [ ] Domain glossary
+- [ ] Existing domain types referenced by this slice's GWT scenarios
+- [ ] Event model context for this slice's bounded context
+- [ ] Design system component inventory from Slice Plan (if UI slice)
+- [ ] Walking skeleton reference (if this is not the first slice)
+- [ ] Scenario boundary type (UI or API — decided by orchestrator, stated explicitly)
+- [ ] Named team member personas selected for ping and pong
+
 ## Anti-pattern: Type-First TDD
 
 Creating domain types before any test references them inverts TDD into
