@@ -15,6 +15,29 @@ strategies: domain veto power, outside-in progression, type-first TDD
 anti-pattern, pre-implementation context checklist, pipeline integration,
 and recovery protocol.
 
+## Architecture Context Extraction is Non-Delegable
+
+The orchestrator (not the RED or GREEN agent) reads the project's ARCHITECTURE.md
+and extracts sections relevant to the current slice. Include the extracted content
+verbatim in every agent spawn prompt for this slice. Agents are stateless — without
+explicit architectural context they will invent non-architectural solutions.
+
+Required sections for every slice:
+- Persistence layer (event store, database, connection patterns)
+- Domain type conventions (semantic type library)
+- Test strategy (acceptance test location, test pyramid shape)
+- UI conventions (if UI slice: component framework, design token enforcement)
+- The slice's bounded context location in the codebase
+
+If a required architectural section is missing for a technology the slice uses,
+STOP. An ADR must be created and approved before the TDD cycle starts. Do not
+allow agents to invent architecture.
+
+## PR Branch Gate
+
+Before spawning the RED agent for a slice's first scenario: verify a PR branch
+exists. Create it if not. No code lands on the main branch directly.
+
 ## Core Rule
 
 All file modifications flow through phase agents. Not "quick fixes," not

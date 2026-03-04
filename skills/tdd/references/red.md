@@ -1,5 +1,20 @@
 # RED Phase -- Write One Failing Test
 
+## Boundary Type (required in spawn prompt)
+
+The orchestrator states the boundary type explicitly in this agent's spawn prompt:
+- "This is a UI scenario — write a browser-boundary test (e.g. Playwright)"
+- "This is an API scenario — write an HTTP-boundary test"
+
+If the spawn prompt does not state the boundary type, stop and ask the
+orchestrator to classify before writing any test.
+
+## Architecture Context (required in spawn prompt)
+
+The orchestrator must extract and include the relevant sections of the project's
+architecture document verbatim in this spawn prompt. Do not invent architectural
+patterns — work only from what is explicitly provided.
+
 ## Goal
 
 Write exactly ONE failing test that describes the desired behavior.

@@ -63,7 +63,15 @@ quality gate. A gate failure routes back for rework; it never skips forward.
    tasks with acceptance criteria. Output: task tree in
    `.factory/audit-trail/slices/<slice-id>/decomposition.json`.
 
-2. **Implement** -- Before dispatching the TDD pair, the pipeline gathers
+2. **Slice Readiness Review** (full ensemble, before first TDD cycle)
+   - Convene the full ensemble using the TeamCreate model
+   - Produce an approved Slice Plan document (see `references/slice-readiness-review.md`)
+   - Gate: the build trio does NOT start until the plan is approved (all members,
+     zero open items)
+   - Create Tasks from the plan's Task Breakdown section with `blockedBy` encoding
+     component pre-work dependencies
+
+3. **Implement** -- Before dispatching the TDD pair, the pipeline gathers
    pre-implementation context: architecture docs, glossary, existing domain
    types matching the slice's referenced types, and event model context from
    the slice. If the slice touches UI, design system components are included.
@@ -92,23 +100,23 @@ quality gate. A gate failure routes back for rework; it never skips forward.
    tests, committed code, cycle evidence in
    `.factory/audit-trail/slices/<slice-id>/tdd-cycles/`.
 
-3. **Review** -- Before pushing, invoke `code-review` with the full team for
+4. **Review** -- Before pushing, invoke `code-review` with the full team for
    three-stage mob review (spec compliance, code quality, domain integrity).
    All review findings must be addressed before proceeding. See
    `references/gate-definitions.md` for review gate criteria.
 
-4. **Address feedback** -- Route review findings back to the TDD pair. The
+5. **Address feedback** -- Route review findings back to the TDD pair. The
    pair fixes via their existing ping-pong process. Re-review scoped to
    flagged concerns only (unless critical-category feedback).
 
-5. **Mutation test** -- Invoke `mutation-testing` scoped to changed files.
+6. **Mutation test** -- Invoke `mutation-testing` scoped to changed files.
    Required: 100% kill rate. Survivors route back to the TDD pair.
 
-6. **Push and CI** -- Pipeline pushes the branch and waits for CI. On infra
+7. **Push and CI** -- Pipeline pushes the branch and waits for CI. On infra
    failures at standard or full autonomy, auto-retry once. On test failures,
    route to triage.
 
-7. **Merge or flag** -- If all gates pass, merge (auto at full autonomy,
+8. **Merge or flag** -- If all gates pass, merge (auto at full autonomy,
    manual otherwise). If any gate failed after exhausting rework budget,
    escalate to human.
 
@@ -179,6 +187,9 @@ boundaries absolutely.
 - Conduct code reviews
 - Fix failing tests
 - Refactor code
+- Start TDD cycles on a slice without an approved Slice Plan
+- Allow the build trio to discover missing UI components or undefined domain types
+  mid-cycle — these are identified in the Slice Readiness Review
 
 If you catch yourself about to write code — even "just one line" — stop
 and delegate. The temptation is strongest when a fix seems trivial, but
