@@ -53,6 +53,18 @@ requirements as OVER-BUILT.
 
 If any criterion is FAIL, stop. Return to implementation before continuing.
 
+**Architecture Compliance Check** (run after the per-criterion loop, before
+moving to Stage 2):
+
+- If `docs/ARCHITECTURE.md` exists: verify this change complies with all
+  documented constraints and patterns (Components, Patterns, Constraints
+  sections). Non-compliance is a FAIL — same severity as a missing acceptance
+  criterion.
+- If `docs/ARCHITECTURE.md` does not exist: flag as a Stage 2 CONCERN:
+  "No architecture document found; architectural compliance cannot be verified."
+
+Include in Stage 1 output: `Architecture Compliance: PASS / FAIL / N/A (no ARCHITECTURE.md)`
+
 ### Vertical Slice Layer Coverage
 
 For tasks that implement a vertical slice (adding user-observable behavior), perform the following checks in order:
@@ -231,6 +243,7 @@ stages being skipped, point it out.
 After completing a review guided by this skill, verify:
 
 - [ ] All three stages were performed separately, in order
+- [ ] docs/ARCHITECTURE.md compliance checked as a named Stage 1 item
 - [ ] Every acceptance criterion was mapped to code and tests in Stage 1
 - [ ] Each changed file was assessed for clarity and domain type usage in Stage 2
 - [ ] Domain integrity was checked for compile-time enforcement opportunities in Stage 3

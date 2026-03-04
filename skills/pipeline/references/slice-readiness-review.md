@@ -24,8 +24,20 @@ A plan document (at the project's canonical path — conventionally
 - Bounded context, slice type (UI / API / hybrid), GWT scenario count,
   component pre-work required (yes/no)
 
-## Confirmed GWT Scenarios
-(verified or refined from the project's GWT specification source)
+## Confirmed Acceptance Scenarios
+(full-stack scenarios verifying user-observable behavior; at least one required;
+exercise the application through its external boundary — Playwright for browser,
+HTTP for APIs, CLI for terminal tools)
+
+| # | Given | When | Then | Boundary | Tool |
+|---|---|---|---|---|---|
+
+## Confirmed Domain Scenarios
+(event-model unit scenarios for commands/projections; optional at planning time
+but expected before TDD begins)
+
+| # | Given | When | Then |
+|---|---|---|---|
 
 ## UI Component Inventory
 | Component | Design System Reference | Status (exists / needs-building) | Notes |
@@ -45,6 +57,32 @@ Ordered list the coordinator will use to create Tasks:
 ## Ping/Pong Assignments
 - Ping: <team-member-name> (selected from rotation pool)
 - Pong: <team-member-name> (different from ping; different from previous slice's pong)
+
+## Agent Delivery Contract
+
+### Tier 1 — Intent
+[Problem statement: what we're building, for whom, why now]
+
+### Tier 2 — Acceptance Scenarios
+(see Confirmed Acceptance Scenarios above)
+
+### Tier 3 — Feature Constraints
+- Bounded context: [name]
+- Domain types in scope: [list]
+- Architectural constraints: [patterns to follow per docs/ARCHITECTURE.md]
+
+### Tier 4 — Agent Interpretation
+[Agent's understanding of the work, drafted from Tiers 1–3]
+
+**Open questions** (must be empty before approval):
+- (none)
+
+### Specification Quality Checklist
+- [ ] Self-contained — implementable without clarifying questions
+- [ ] Clear module boundaries — explicit inputs, outputs, integration points
+- [ ] Observable acceptance criteria — user-visible outcomes only
+- [ ] Test cases with known-good expected outputs
+- [ ] Evaluation design — how validation will be established
 
 ## Open Questions / Escalations
 (must be empty before approval)
@@ -83,6 +121,7 @@ Each reviewer has a specific scope. Include their focus explicitly in the spawn 
 | UX | User journey coherence, UX concerns |
 | Product | Product value, scope alignment, MVP fit |
 | Event modeling | Scenario completeness, event model alignment |
+| Pipeline integrity | Cross-slice dependency check: compare this slice's bounded context, `domain_types_referenced`, and `ui_components_referenced` against all currently `active` slices in `.factory/slice-queue.json`. If overlap exists on any shared domain type or bounded context, the slice is **not ready** — add the conflicting active slice to `depends_on` before approval. |
 
 ## Component Pre-Work Gate
 
@@ -98,6 +137,13 @@ If the UI Component Inventory contains any component marked `needs-building`:
 
 All ensemble members APPROVED, zero open items. "Approved with caveats" is not
 approval — route for fixes immediately.
+
+Additional requirements:
+- Human has signed off on Agent Delivery Contract Tiers 1–3
+- Tier 4 open questions are empty
+- Specification quality checklist is complete
+- Zero overlap with active slices on shared domain types or bounded context
+  (or explicit dependency declared in `depends_on`)
 
 ## Relation to TDD Skill
 

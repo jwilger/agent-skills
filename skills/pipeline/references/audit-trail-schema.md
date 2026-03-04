@@ -77,6 +77,11 @@ Produced after each completed RED-GREEN-DOMAIN-COMMIT cycle.
   "slice_id": "auth-registration",
   "timestamp": "2026-02-22T10:45:00Z",
   "pair": ["engineer-a", "engineer-b"],
+  "provenance": {
+    "agent_roles": {"ping": "engineer-a", "pong": "engineer-b"},
+    "skill_version": "tdd@2.0",
+    "scenario": "auth-registration-S1"
+  },
   "phases": {
     "red": {
       "test_file": "tests/acceptance/registration_test.ext",
@@ -101,12 +106,26 @@ Produced after each completed RED-GREEN-DOMAIN-COMMIT cycle.
     },
     "commit": {
       "commit_hash": "abc1234",
-      "commit_message": "feat(auth): registration handler stores UserRegistered event",
+      "commit_message": "feat(auth): registration handler stores UserRegistered event\n\nSlice: auth-registration | Scenario: auth-registration-S1",
       "full_test_output": "1 test passed, 0 failed"
     }
   }
 }
 ```
+
+**Commit message footer format:** Every agent-generated commit must include a
+footer appended by the pipeline controller:
+```
+Slice: <slice-id> | Scenario: <scenario-id>
+```
+This enables tracing any commit back to the originating slice and scenario,
+supporting the agent change failure rate metric and post-failure root cause
+analysis.
+
+**Provenance fields:**
+- `agent_roles`: maps TDD role (ping/pong) to agent name for that cycle
+- `skill_version`: the tdd skill version active during this cycle (e.g. `tdd@2.0`)
+- `scenario`: the scenario ID being implemented in this cycle
 
 ### review.json
 

@@ -89,9 +89,32 @@ Common mutation types and what survival indicates:
   checked
 - **Statement removal** (line deleted): Side effects not asserted
 
+### Scenario Coverage Check
+
+Before recommending any test for a surviving mutant, check scenario coverage:
+
+For each surviving mutant:
+
+**Step 1 — Scenario check:** Does any acceptance scenario or domain scenario
+(from the slice's `acceptance_scenarios` or `domain_scenarios` arrays, or
+the plan's Confirmed Scenarios sections) require the behavior being mutated?
+
+- **YES** → A scenario exists but its test is missing. Proceed to Recommend
+  Missing Tests below.
+- **NO** → Flag for human decision:
+  ```
+  Surviving mutant at [file]:[line] has no GWT scenario requiring this behavior.
+  Options:
+    (a) Delete the code — this behavior may not be needed.
+    (b) Add a missing acceptance or domain scenario — the spec is incomplete.
+  The 100% kill rate still applies; this clarifies how to resolve it.
+  ```
+  Do NOT proceed to test recommendations for uncovered mutants. Writing a test
+  without a scenario games the metric without testing real behavior.
+
 ### Recommend Missing Tests
 
-For each surviving mutant, suggest a specific test:
+For each surviving mutant **with a covering scenario**, suggest a specific test:
 
 ```
 Surviving: src/money.rs:45 -- replaced `+` with `-` in Money::add()
@@ -170,7 +193,9 @@ After completing mutation testing, verify:
 
 - [ ] Mutation testing tool was run against the relevant scope
 - [ ] All surviving mutants are listed with file, line, and mutation type
-- [ ] Each survivor has a specific test recommendation
+- [ ] Each survivor checked for scenario coverage before test recommendations
+- [ ] Each survivor with a covering scenario has a specific test recommendation
+- [ ] Each survivor without a covering scenario is flagged for human decision
 - [ ] Mutation score is 100% (or user explicitly chose to override)
 - [ ] If fixes were made, mutation testing was re-run to confirm
 
