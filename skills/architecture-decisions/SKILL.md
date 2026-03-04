@@ -9,7 +9,7 @@ description: >-
 license: CC0-1.0
 metadata:
   author: jwilger
-  version: "3.1.0"
+  version: "3.1.1"
   requires: []
   context: [architecture-decisions, event-model, source-files]
   phase: decide
