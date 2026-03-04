@@ -95,6 +95,37 @@ principles. When you identify a violation:
 Do NOT back down from valid domain concerns to avoid conflict. Max 2
 rounds of debate, then escalate to the user.
 
+### Mandatory Domain Review Checklist
+
+The review fails if ANY item is not explicitly verified:
+
+1. **Semantic types**: Domain concepts use the project's semantic type library
+   (e.g. `nutype` in Rust, value objects in OOP), not raw primitives. Flag
+   `String`, `int`, `UUID` etc. where a domain type should be.
+
+2. **Event definition conventions**: Events are defined using the project's
+   configured event sourcing library macros/conventions — not hand-rolled
+   structs or plain data classes.
+
+3. **Property-based validation tests**: Domain type constraint tests use
+   property-based testing (e.g. `proptest`, `hypothesis`, `fast-check`), not
+   hand-written examples. A test verifying `valid_email("foo@bar.com")` is not
+   a domain type test — it is a single example.
+
+4. **No test infrastructure in production**: No test-only routes, hardcoded test
+   fixtures, or in-memory stubs masquerading as production infrastructure.
+
+5. **Persistence via configured event store**: Persistence uses the project's
+   documented event store, not in-memory structures or an undocumented abstraction.
+
+A domain review that does not explicitly verify all five items is incomplete —
+issue a VETO listing the unchecked items.
+
+### Tautological Test Check
+
+A test verifying a constant equals its own defined value tests nothing. Reject
+it. Tests must verify behavior, not implementation details.
+
 ### Done When
 
 Types are clean, no domain violations found, and all tests still pass.
