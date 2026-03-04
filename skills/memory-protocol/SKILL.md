@@ -9,7 +9,7 @@ description: >-
 license: CC0-1.0
 metadata:
   author: jwilger
-  version: "2.0"
+  version: "3.0.0"
   requires: []
   context: []
   phase: build
