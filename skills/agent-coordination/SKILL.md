@@ -2,13 +2,13 @@
 name: agent-coordination
 description: >-
   Multi-agent coordination discipline: one-message-then-wait, idle heartbeat
-  handling, no polling loops, sequential agent spawning, and proper shutdown
-  protocol. Activate when orchestrating multiple agents, managing agent teams,
-  or coordinating handoffs between agents.
+  handling, no polling loops, never fabricate agent responses, sequential agent
+  spawning, and proper shutdown protocol. Activate when orchestrating multiple
+  agents, managing agent teams, or coordinating handoffs between agents.
 license: CC0-1.0
 metadata:
   author: jwilger
-  version: "1.0"
+  version: "1.1"
   requires: []
   context: []
   phase: build
@@ -94,6 +94,33 @@ Explicit rules for when to act versus when to wait.
 - Wanting to help or feeling anxious about progress
 - Silence (silence means working, not stuck)
 
+### Never Fabricate Agent Responses
+
+After spawning an agent or sending a message, STOP generating and wait
+for the harness to deliver a response. Real agent responses arrive via
+system-injected events (e.g., `<teammate-message>` tags, Task completion
+callbacks). You do not produce them yourself.
+
+**The rule:** If the harness has not delivered a response event, no
+response has been received. Period.
+
+**Why this fails:** After spawning an agent, you already possess context
+(files read, code analyzed) sufficient to predict plausible output. The
+failure mode is pattern-completing the expected workflow — spawn, receive,
+process — without waiting for a real system event. The result: convincing
+but entirely fabricated "findings" that waste tokens and deceive the user.
+
+**Do:**
+- Spawn or send, then stop. Wait for the system-delivered event.
+- If no response arrives, tell the user honestly.
+
+**Do not:**
+- Write "[Received message from X]" or any text representing another
+  agent's response
+- Generate "findings" that you attribute to another agent
+- Continue generating substantive output after a spawn/send when you
+  should be waiting for a harness event
+
 ### Sequential Agent Spawning
 
 When creating multiple agents, spawn one at a time. Wait for each agent to
@@ -155,6 +182,8 @@ After completing work guided by this skill, verify:
 - [ ] No action taken on idle notifications alone
 - [ ] No polling loops or sleep-check patterns used
 - [ ] Agents spawned sequentially with acknowledgment between each
+- [ ] No text generated that represents or simulates another agent's response
+- [ ] After every spawn/send, generation stopped and waited for a system event
 - [ ] No agent shut down prematurely or with undelivered work
 - [ ] Shutdown used proper request/response protocol
 

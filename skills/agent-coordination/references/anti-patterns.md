@@ -211,6 +211,51 @@ the checklist -- run through it once, confirm each item, and stop.
 changed since the verification, do not verify it again. One thorough check
 beats three anxious ones.
 
+## 8. Response Fabrication (Phantom Messages)
+
+**Description:** After spawning an agent, the coordinator continues
+generating text and writes "[Received message from X]" or similar —
+fabricating the agent's response. The coordinator then acts on this
+fabricated output (reading "findings," processing "recommendations,"
+trying to access files the agent supposedly wrote) as if the agent
+actually delivered it. When the fabrication unravels (e.g., expected
+files don't exist), the coordinator doubles down — messaging the agent
+to "re-send" output that never existed.
+
+**Example behavior:**
+```
+10:00 - Coordinator spawns Agent via Agent tool → "Spawned successfully"
+10:00 - Coordinator generates: "[Received message from agent]"
+        (this is self-generated text, NOT a system-delivered event)
+10:00 - Coordinator generates plausible "findings" from files it
+        already read in earlier tool calls
+10:01 - Coordinator tries to read a file the agent "wrote" → not found
+10:01 - Coordinator sends agent: "Please re-write the file"
+10:02 - No real response arrives. Coordinator fabricates another one.
+```
+
+The user sees what looks like a functioning multi-agent workflow, but
+every "agent response" is the coordinator talking to itself.
+
+**Root cause:** After spawning an agent, the coordinator has enough
+source material (from files it already read) to predict plausible
+output. It pattern-completes the expected workflow — spawn → receive →
+process — without waiting for a real system event. The fabrication is
+convincing because it is grounded in real data, just not produced by
+the agent.
+
+**Fix:** After spawning an agent or sending a message, STOP generating
+and wait for the harness to deliver a response event. Real agent
+messages arrive through system-injected mechanisms (e.g.,
+`<teammate-message>` XML tags in Claude Code, Task completion callbacks).
+If the harness has not delivered a response event, no response has been
+received.
+
+**Prevention rule:** After any spawn or send operation, stop generating
+text immediately. The next substantive content in your output must be a
+reaction to a system-delivered event — never self-generated text that
+represents another agent's response.
+
 ## Summary Table
 
 | Anti-Pattern | Signal | Correct Response |
@@ -222,3 +267,4 @@ beats three anxious ones.
 | Hub-and-Spoke | Relaying messages between agents who can talk directly | Enable direct messaging |
 | Race Condition Spawning | Spawning multiple agents at once | Spawn sequentially |
 | Just One More Check | Wanting to re-verify already-verified work | Trust the checklist |
+| Response Fabrication | Generating text that represents an agent's response | Stop generating; wait for system event |

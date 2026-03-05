@@ -37,6 +37,32 @@ Every TeamCreate prompt must contain:
 
 Do NOT assume the agent will inherit any context from your current session.
 
+## Recognizing Real vs. Fabricated Agent Messages
+
+On Claude Code, real agent messages arrive through specific system
+mechanisms. You must NEVER generate text that mimics these.
+
+**Real agent responses look like:**
+- `<teammate-message>` XML tags injected by the system in a new
+  conversation turn (for TeamCreate agents)
+- Task completion output delivered by the harness (for Task/Agent tool)
+- System-level notifications (idle, error, completion)
+
+**Fabricated responses look like:**
+- `[Received message from X]` written by you in the same turn as a spawn
+- Text you generate that describes what an agent "found" or "reported"
+- Any substantive content appearing after a spawn/send without a system
+  event separating them
+
+**The hard rule:** After calling Agent, TeamCreate, SendMessage, or Task
+with `run_in_background: true`, your turn is DONE for that interaction.
+Generate at most a brief status line ("Spawned X, waiting for response.")
+then stop. The next substantive content you produce must be in response
+to a system-delivered event.
+
+If you find yourself writing an agent's "findings" in the same output
+block where you spawned that agent, you are fabricating. Stop immediately.
+
 ## SendMessage Discipline
 
 ### One Message, Complete Context
