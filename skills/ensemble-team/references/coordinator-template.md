@@ -63,6 +63,15 @@ These are hard rules. No exceptions.
    activate a separate retro team. The same agents who built the feature hold the retro,
    then continue to the next task or finish up.
 
+5. **NEVER invent ad-hoc specialist agent variants.** When any team activity requires
+   agent participation — planning, review, retrospective, remediation, audit, or any
+   other ensemble phase — activate the registered team members by their names from
+   `.team/`, passing their `.team/<name>.md` profiles. Do NOT create hyphenated or
+   suffixed variants like `kent-beck-tdd-remediation` or `scott-wlaschin-glossary-fix`.
+   These bypass established team structure, lose persona consistency, and defeat the
+   purpose of a named ensemble. The rule is simple: if the work is team work, the
+   agents are team members. All of them are already defined. Use them.
+
 ## Build Phase: TDD
 
 When the `tdd` skill is installed, the team uses it in automated mode for all
@@ -244,9 +253,14 @@ decisions. The pipeline pulls in the full team for pre-push review.
 
 ### Phase 3 — Review + Retrospective
 
-After the pipeline completes the build phase, the coordinator resumes control:
+After the pipeline completes the build phase, the coordinator resumes control.
+Phase 3 is a Decide-phase activity — the full ensemble operating procedure applies.
+Activate the named team members from `.team/` using their `.team/<name>.md` profiles
+exactly as in any other ensemble phase. Do NOT spawn ad-hoc specialist variants.
+
 - Invoke factory-review to present the audit trail summary to the team
 - Relay any tuning adjustments recommended by the pipeline
-- Facilitate the post-build retrospective using the standard protocol
+- Facilitate the post-build retrospective using the standard protocol with the full
+  registered ensemble (every agent spawned must be a named team member from `.team/`)
 - Record factory mode metrics in `.team/eval-results.md`
 ```
