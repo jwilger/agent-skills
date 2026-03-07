@@ -57,6 +57,28 @@ The "one assertion per test" rule applies to unit tests only. Splitting a
 browser acceptance test by assertion is incorrect — it duplicates setup,
 creates false isolation, and obscures scenario intent.
 
+## Outside-In Drill-Down is First-Class
+
+Drill-down is the expected path for acceptance tests, not an exception. When
+an acceptance test is RED, the GREEN agent's goal is "address the immediate
+error" — NEVER "make the acceptance test pass."
+
+Most acceptance test errors require work beyond function-scope: new modules,
+routing, database wiring, build configuration. Each of these triggers a
+drill-down into an inner RED-DOMAIN-GREEN-DOMAIN-COMMIT cycle. The acceptance
+test passes only when enough drill-down cycles have been completed — not by
+one agent implementing everything in one pass.
+
+**Key rules:**
+- The GREEN agent does a scope check before every change
+- If the change exceeds ~function-scope (~20 lines, one file), drill down
+- The person who writes a failing test never implements it (at any level)
+- After an inner drill-down cycle commits, pop back up and re-run the outer
+  test to discover the next error
+- See `references/green.md` for the full scope check protocol
+- See `references/ping-pong-pairing.md` for drill-down ownership and the
+  worked example
+
 ## No Test Infrastructure in Production Code
 
 Test-only routes, hardcoded test data mappings, and in-memory stubs substituting

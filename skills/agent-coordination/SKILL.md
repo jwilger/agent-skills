@@ -18,7 +18,7 @@ description: >-
 license: CC0-1.0
 metadata:
   author: jwilger
-  version: "1.3.1"
+  version: "1.4.0"
   requires: []
   context: []
   phase: build
@@ -196,6 +196,7 @@ After completing work guided by this skill, verify:
 - [ ] After every spawn/send, generation stopped and waited for a system event
 - [ ] No agent shut down prematurely or with undelivered work
 - [ ] Shutdown used proper request/response protocol
+- [ ] No agent respawned after user-initiated interruption without waiting for user direction
 
 If any criterion is not met, revisit the relevant practice before proceeding.
 

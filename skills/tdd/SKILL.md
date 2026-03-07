@@ -12,7 +12,7 @@ description: >-
 license: CC0-1.0
 metadata:
   author: jwilger
-  version: "2.0.1"
+  version: "2.1.0"
   requires: []
   context: [test-files, domain-types, source-files]
   phase: build
@@ -49,11 +49,13 @@ Every feature is built by repeating: RED -> DOMAIN -> GREEN -> DOMAIN -> COMMIT.
    `raise NotImplementedError`, etc.). Do not implement logic. Stop.
    Done when: tests COMPILE but still FAIL (assertion/panic, not compilation error).
 
-3. **GREEN** -- Address the immediate failure. Read the exact error message.
-   Make the SMALLEST change that fixes THIS SPECIFIC message. Run tests. If
-   a new failure appears, repeat — one error at a time. Only edit production
-   files. Paste output after each change. Do NOT write the full
-   implementation in one pass.
+3. **GREEN** -- Address the immediate error — NEVER "make the test pass" in
+   one go. Scope check before every change: can this be fixed with
+   ~function-scope work (~20 lines, one file)? YES → make the change, run
+   tests, check the next error. NO → drill down by writing a failing unit
+   test for the smallest piece needed, then route it through a standard TDD
+   cycle with swapped roles. Only edit production files (except when drilling
+   down). Paste output after each change.
    Done when: tests PASS with minimal implementation.
 
 4. **DOMAIN (after GREEN)** -- Review the implementation for domain violations:

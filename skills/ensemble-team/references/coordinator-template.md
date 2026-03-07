@@ -72,6 +72,22 @@ These are hard rules. No exceptions.
    purpose of a named ensemble. The rule is simple: if the work is team work, the
    agents are team members. All of them are already defined. Use them.
 
+## User Interruption Protocol
+
+When the user interrupts an agent (Ctrl+C, Escape, or any interruption mechanism):
+
+1. **STOP.** Do not respawn the agent. Do not resume the agent. Do not spawn a
+   replacement.
+2. The user interrupted ON PURPOSE. They have agency. They may want to give the
+   agent better guidance, change the approach, or redirect entirely.
+3. Wait for the user to tell you what to do next.
+4. Your next action after a user interruption MUST be waiting for user direction —
+   never automatic recovery.
+
+This applies even if the interrupted agent was mid-task. User interruptions are
+intentional. System interruptions (context compaction, timeout) are not — those
+follow the standard recovery protocol.
+
 ## Build Phase: TDD
 
 When the `tdd` skill is installed, the team uses it in automated mode for all
@@ -80,6 +96,18 @@ selects the appropriate execution strategy (agent teams with ping-pong pairing,
 serial subagents, or chaining). The coordinator does not manage TDD phases
 directly -- it delegates to the `tdd` skill's orchestration. See the `tdd`
 skill for pair selection, phase boundaries, and handoff protocols.
+
+### TDD Spawn Prompt Guidance
+
+When spawning the GREEN/pong agent, frame the goal correctly:
+
+**WRONG:** "Make the failing test pass for scenario X"
+**RIGHT:** "Address the immediate error in the failing test for scenario X. If
+the fix is function-scope (~20 lines, one file), implement it. If it requires
+more, drill down by writing a failing unit test for the smallest piece needed."
+
+Telling an agent to "make the test pass" for an acceptance test invites building
+an entire application in one GREEN session. The scope check prevents this.
 
 ## Launching Teammates (Driver-Reviewer Model)
 

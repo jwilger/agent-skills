@@ -256,6 +256,43 @@ text immediately. The next substantive content in your output must be a
 reaction to a system-delivered event — never self-generated text that
 represents another agent's response.
 
+## 9. Respawning on User Interruption
+
+**Description:** The user interrupts an agent (Ctrl+C, Escape, or any
+interruption mechanism), and the coordinator immediately spawns a
+replacement — treating the interruption as a crash to recover from rather
+than an intentional user action. This often cascades: the user interrupts
+the replacement too, leading to proliferating agent variants.
+
+**Example behavior:**
+```
+10:00 - User interrupts greg-johnston (wants to give better guidance)
+10:00 - Coordinator spawns greg-johnston-2 (auto-recovery)
+10:01 - User: "no, stop, I was trying to—"
+10:01 - Coordinator spawns greg-johnston-3
+10:02 - User: "quit adding duplicates!"
+10:02 - Coordinator spawns greg-johnston-4
+```
+
+The user's intent was to pause and redirect. The coordinator's
+auto-recovery turned a simple guidance correction into a proliferation
+cascade that required killing the entire session.
+
+**Root cause:** Treating all interruptions the same — "something broke,
+recover." But user interruptions are intentional. The user has agency.
+System interruptions (context compaction, timeouts) are accidents that
+warrant recovery. User interruptions are deliberate actions that warrant
+waiting for direction.
+
+**Fix:** After a user-initiated interruption, the coordinator's next
+action MUST be waiting for the user to provide direction. Never
+auto-recover, auto-respawn, or auto-resume. See
+`claude-code-coordination.md` for the decision tree.
+
+**Prevention rule:** When an agent is interrupted by the user, STOP.
+Wait for the user to tell you what to do next. Your next action is
+always "wait for user direction" — never automatic recovery.
+
 ## Summary Table
 
 | Anti-Pattern | Signal | Correct Response |
@@ -268,3 +305,4 @@ represents another agent's response.
 | Race Condition Spawning | Spawning multiple agents at once | Spawn sequentially |
 | Just One More Check | Wanting to re-verify already-verified work | Trust the checklist |
 | Response Fabrication | Generating text that represents an agent's response | Stop generating; wait for system event |
+| Respawning on User Interruption | User interrupted an agent | STOP; wait for user direction |
