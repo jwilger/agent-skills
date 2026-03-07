@@ -1,14 +1,20 @@
 ---
 name: domain-modeling
 description: >-
-  Domain modeling principles: parse-don't-validate, make invalid states
-  unrepresentable, primitive obsession detection, semantic types, and domain
-  veto authority. Activate when designing types, reviewing code for domain
-  integrity, or when domain review is needed in a TDD cycle.
+  Use this skill when the user asks about domain modeling, primitive obsession,
+  parse-don't-validate, semantic types, value objects, or making invalid states
+  unrepresentable. Triggers on: "review for domain issues", "primitive
+  obsession", "design domain types", "value object", "newtype wrapper",
+  "semantic type", "make invalid states unrepresentable", "bool-as-state",
+  requests to replace raw strings/ints with proper types, requests to fix
+  swappable parameters, or any code review focusing on type safety and domain
+  integrity. Also activates during TDD domain review phases. NOT for general
+  code review (style, formatting), debugging, database schema design, or
+  design patterns unrelated to domain type modeling.
 license: CC0-1.0
 metadata:
   author: jwilger
-  version: "1.0"
+  version: "1.1"
   requires: []
   context: [domain-types, source-files]
   phase: decide

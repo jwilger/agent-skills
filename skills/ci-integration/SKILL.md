@@ -1,13 +1,25 @@
 ---
 name: ci-integration
 description: >-
-  Deterministic CI/CD interaction patterns. Push-and-wait discipline, failure
-  triage, self-healing for lint/format/infra failures, structured output for
-  pipeline consumption. Activate when interacting with CI/CD systems.
+  Deterministic CI/CD interaction patterns with structured evidence output.
+  Push-and-wait discipline (one pending run at a time, never push while CI is
+  running), five-category failure triage (test-failure, lint-failure,
+  build-failure, flaky-test, infra-failure) with classification-specific fix
+  strategies, self-healing for lint/format/infra failures, flaky test detection
+  and tracking, and CI_RESULT JSON evidence packets for every run (pass or fail)
+  consumed by pipeline orchestrators and audit trails. Activate when pushing code
+  to CI, triaging CI failures, waiting for pipeline results, classifying build
+  errors, dealing with flaky tests, or producing CI evidence for quality gates.
+  Triggers on: "CI failed", "push and wait for CI", "triage this build failure",
+  "classify CI error", "flaky test", "CI pipeline", "build broke", "lint
+  failure in CI", "waiting for CI", "CI evidence", "push to CI", "CI result
+  packet", "quality gate CI check". NOT for: individual test debugging (use
+  debugging-protocol), code review (use code-review), or mutation testing (use
+  mutation-testing).
 license: CC0-1.0
 metadata:
   author: jwilger
-  version: "1.0"
+  version: "1.1.0"
   requires: [debugging-protocol]
   context: [ci-results, git-history]
   phase: ship

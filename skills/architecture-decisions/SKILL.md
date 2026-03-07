@@ -2,14 +2,21 @@
 name: architecture-decisions
 description: >-
   Architecture Decision Records with a four-phase lifecycle
-  (RESEARCH → DRAFT → HOLD → MERGE). Activate when making technology
-  choices, defining system boundaries, recording architectural decisions,
-  or creating/updating ARCHITECTURE.md. Enforces research-before-writing
-  and explicit merge authorization.
+  (RESEARCH -> DRAFT -> HOLD -> MERGE). Use this skill whenever the user needs
+  to make a technology choice, choose a database, select a framework, define
+  system boundaries, record architectural decisions, review or evaluate an
+  existing ADR, create or update ARCHITECTURE.md, or inventory decision points
+  for a new project. Triggers on: "choose a database", "architecture decision",
+  "ADR", "which technology should we use", "is this ADR ready to merge",
+  "review this architecture decision", "what decisions do we need to make",
+  "tech stack decision", "define system boundaries", "record this decision".
+  Enforces research-before-writing and explicit merge authorization. NOT for:
+  code review (use code-review), implementation decisions within established
+  patterns, or design system choices (use design-system).
 license: CC0-1.0
 metadata:
   author: jwilger
-  version: "3.1.1"
+  version: "3.2.0"
   requires: []
   context: [architecture-decisions, event-model, source-files]
   phase: decide

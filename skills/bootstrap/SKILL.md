@@ -1,14 +1,20 @@
 ---
 name: bootstrap
 description: >-
-  Zero-config SDLC onboarding. Detects project environment, harness
-  capabilities, and harness type. Configures TDD mode, generates AGENTS.md,
-  offers optional enforcement hooks, and recommends skills by phase. Single
-  entry point for all harnesses.
+  Trigger this skill immediately when the user says "bootstrap" in any
+  form. Also trigger it for any request about initializing a project's
+  workflow, configuring development practices, or setting up a codebase
+  for the first time. Key signals: "bootstrap", "set up workflow",
+  "configure TDD", "generate AGENTS.md", "recommend skills", "onboard
+  to project", "what tools should I use", "greenfield", "just cloned",
+  "new developer joining". Detects the project environment, recommends
+  skills by phase, configures TDD strategy, and generates instruction
+  files. Project-level onboarding -- NOT for writing code, tests, or
+  performing specific dev tasks.
 license: CC0-1.0
 metadata:
   author: jwilger
-  version: "2.1"
+  version: "2.2"
   requires: []
   context: []
   phase: understand
@@ -43,18 +49,13 @@ Gather project context silently before asking questions:
 !ls skills/*/SKILL.md 2>/dev/null | sed 's|skills/||;s|/SKILL.md||' || true
 ```
 
-Record: languages detected, git available, skills already installed.
+Record: languages detected, git available, skills already installed. If no
+language files are found, note "none" and ask the user in Step 5.
 
 ### Step 2: Detect Harness Capabilities
 
-Probe for delegation primitives. See `references/capability-detection.md`
-for the full detection procedure.
-
-| Capability | How to detect | Implication |
-|------------|---------------|-------------|
-| Skill chaining | Always available | Guided TDD mode works |
-| Subagents | Task tool present | Serial subagent strategy works |
-| Agent teams | TeamCreate tool present | Ping-pong pairing works |
+Probe for delegation primitives (see `references/capability-detection.md`):
+check for TeamCreate tool, Task tool, and skill chaining (always available).
 
 ### Step 3: Detect Harness Type
 
@@ -69,11 +70,17 @@ Identify the harness to generate the correct instruction files:
 
 ### Step 4: Configure TDD Mode
 
-Recommend based on detected capabilities:
+Match the strategy to detected capabilities:
 
-- **Subagents or teams available:** Recommend automated mode (`/tdd`).
-- **No delegation primitives:** Recommend guided mode (`/tdd red`, `/tdd green`, etc.).
-- Let the user override. Record the choice.
+| Capabilities detected | Strategy | Default mode |
+|----------------------|----------|--------------|
+| TeamCreate + Task | Agent teams | Automated |
+| Task only | Serial subagents | Automated |
+| Neither | Chaining | Automated |
+
+Chaining is always available and runs all TDD phases sequentially in a
+single context. Guided mode (`/tdd red`, `/tdd green`, etc.) is always
+available as a user-controlled alternative. Let the user override.
 
 If Claude Code is detected and the user wants maximum enforcement, offer
 to install optional hook templates from `skills/tdd/references/hooks/`.
@@ -94,14 +101,9 @@ Check if the `pipeline` skill is installed (`skills/pipeline/SKILL.md` exists). 
 - "Standard" -- recommend core + ship skills
 - "Full" -- recommend all skills (include factory pipeline skills when pipeline is detected)
 
-**Question 3 (only when pipeline skill is detected): What autonomy level?**
-- "Conservative" (default for new projects) -- human approval at every gate
-- "Standard" (established projects) -- human approval at PR and deploy gates only
-- "Full" (mature projects with comprehensive tests) -- human approval at deploy gate only
-
-When this question is answered, generate `.factory/config.yaml` with the chosen autonomy level and sensible defaults (e.g., max rework cycles, slice timeout, audit trail path).
-
-See `references/skill-recommendations.md` for the full skill list by phase.
+**Question 3 (only when pipeline detected): What autonomy level?**
+Conservative / Standard / Full. Generate `.factory/config.yaml` with the
+chosen level. See `references/skill-recommendations.md` for skill lists.
 
 ### Step 6: Generate Instruction Files
 
@@ -114,28 +116,15 @@ document, progressive disclosure, managed markers) and
 
 ### Step 6.5: Generate System Prompt (Claude Code + Factory Mode Only)
 
-Only when BOTH conditions are true: (a) the harness is Claude Code, AND
-(b) the `pipeline` skill is detected and the user selected factory mode:
-
-1. Create `.claude/SYSTEM_PROMPT.md` with: Role and Constraints (controller
-   MAY/MUST NOT boundaries), Startup Procedure (read state files), Common
-   Mistakes (empty initially), and Reminders.
-2. Create `bin/ccf` launcher script that runs
-   `claude --system-prompt .claude/SYSTEM_PROMPT.md "$@"` and
-   `chmod +x bin/ccf`.
-
-On non-Claude-Code harnesses, skip this step entirely — fold critical
-directives into the harness instruction file during Step 6 instead.
-
-See `references/system-prompt-generation.md` for templates and content
-guidelines (keep under 500 tokens, use MUST/NEVER language).
+Only when the harness is Claude Code AND the `pipeline` skill is detected
+and factory mode is selected: generate `.claude/SYSTEM_PROMPT.md` and
+`bin/ccf` launcher script. See `references/system-prompt-generation.md`
+for templates. Skip on non-Claude-Code harnesses.
 
 ### Step 7: Optional Ensemble Team
 
-If the user selected "Set up team workflow" or "Full" process structure,
-offer to invoke the `ensemble-team` skill for AI team formation. Present
-the three presets (solo-plus, lean, full). If accepted, invoke the skill
-and record the preset in configuration.
+If the user selected "Set up team workflow" or "Full", offer the
+`ensemble-team` skill with its three presets (solo-plus, lean, full).
 
 ### Step 8: Commit and Display
 
@@ -155,7 +144,7 @@ confirmation.
 - [ ] Environment was detected before asking questions
 - [ ] Harness capabilities were probed (not assumed)
 - [ ] No more than 2-3 questions were asked
-- [ ] TDD mode recommendation matched detected capabilities
+- [ ] TDD strategy matched detected capabilities (see Step 4 table)
 - [ ] Generated files use managed markers for safe re-runs
 - [ ] Nothing was installed without user confirmation
 

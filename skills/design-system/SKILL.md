@@ -1,16 +1,29 @@
 ---
 name: design-system
 description: >-
-  Collaborative design system creation using Atomic Design methodology.
-  Produces a specification artifact with philosophy, tokens, and component
-  hierarchy. Activate when creating a design system, defining visual
-  language, specifying UI tokens, or planning component architecture
-  before implementation begins.
+  Collaborative design system creation using Atomic Design methodology with
+  a structured seven-phase process (Philosophy, Tokens, Atoms, Molecules,
+  Organisms, Templates, Assembly). Produces a specification artifact with
+  philosophy traceability, named design tokens, and full component hierarchy.
+  Use this skill whenever the user wants to create a design system, define
+  a visual language, specify UI tokens (colors, typography, spacing, radii),
+  build a component catalog, or plan component architecture before
+  implementation. Triggers on: "create a design system", "define our design
+  tokens", "build a component library spec", "what tokens do we need",
+  "design the UI components", "set up our visual language", "define atoms
+  and molecules", "create a style guide", "document our UI philosophy",
+  "plan the component hierarchy", "specify button/input/form styles",
+  "design system for this app". Also activates when the user wants to
+  ensure philosophy-first design, enforce token-only references (no raw
+  color codes or pixel values), or trace design decisions back to
+  principles. NOT for: implementing components in code (use atomic-design),
+  choosing CSS frameworks or component libraries (use architecture-decisions),
+  or writing visual regression tests (use tdd).
 license: CC0-1.0
 compatibility: Designed for any coding agent (Claude Code, Codex, Cursor, OpenCode, etc.)
 metadata:
   author: jwilger
-  version: "1.0"
+  version: "1.1.0"
   requires: []
   context: [event-model]
   phase: decide

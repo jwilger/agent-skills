@@ -1,14 +1,27 @@
 ---
 name: session-reflection
 description: >-
-  Structured session analysis and system prompt refinement. Analyzes user
-  interventions, categorizes process gaps, generates project-specific system
-  prompts, and maintains working state for crash recovery. Activate after
-  milestones, repeated corrections, session restarts, or on user request.
+  Structured session analysis and system prompt refinement using a five-type
+  intervention taxonomy (Correction, Repetition, Role Redirect, Frustration
+  Escalation, Workaround) with severity scoring to categorize process gaps.
+  Generates project-specific system prompts with structural (not advisory)
+  language, maintains WORKING_STATE.md for crash recovery (read-first-after-
+  any-interruption protocol), and implements a self-reminder protocol (re-read
+  constraints every 5-10 messages to prevent role drift). Includes advisory-
+  to-structural promotion pattern for recurring gaps and launcher script
+  generation for harnesses supporting system prompts. Activate after
+  milestones, repeated user corrections, session restarts, crash recovery,
+  every 5 completed tasks, or on user request. Triggers on: "reflect on this
+  session", "why do I keep correcting you", "generate a system prompt",
+  "update working state", "session retrospective", "crash recovery", "context
+  compaction", "role drift", "I keep telling you the same thing", "analyze my
+  corrections", "create a launcher script". Also relevant when the agent
+  notices repeated corrections, needs to resume after compaction, or wants to
+  prevent known failure modes from recurring.
 license: CC0-1.0
 metadata:
   author: jwilger
-  version: "1.0"
+  version: "1.1.0"
   requires: []
   optional: [memory-protocol, agent-coordination]
   context: [git-history]

@@ -1,15 +1,27 @@
 ---
 name: atomic-design
 description: >-
-  Brad Frost's Atomic Design for UI component hierarchy: atoms, molecules,
-  organisms, templates. Activate when building user interfaces, creating
-  design systems, organizing components, or structuring frontend code.
+  Brad Frost's Atomic Design methodology for UI component hierarchies: atoms
+  (indivisible elements like buttons, inputs, labels), molecules (small groups
+  of atoms like form fields, star ratings), organisms (complex sections
+  composed of molecules like login forms, product summaries), and templates
+  (page layouts arranging organisms). Enforces bottom-up composition (never
+  skip levels), presentational components (data in via props, events out via
+  callbacks, no data fetching), design tokens for all visual properties (no
+  hard-coded colors or spacing), and composition over inheritance (no
+  extends/class inheritance for variants). Activate when building user
+  interfaces, creating component libraries, organizing frontend code,
+  designing form systems, or structuring any UI. Triggers on: "build a
+  component", "organize UI components", "atomic design", "component
+  hierarchy", "design tokens", "presentational components", "form field
+  component", "composition over inheritance", "create a button component",
+  "design system implementation", "React components", "Vue components".
   Applies to any UI framework (React, Vue, SwiftUI, etc.).
 license: CC0-1.0
 compatibility: Designed for any coding agent (Claude Code, Codex, Cursor, OpenCode, etc.)
 metadata:
   author: jwilger
-  version: "1.0"
+  version: "1.1.0"
   requires: []
   context: [source-files]
   phase: build
