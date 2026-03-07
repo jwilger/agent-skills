@@ -14,7 +14,7 @@ description: >-
 license: CC0-1.0
 metadata:
   author: jwilger
-  version: "3.0.0"
+  version: "3.1.0"
   requires: []
   context: []
   phase: understand
@@ -105,7 +105,18 @@ Check if the `pipeline` skill is installed (`skills/pipeline/SKILL.md` exists). 
 Conservative / Standard / Full. Generate `.factory/config.yaml` with the
 chosen level. See `references/skill-recommendations.md` for skill lists.
 
-### Step 6: Generate Instruction Files
+### Step 6: Task Tracking Convention
+
+Include in generated instruction files that agents should use task lists (TaskCreate,
+TaskList, or equivalent harness tools) to track work — even for tasks that seem simple.
+Simple tasks often reveal subtasks, and a visible task list keeps progress transparent
+and prevents steps from being forgotten.
+
+This convention goes into the AGENTS.md "Conventions" section (see
+`references/agents-md.md`). If the `task-management` skill is installed, reference it;
+otherwise, include the basic convention directly.
+
+### Step 7: Generate Instruction Files
 
 Generate harness-appropriate files. For Claude Code, CLAUDE.md uses
 `@AGENTS.md` references instead of symlinks or content embedding to keep
@@ -114,12 +125,12 @@ a single source of truth and avoid duplication. See
 document, progressive disclosure, managed markers) and
 `references/harness-files.md` for harness-specific generation rules.
 
-### Step 7: Optional Ensemble Team
+### Step 8: Optional Ensemble Team
 
 If the user selected "Set up team workflow" or "Full", offer the
 `ensemble-team` skill with its three presets (solo-plus, lean, full).
 
-### Step 8: Commit and Display
+### Step 9: Commit and Display
 
 Stage generated files, commit with a descriptive message, and display:
 - What was configured (harness, TDD mode, skills recommended)
@@ -139,6 +150,7 @@ confirmation.
 - [ ] No more than 2-3 questions were asked
 - [ ] TDD strategy matched detected capabilities (see Step 4 table)
 - [ ] Generated files use managed markers for safe re-runs
+- [ ] Task tracking convention is included in generated AGENTS.md
 - [ ] Nothing was installed without user confirmation
 
 ## Dependencies

@@ -47,6 +47,7 @@ self-referential editing rule to prevent instruction sprawl:
 - One assertion per test
 - Commit after each completed TDD cycle
 - Domain types over primitives (`Email` not `String`)
+- Use task lists to track work — even for seemingly simple tasks. Create tasks before starting, update status as you go, and check for remaining work before finishing.
 - When editing AGENTS.md or CLAUDE.md: keep total instructions under 30, use @-references or file path references for detailed topics, never duplicate content between files
 ```
 
