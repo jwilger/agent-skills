@@ -14,7 +14,7 @@ description: >-
 license: CC0-1.0
 metadata:
   author: jwilger
-  version: "1.1"
+  version: "1.1.1"
   requires: []
   context: [domain-types, source-files]
   phase: decide

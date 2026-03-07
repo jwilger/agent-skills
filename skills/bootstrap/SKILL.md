@@ -14,7 +14,7 @@ description: >-
 license: CC0-1.0
 metadata:
   author: jwilger
-  version: "2.2"
+  version: "2.2.1"
   requires: []
   context: []
   phase: understand
