@@ -116,38 +116,130 @@ idle-wait or work on stale assumptions.
 5. **End the session** when the acceptance test passes and the slice is
    complete.
 
+## Phase Reference Loading (Every Turn)
+
+At the START of every turn, each agent must read the reference file for the
+phase it is CURRENTLY executing — not just its "default" phase. Roles shift
+during drill-downs: ping may end up in a GREEN turn, pong may end up writing
+a test (RED turn). Context compaction may discard earlier loads, so re-read
+every turn regardless.
+
+| Current phase | File to read |
+|--------------|-------------|
+| RED (writing a failing test) | `references/red.md` |
+| GREEN (implementing) | `references/green.md` |
+| DOMAIN (reviewing) | `references/domain.md` |
+
+If an agent starts a GREEN turn but the scope check triggers a drill-down
+(writing a failing test), it should switch and load `references/red.md`
+before writing that test.
+
+The orchestrator's spawn prompt should remind agents of this rule, but agents
+are also responsible for self-enforcing it.
+
 ## Ping-Pong-Review Rhythm
 
-1. **Ping** writes a failing test (RED step).
-2. **Domain reviewer** reviews the test for primitive obsession, invalid
-   state risks, and boundary correctness. Sends verdict to ping and pong.
-3. **Pong** writes the GREEN implementation iteratively (see Iterative
-   GREEN Discipline below). Runs tests after each small change.
-4. **Domain reviewer** reviews the implementation for domain violations.
+1. **Ping** reads `references/red.md`, then writes a failing test (RED step).
+2. **Domain reviewer** reads `references/domain.md`, then reviews the test for
+   primitive obsession, invalid state risks, and boundary correctness. Sends
+   verdict to ping and pong.
+3. **Pong** reads `references/green.md`, then addresses the immediate error
+   (see GREEN Phase: Scope Check and Drill-Down below). Runs the scope check
+   before every change.
+4. If pong returns a **DRILL_DOWN**: roles swap at the inner level (see
+   Drill-Down Protocol below). When the inner cycle completes, pop back up
+   and pong re-runs the outer test to check the next error.
+5. If pong returns **standard GREEN** (test passes): **Domain reviewer** reads
+   `references/domain.md` and reviews the implementation for domain violations.
    Sends verdict to team.
-5. **COMMIT** — orchestrator or designated member commits.
-6. **Roles swap.** Ping becomes pong, pong becomes ping. Domain reviewer
+6. **COMMIT** — orchestrator or designated member commits.
+7. **Roles swap.** Ping becomes pong, pong becomes ping. Domain reviewer
    may stay or rotate.
-7. Repeat until the acceptance test passes.
+8. Repeat until the acceptance test passes.
 
-## Iterative GREEN Discipline
+## GREEN Phase: Scope Check and Drill-Down
 
-The GREEN phase must proceed one error at a time:
+Pong's goal is NEVER "make the acceptance test pass." It is always "address
+the immediate error" with a scope check before every change.
 
-1. Read the exact error message from the test output.
-2. Ask: "What is the SMALLEST change that fixes THIS SPECIFIC message?"
-3. Make only that change. Nothing else.
-4. Run tests. Paste the output.
-5. If a new failure appears, return to step 1.
-6. Stop immediately when the test passes.
+**Before every change, pong asks:**
 
-**Anti-pattern: Writing the full implementation in one pass.** This skips
-the feedback loop that catches mistakes early. Even if you "know" the full
-solution, implement it one error at a time. The test output guides you.
+> "Can I fix this error with roughly function-scope work (~20 lines, one file)?"
 
-**Anti-pattern: Adding error handling or features not demanded by the
-current failure.** Stop means stop. If the test passes, do not improve the
-code. Improvements happen in the refactor step or the next RED phase.
+**YES path:**
+1. Make the change. Run tests. Paste output.
+2. If a new error appears, do the scope check again.
+3. When the test passes, stop. Return standard GREEN evidence.
+
+**NO path (drill down):**
+1. The change requires new modules, multiple files, or significant work.
+2. STOP implementing.
+3. Write a NEW failing unit test for the smallest piece needed.
+4. Return the DRILL_DOWN evidence format.
+5. The orchestrator routes the drill-down through a standard TDD cycle
+   with swapped roles.
+
+**Anti-pattern: "Make the acceptance test pass."** Telling pong to "make the
+test pass" for an acceptance test invites building an entire application in
+one GREEN session. The correct goal is "address the immediate error" — which
+may mean drilling down many times before the acceptance test finally passes.
+
+**Anti-pattern: Full implementation in one pass.** Even when pong "knows"
+the full solution, the scope check prevents scope explosion. Each drill-down
+gets its own RED-DOMAIN-GREEN-DOMAIN-COMMIT cycle with proper review.
+
+## Drill-Down Protocol
+
+Drill-down is the PRIMARY mechanism for outside-in TDD with acceptance
+tests. It is not an edge case — it is the expected path whenever an
+acceptance test requires multi-layer implementation.
+
+**When to drill down:**
+- The error requires creating a new module or component
+- The fix spans multiple files
+- The implementation would exceed ~20 lines
+- The change requires build system or infrastructure work
+
+**How drill-down works:**
+
+1. Pong (at outer level) writes a failing unit test for the smallest
+   piece needed → pong is now acting as PING at the inner level.
+2. The inner test is routed to the OTHER engineer (original ping) who
+   implements it → original ping is now acting as PONG at the inner level.
+3. Domain reviewer reviews at the inner level too.
+4. The inner cycle follows the full RED-DOMAIN-GREEN-DOMAIN-COMMIT sequence.
+5. When the inner cycle commits, pop back up to the outer level.
+6. Pong re-runs the outer test. The error may now be resolved (proceed to
+   next error) or a different error appears (scope check again).
+
+**The Rule:** The person who wrote a failing test NEVER writes its
+implementation. This applies at EVERY level — outer acceptance tests AND
+inner drill-down tests. This is what makes ping-pong work: mutual
+accountability through role separation.
+
+**Example (walking skeleton):**
+```
+Outer: acceptance test "browser navigates to /dev/ui, sees heading"
+  Error: "No Cargo.toml metadata for leptos"
+  Scope check: NO (needs Cargo.toml features, metadata, dependencies)
+
+  Pong writes inner test: "test that app module exists and can be imported"
+  → Drill down: original ping implements the app module
+  → Domain review, commit
+
+  Pop back up. Re-run outer test.
+  Error: "no route matches /dev/ui"
+  Scope check: NO (needs router, route handler, server setup)
+
+  Pong writes inner test: "test that /dev/ui route returns 200"
+  → Drill down: original ping implements the route
+  → Domain review, commit
+
+  Pop back up. Re-run outer test.
+  Error: "Expected heading 'Component Showcase', found empty body"
+  Scope check: YES (add heading text to the component)
+  → Pong makes the change. Outer test passes.
+```
 
 ## Commit Atomicity Verification
 
@@ -203,17 +295,6 @@ Ready to commit: [yes / no - if no, explain what needs rework]
 
 Because all three members persist, handoffs provide the delta — not a full
 re-bootstrap.
-
-## Drill-Down Ownership
-
-When pong needs to drill down instead of going green at the current level:
-
-1. Pong writes a lower-level failing test (now acting as ping at this level).
-2. Ping writes the green for it (now acting as pong at this level).
-3. Domain reviewer reviews at this level too.
-4. When this level goes green, pop back up with swapped roles.
-
-The person who wrote a failing test never writes its green implementation.
 
 ## Message Routing
 

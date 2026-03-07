@@ -184,6 +184,50 @@ Always use the proper shutdown handshake. Never force-terminate an agent.
 - You want to free up resources (ask the user first)
 - The agent is taking longer than expected
 
+## User Interruption Handling
+
+User interruptions and system interruptions require opposite responses.
+Confusing them causes the proliferation cascade described in
+`anti-patterns.md` (anti-pattern #9).
+
+```
+Agent interrupted
+  |
+  v
+Was this a USER-initiated interruption?
+(Ctrl+C, Escape, user typing "stop", manual cancellation)
+  |
+  +-- YES --> STOP. Wait for user direction.
+  |           Do NOT respawn the agent.
+  |           Do NOT resume the agent.
+  |           Do NOT spawn a replacement.
+  |           Your next action MUST be waiting for the user.
+  |
+  +-- NO (system interruption: compaction, timeout, crash)
+        |
+        v
+      Can the agent be resumed with full context?
+        |
+        +-- YES --> Resume the agent. Provide context summary
+        |           of where it left off.
+        |
+        +-- NO --> Respawn with full context from the last
+                   known good state. Include handoff data
+                   from previous work.
+```
+
+**Why this matters:** User interruptions are INTENTIONAL. The user may
+want to give the agent better guidance, change the approach, redirect
+entirely, or just pause. Auto-recovering treats the user's deliberate
+action as an error to fix — which is disrespectful and wastes resources.
+
+System interruptions (context compaction, harness timeouts) are NOT
+intentional. The agent was doing useful work and got cut off. Recovery
+is appropriate.
+
+**The distinction is simple:** Did the user cause the interruption? Wait
+for direction. Did the system cause the interruption? Attempt recovery.
+
 ## Task Tool Sequential Delegation
 
 When using the Task tool for subagent work (rather than persistent teams):

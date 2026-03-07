@@ -56,6 +56,34 @@ If `review` is `CONCERN_RAISED`, the concern must be resolved before
 proceeding to COMMIT. The implementation is revised via the GREEN phase,
 then domain reviews again.
 
+## GREEN -> DRILL_DOWN Handoff
+
+Alternative to GREEN -> DOMAIN when the scope check determines the needed
+change is larger than function-scope. Instead of implementing, the GREEN
+agent writes a failing unit test and returns this evidence.
+
+Required fields:
+
+| Field | Description |
+|-------|-------------|
+| `drill_down` | Must be `true` |
+| `outer_test` | Path to the test that is still failing |
+| `outer_error` | The error message that triggered the scope check |
+| `inner_test_file` | Path to the new failing unit test written by the GREEN agent |
+| `inner_test_name` | Name of the new test function |
+| `inner_failure_output` | Actual test runner output showing the inner test fails |
+| `rationale` | Why drill-down was needed (one sentence) |
+
+The orchestrator routes the inner test through a standard TDD cycle with
+swapped roles: the agent who wrote the inner test (GREEN/pong at outer level)
+becomes the RED/ping at inner level. The other engineer (RED/ping at outer
+level) implements the inner test as GREEN/pong at inner level. Domain review
+applies at the inner level too.
+
+When the inner cycle commits, the orchestrator pops back to the outer level
+and re-runs the outer test. The next error (if any) goes through the same
+scope check.
+
 ## Enforcement by Mode
 
 **Automated mode (serial subagents):** The orchestrator checks return
