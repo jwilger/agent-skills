@@ -2,14 +2,26 @@
 name: memory-protocol
 description: >-
   Knowledge persistence across sessions using Memento MCP knowledge graph
-  (primary) or file-based markdown (fallback). Covers when to recall past
-  solutions, when to store discoveries, entity naming, relationship creation,
-  and subagent memory responsibilities. Activate at task start, on errors,
-  before decisions, or when context may be lost.
+  (primary) or file-based markdown with topic directories (fallback).
+  Mandatory recall-before-acting: search memory before starting any task.
+  Store-after-discovery: persist solutions, conventions, and decisions
+  immediately using structured format (title, context, discovery) in
+  topic-based directories (debugging/, conventions/, architecture/,
+  patterns/, tools/). Maintains MEMORY.md as concise index under 200 lines.
+  WORKING_STATE.md for crash recovery in long sessions. Self-reminder
+  protocol every 5-10 messages. Activate at task start, on errors, before
+  decisions, when context may be lost, or at session boundaries. Triggers
+  on: "remember this", "what did we learn last time", "check memory",
+  "save this for later", "store this convention", "recall previous work",
+  "persist this knowledge", "working state", "session notes". Also
+  activates when instructing subagents (they must follow memory protocol
+  too), or when approaching context compaction. NOT for: obvious/well-
+  documented information, temporary session-specific facts, or verbose
+  narratives.
 license: CC0-1.0
 metadata:
   author: jwilger
-  version: "3.0.0"
+  version: "3.2.0"
   requires: []
   context: []
   phase: build

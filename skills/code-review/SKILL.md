@@ -1,16 +1,22 @@
 ---
 name: code-review
 description: >-
-  Three-stage code review protocol: spec compliance, code quality, and domain
-  integrity. Activate when reviewing code, preparing PRs, assessing
-  implementation quality, or checking that code matches requirements. Triggers
-  on: "review this code", "prepare PR", "check implementation", "code quality",
-  "does this match the spec".
+  Three-stage code review protocol covering spec compliance, code quality, and
+  domain integrity. Use this skill whenever the user asks to review code,
+  prepare or check a PR, assess implementation quality, verify code against a
+  spec or acceptance criteria, or audit for security and domain modeling issues.
+  Triggers on: "review this code", "review my PR", "check implementation
+  against spec", "code quality audit", "does this match the requirements",
+  "review for security issues", "check for primitive obsession", "monetary
+  precision review", "review test coverage gaps". Also activates when the user
+  wants structured PASS/FAIL verdicts per requirement, severity-rated findings,
+  or a gated review that blocks on critical issues. NOT for: style/formatting
+  linting, debugging runtime errors, writing new code, or automated CI checks.
 license: CC0-1.0
 compatibility: Designed for any coding agent (Claude Code, Codex, Cursor, OpenCode, etc.)
 metadata:
   author: jwilger
-  version: "2.0.0"
+  version: "2.1.0"
   requires: [domain-modeling]
   context: [source-files, test-files, domain-types, git-history]
   phase: ship

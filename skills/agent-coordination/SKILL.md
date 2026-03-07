@@ -1,14 +1,24 @@
 ---
 name: agent-coordination
 description: >-
-  Multi-agent coordination discipline: one-message-then-wait, idle heartbeat
-  handling, no polling loops, never fabricate agent responses, sequential agent
-  spawning, and proper shutdown protocol. Activate when orchestrating multiple
-  agents, managing agent teams, or coordinating handoffs between agents.
+  Multi-agent coordination discipline: one-message-then-wait (send complete
+  context, wait for reply before sending again), idle notifications are
+  heartbeats (no action unless extended + blocking + user asked), no polling
+  loops (event-driven only), never fabricate agent responses (wait for real
+  system events), sequential agent spawning (acknowledge between each), and
+  proper shutdown protocol (request, wait, respect rejection). Activate when
+  orchestrating multiple agents, managing agent teams, coordinating handoffs
+  between agents, spawning subagents, or building multi-agent workflows.
+  Triggers on: "coordinate agents", "spawn multiple agents", "manage agent
+  team", "agent keeps sending messages", "polling loop", "agent idle", "shut
+  down agent", "multi-agent workflow", "agent handoff", "coordinate parallel
+  work", "stop bothering the other agent". Also relevant when an agent is
+  fabricating responses, sending follow-up messages before replies arrive, or
+  reacting to idle notifications unnecessarily.
 license: CC0-1.0
 metadata:
   author: jwilger
-  version: "1.2.0"
+  version: "1.3.0"
   requires: []
   context: []
   phase: build

@@ -1,14 +1,26 @@
 ---
 name: pipeline
 description: >-
-  Autonomous build-phase orchestrator. Manages slice queue, TDD pair dispatch,
-  full-team code review, mutation testing, CI integration, and auto-merge with
-  quality gates. Replaces manual coordinator overhead during build phase.
-  Activate when running factory mode with ensemble-team.
+  Autonomous build-phase orchestrator with 8-stage per-slice pipeline
+  (decompose, slice readiness review, implement via TDD pairs, three-stage
+  code review, address feedback, mutation testing, push/CI, merge/flag).
+  Manages slice queue (walking skeleton first, dependency ordering), dispatches
+  TDD pairs with capability detection (TeamCreate, Task, or chaining),
+  enforces 5 binary quality gates with 3-cycle rework budgets and human
+  escalation, maintains audit trail, and respects strict controller role
+  boundaries (never writes code, delegates all creative work). Supports three
+  autonomy levels (conservative/standard/full with parallel worktree
+  isolation). Activate when running factory mode, orchestrating build phases,
+  managing slice queues, coordinating TDD pairs with review gates, or setting
+  up autonomous build pipelines. Triggers on: "run the pipeline", "factory
+  mode", "build phase", "slice queue", "dispatch TDD pair", "quality gates",
+  "auto-merge", "pipeline controller", "autonomous build", "gate failure
+  rework". NOT for: individual TDD sessions (use tdd), standalone code reviews
+  (use code-review), or CI-only workflows (use ci-integration).
 license: CC0-1.0
 metadata:
   author: jwilger
-  version: "3.0.0"
+  version: "3.1.0"
   requires: [tdd, code-review, mutation-testing, task-management, ci-integration]
   context: [test-files, domain-types, source-files, ci-results, task-state, git-history]
   phase: build

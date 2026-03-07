@@ -2,14 +2,24 @@
 name: event-modeling
 description: >-
   Event modeling facilitation for discovering and designing event-sourced
-  systems. Four phases: domain discovery, workflow design (9-step process),
-  GWT scenario generation, and model validation. Activate when starting a
-  new project, designing features, modeling domains, writing Given/When/Then
-  scenarios, or discussing event sourcing and domain-driven design.
+  systems using a structured 9-step workflow process. Use this skill whenever
+  the user wants to model a domain workflow, design an event-sourced system,
+  write Given/When/Then scenarios for commands or views, validate an event
+  model for completeness, or discuss event sourcing and domain-driven design.
+  Triggers on: "model this workflow", "design the order process", "event
+  model", "event sourcing", "what events do we need", "write GWT scenarios",
+  "Given/When/Then for this command", "validate the event model", "identify
+  events and commands", "decompose into slices", "what read models do we
+  need", "map this domain", "brainstorm events for", "design this feature
+  using events". Also activates when the user wants to discover domain
+  actors, identify automations, map external integrations, or decompose
+  workflows into vertical slices (Command, View, Automation, Translation).
+  NOT for: implementing event store infrastructure, choosing databases or
+  frameworks, writing application code, or CI/CD pipeline setup.
 license: CC0-1.0
 metadata:
   author: jwilger
-  version: "1.0"
+  version: "1.1.0"
   requires: []
   context: [event-model]
   phase: understand

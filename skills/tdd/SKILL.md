@@ -1,9 +1,14 @@
 ---
 name: tdd
 description: >-
-  Adaptive test-driven development cycle. Detects harness capabilities and routes
-  to guided (manual phase control) or automated (orchestrated) mode. Invoke with
-  /tdd for automated or /tdd red|domain|green|commit for guided.
+  Use this skill whenever the user wants to write code using TDD, test-driven
+  development, or test-first methodology. Triggers on: "/tdd", "let's do TDD",
+  "write a failing test", "red green refactor", "test-first", "start a TDD
+  cycle", or any request to implement a feature by writing tests before code.
+  Adaptive five-step cycle (RED-DOMAIN-GREEN-DOMAIN-COMMIT) that detects
+  harness capabilities and routes to guided (/tdd red|domain|green|commit)
+  or automated (/tdd) mode. NOT for running existing tests, debugging test
+  failures, or reviewing code -- only for the disciplined test-first cycle.
 license: CC0-1.0
 metadata:
   author: jwilger

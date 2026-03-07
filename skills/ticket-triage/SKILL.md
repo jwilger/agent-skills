@@ -1,18 +1,25 @@
 ---
 name: ticket-triage
-description: >
-  Evaluate whether a development ticket (user story, feature request, bug report, etc.)
-  is ready for development, and provide specific, actionable feedback if it is not.
-  Use this skill whenever the user asks to triage, evaluate, assess, review, or check
-  the readiness of a ticket, story, issue, or work item. The ticket can come from
-  anywhere: pasted inline, read from a file, fetched from Jira or another tracker via
-  MCP, or any other source. Also use this when a user asks "is this ticket ready?" or
-  "what's wrong with this ticket?" or wants to improve a ticket's specification.
+description: >-
+  Six-criterion readiness evaluation for development tickets (user stories,
+  feature requests, bug reports). Produces a structured READY / NEARLY READY /
+  NOT READY verdict with specific remediation guidance and before/after
+  examples. Use this skill whenever the user asks to triage, evaluate, assess,
+  review, or check the readiness of a ticket, story, issue, or work item.
+  Triggers on: "is this ticket ready", "triage this ticket", "review this
+  story", "evaluate this issue", "what's wrong with this ticket", "check
+  acceptance criteria", "is this user story well-written", "improve this
+  ticket", "assess ticket readiness", "are these ACs testable", "is this
+  appropriately sliced". Also activates when the user pastes a ticket and
+  asks for feedback, fetches an issue from Jira/Linear/GitHub, or wants to
+  know if a ticket has adequate validation criteria for data models. NOT for:
+  code review (use code-review), sprint planning, project management, or
+  writing tickets from scratch.
 license: CC0-1.0
 compatibility: Designed for any coding agent (Claude Code, Codex, Cursor, OpenCode, etc.)
 metadata:
   author: jwilger
-  version: "1.0"
+  version: "1.1.0"
   requires: []
   context: []
   phase: decide

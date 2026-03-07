@@ -1,16 +1,24 @@
 ---
 name: debugging-protocol
 description: >-
-  Systematic 4-phase debugging: understand the failure, form hypotheses, test
-  one change at a time, fix with confidence. Activate when tests fail
-  unexpectedly, errors occur, behavior is wrong, or something that worked
-  before is now broken. Triggers on: "debug", "why is this failing", "test
-  failure", "unexpected error", "bug", "broken".
+  Systematic 4-phase debugging: (1) understand the failure by reading the
+  complete error and reproducing it, (2) find working examples to compare
+  against, (3) test one hypothesis at a time with a single change, (4) fix
+  the root cause and verify with tests. Includes the Three Strikes Rule
+  (escalate after 3 failed fix attempts) and the Iron Law (no fixes without
+  investigation). Activate when tests fail unexpectedly, errors occur,
+  behavior is wrong, something that worked before is now broken, or a user
+  reports a bug. Triggers on: "debug", "why is this failing", "test failure",
+  "unexpected error", "bug", "broken", "investigate this error", "fix this
+  bug", "tests are failing", "weird behavior", "something broke", "track
+  down this issue". Also activates when multiple bugs need systematic
+  investigation (one at a time, not batch-fixed). NOT for: writing new tests
+  from scratch (use tdd), or general code review (use code-review).
 license: CC0-1.0
 compatibility: Designed for any coding agent (Claude Code, Codex, Cursor, OpenCode, etc.)
 metadata:
   author: jwilger
-  version: "1.0"
+  version: "1.1.0"
   requires: []
   context: [source-files, test-files, git-history]
   phase: build
