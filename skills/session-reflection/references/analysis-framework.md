@@ -7,8 +7,8 @@ during session reflection.
 
 ### 1. Correction
 
-The agent did the wrong thing. The system prompt or skill instructions did
-not cover this case, or covered it ambiguously.
+The agent did the wrong thing. The project instructions or skill instructions
+did not cover this case, or covered it ambiguously.
 
 **Examples:**
 - Agent modified a file it was told not to touch
@@ -16,7 +16,7 @@ not cover this case, or covered it ambiguously.
 - Agent created a class when the project uses functional patterns
 - Agent committed without running tests first
 
-**Root cause:** Missing instruction or ambiguous instruction in system prompt.
+**Root cause:** Missing instruction or ambiguous instruction in project instructions.
 
 **Fix pattern:** Add explicit directive: "NEVER modify files in `vendor/`.
 Only modify files in `src/` and `test/`."
@@ -111,7 +111,7 @@ Score interventions by severity to prioritize which gaps to fix first:
    occurred most often.
 
 3. **Batch related gaps.** If three Corrections all relate to "file naming
-   conventions," address them as one system prompt update.
+   conventions," address them as one project instruction update.
 
 4. **Time-weight recent interventions.** A correction from 10 minutes ago
    matters more than one from 2 hours ago (the recent one reflects current
@@ -121,7 +121,7 @@ Score interventions by severity to prioritize which gaps to fix first:
 
 A pattern exists when the same category appears 3+ times for related issues:
 
-- 3+ Corrections about code style = missing style guide in system prompt
+- 3+ Corrections about code style = missing style guide in project instructions
 - 3+ Role Redirects about scope = missing role boundaries
 - 3+ Repetitions about the same topic = advisory instruction that needs
   promotion to structural

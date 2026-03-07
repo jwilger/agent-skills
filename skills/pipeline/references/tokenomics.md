@@ -45,8 +45,8 @@ registry.
 
 ### 3. Prompt Caching
 
-Place skill definitions and system prompts at the top of context. Cache hit spans
-are longest when stable content (skills, system prompts) precedes variable content
+Place skill definitions and project instructions at the top of context. Cache hit
+spans are longest when stable content (skills, project instructions) precedes variable content
 (task details, code). Most inference providers cache prefix content automatically;
 maximizing the stable prefix maximizes the cache hit rate across repeated
 invocations of the same agent role.

@@ -1,23 +1,23 @@
 ---
 name: session-reflection
 description: >-
-  Structured session analysis and system prompt refinement using a five-type
-  intervention taxonomy (Correction, Repetition, Role Redirect, Frustration
-  Escalation, Workaround) with severity scoring to categorize process gaps.
-  Generates project-specific system prompts with structural (not advisory)
-  language, maintains WORKING_STATE.md for crash recovery (read-first-after-
-  any-interruption protocol), and implements a self-reminder protocol (re-read
+  Structured session analysis and project instruction refinement using a
+  five-type intervention taxonomy (Correction, Repetition, Role Redirect,
+  Frustration Escalation, Workaround) with severity scoring to categorize
+  process gaps. Refines project instructions (CLAUDE.md, AGENTS.md,
+  .team/coordinator-instructions.md) with structural (not advisory) language,
+  maintains WORKING_STATE.md for crash recovery (read-first-after-any-
+  interruption protocol), and implements a self-reminder protocol (re-read
   constraints every 5-10 messages to prevent role drift). Includes advisory-
-  to-structural promotion pattern for recurring gaps and launcher script
-  generation for harnesses supporting system prompts. Activate after
+  to-structural promotion pattern for recurring gaps. Activate after
   milestones, repeated user corrections, session restarts, crash recovery,
   every 5 completed tasks, or on user request. Triggers on: "reflect on this
-  session", "why do I keep correcting you", "generate a system prompt",
+  session", "why do I keep correcting you", "update project instructions",
   "update working state", "session retrospective", "crash recovery", "context
   compaction", "role drift", "I keep telling you the same thing", "analyze my
-  corrections", "create a launcher script". Also relevant when the agent
-  notices repeated corrections, needs to resume after compaction, or wants to
-  prevent known failure modes from recurring.
+  corrections". Also relevant when the agent notices repeated corrections,
+  needs to resume after compaction, or wants to prevent known failure modes
+  from recurring.
 license: CC0-1.0
 metadata:
   author: jwilger
@@ -38,7 +38,7 @@ compound improvement across sessions.
 ## Purpose
 
 Teaches agents to analyze session history for recurring corrections, generate
-project-specific system prompts that prevent known failure modes, and maintain
+project-specific instructions that prevent known failure modes, and maintain
 working state that survives context compaction and crashes. Transforms reactive
 corrections into proactive prevention.
 
@@ -56,7 +56,7 @@ completed tasks, and on explicit user request. Do not wait for a "good time"
 Examine conversation history, git log, memory files, WORKING_STATE.md, and
 session logs. Categorize each user intervention into one of five types:
 
-- **Correction**: Agent did the wrong thing (system prompt gap)
+- **Correction**: Agent did the wrong thing (instruction gap)
 - **Repetition**: Agent was told the same thing again (emphasis gap)
 - **Role Redirect**: Agent stepped outside its role (boundary gap)
 - **Frustration Escalation**: User became more forceful (decay problem)
@@ -65,27 +65,30 @@ session logs. Categorize each user intervention into one of five types:
 See `references/analysis-framework.md` for detailed categorization and
 prioritization.
 
-### Generate or Refine System Prompt
+### Generate or Refine Project Instructions
 
-Create a project-specific system prompt file that supplements installed
-skills. Structure: Role and Constraints, Startup Procedure, Process
-Requirements, Common Mistakes, Reminders.
+Route project-specific directives into the appropriate instruction file
+based on content type. There is no separate system prompt file — everything
+flows from CLAUDE.md → AGENTS.md → .team/coordinator-instructions.md:
+
+- **CLAUDE.md** — Session management (startup procedure, compaction recovery,
+  state tracking), harness-specific configuration
+- **AGENTS.md** — General project rules, dos/don'ts, coding conventions,
+  workflow configuration
+- **.team/coordinator-instructions.md** — Coordinator/pipeline-controller role
+  distinctions, build pre-flight gates, spawn discipline, domain review
+  checklists
 
 Refinement rules: add new items for new gaps, promote advisory to structural
 when gaps recur, rewrite ambiguous items for clarity. Never remove items
 until the gap is confirmed solved across 3+ sessions. See
-`references/system-prompt-patterns.md`.
-
-### Generate Launcher Script
-
-For harnesses that support system prompts (Claude Code:
-`claude --system-prompt <file> "$@"`), generate a launcher script (e.g.,
-`bin/ccf`). For harnesses without system prompt support, fold critical
-directives into CLAUDE.md/AGENTS.md. See `references/launcher-templates.md`.
+`references/system-prompt-patterns.md` for writing patterns and
+`references/launcher-templates.md` for harness-specific file routing.
 
 ### Self-Reminder Protocol
 
-Every 5-10 messages during long sessions, re-read: system prompt, role
+Every 5-10 messages during long sessions, re-read: project instructions
+(CLAUDE.md, AGENTS.md, coordinator-instructions.md as applicable), role
 constraints, current task context, WORKING_STATE.md. Mandatory after context
 compaction (you lose implicit context). This is the primary defense against
 role drift in long sessions.
@@ -110,10 +113,10 @@ root (standalone). See `references/working-state-schema.md` for format.
 ### Post-Session Learning Loop
 
 At session end: identify patterns from this session, update memory files,
-refine system prompt if triggers were hit, archive working state.
+refine project instructions if triggers were hit, archive working state.
 
 The loop closes when the same category of intervention stops recurring. If
-an intervention category persists across 3+ sessions after system prompt
+an intervention category persists across 3+ sessions after instruction
 refinement, escalate: the gap may require a new skill or a structural
 change to the workflow.
 
@@ -133,11 +136,11 @@ After completing work guided by this skill, verify:
 
 - [ ] Reflection performed at every trigger point (milestone, repeated correction, restart)
 - [ ] User interventions categorized using the five-type taxonomy
-- [ ] System prompt generated or refined with structural (not just advisory) language
+- [ ] Project instructions refined with structural (not just advisory) language
+- [ ] Directives routed to correct file (CLAUDE.md / AGENTS.md / coordinator-instructions.md)
 - [ ] Self-reminder protocol followed (state re-read every 5-10 messages)
 - [ ] WORKING_STATE.md current and accurate
 - [ ] State re-read after every context compaction (not guessed)
-- [ ] Launcher script generated for harnesses that support system prompts
 
 If any criterion is not met, revisit the relevant practice before proceeding.
 
@@ -146,7 +149,7 @@ If any criterion is not met, revisit the relevant practice before proceeding.
 This skill works standalone. For enhanced workflows, it integrates with:
 
 - **memory-protocol:** Persistent storage for session learnings and working state
-- **agent-coordination:** Coordination patterns referenced in system prompt generation
+- **agent-coordination:** Coordination patterns referenced in instruction generation
 - **pipeline:** Pipeline controller benefits from self-reminder and crash recovery
 - **ensemble-team:** Team retrospectives feed into session reflection analysis
 

@@ -114,13 +114,6 @@ a single source of truth and avoid duplication. See
 document, progressive disclosure, managed markers) and
 `references/harness-files.md` for harness-specific generation rules.
 
-### Step 6.5: Generate System Prompt (Claude Code + Factory Mode Only)
-
-Only when the harness is Claude Code AND the `pipeline` skill is detected
-and factory mode is selected: generate `.claude/SYSTEM_PROMPT.md` and
-`bin/ccf` launcher script. See `references/system-prompt-generation.md`
-for templates. Skip on non-Claude-Code harnesses.
-
 ### Step 7: Optional Ensemble Team
 
 If the user selected "Set up team workflow" or "Full", offer the
