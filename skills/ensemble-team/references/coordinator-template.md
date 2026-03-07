@@ -123,25 +123,53 @@ compaction and works on harnesses without inter-agent messaging.
 - Tell the Driver where to read: `.reviews/` directory, filtered by current task slug
 - Ensure `.reviews/` is added to `.gitignore` during project setup
 
-**Driver activation prompt addition**: "Read `.reviews/` files matching the current task
-for authoritative review feedback. Messages contain coordination signals only — the full
-review content is in the files."
+**Driver spawn addition**: Include "Check `.reviews/` for review feedback on the
+current task — files are the authoritative source, not messages."
 
-**Reviewer activation prompt addition**: "Write structured review feedback to
-`.reviews/<your-name>-<task-slug>.md` using the format specified in
-`references/file-based-reviews.md`. Send a one-line summary message after posting (if
-messaging is available). Do NOT put substantive review content in messages."
+**Reviewer spawn addition**: Include "Write review feedback to
+`.reviews/<your-name>-<task-slug>.md`. Send a one-line coordination message after
+posting (if messaging is available)."
 
-### Common Launch Instructions
-- Include the teammate's `.team/` profile content in the activation prompt so the agent
-  embodies that persona.
-- Instruct each teammate to **read `PROJECT.md` and `AGENTS.md`** at the start of
-  their session before doing any work.
-- Clearly indicate in each teammate's activation prompt whether they are the **Driver**
-  or a **Reviewer** for the current task.
-- **Driver onboarding**: The activation prompt must instruct the Driver to read
-  `PROJECT.md`, `AGENTS.md`, `docs/glossary.md`, and the relevant user story before
-  writing any code.
+### Spawn Prompt Structure (Goal-Oriented)
+
+Agents auto-receive CLAUDE.md, AGENTS.md, all installed skills, and full file access
+when spawned. The coordinator should NOT repeat this information. Prescriptive
+step-by-step instructions, architecture excerpts, skill rules, or file paths to
+create all waste context and risk contradicting the authoritative sources the agent
+already has.
+
+Every spawn prompt should contain exactly these elements:
+
+1. **Identity**: "You are [Name], [Role]." + path to their `.team/<name>.md` profile
+   (the agent reads the file — do not paste the profile content)
+2. **Goal**: One clear sentence stating what the agent should accomplish
+   (e.g., "Write a failing acceptance test for the deposit scenario")
+3. **Context**: The scenario spec (GWT), relevant slice, or problem description —
+   only information the agent cannot get from project files
+4. **Handoff data**: Output from the previous agent if this is a continuation
+   (e.g., "The previous Driver committed the failing test in abc123")
+5. **Role designation**: Whether they are the **Driver** or a **Reviewer** for
+   this task
+
+**Do not include:**
+- Step-by-step instructions for how to do the work
+- File paths to create or architecture excerpts
+- Rules already in AGENTS.md, CLAUDE.md, or installed skills
+- The full profile content (the agent reads the file itself)
+
+**Example spawn prompt:**
+```
+You are Kent Beck, Dev Practice Lead. Read your profile at .team/kent-beck.md.
+
+You are the Driver for this task. Goal: Implement the deposit command handler
+to make the failing acceptance test pass.
+
+Context: The acceptance test (committed in abc123) verifies that depositing
+$100 into a verified account increases the balance by $100.
+
+Previous Driver output: Failing test is in tests/deposits_test.rs, the
+Account aggregate skeleton is in src/domain/account.rs.
+```
 
 ## Teammate Permissions
 

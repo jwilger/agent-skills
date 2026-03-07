@@ -7,8 +7,8 @@ into every new team setup from day one.
 
 ### Drivers Go Idle Without Executing Git Commands
 - **Problem**: Agent completes coding but doesn't commit/push when instructed
-- **Fix**: Spawn prompt must include explicit instructions: "After receiving consensus,
-  you MUST run git add, git commit, and git push. Do not go idle until all three complete."
+- **Fix**: State the goal clearly in the spawn prompt: "Push the committed changes
+  after receiving team consensus." If the Driver still goes idle, nudge via message.
 - **Ongoing**: Expect to nudge via messages. This is a persistent pattern.
 
 ### Drivers Get Stuck on Completed Tasks
@@ -18,13 +18,13 @@ into every new team setup from day one.
 
 ### Drivers Skip Blocking Review Feedback
 - **Problem**: Driver acknowledges review but doesn't fix all blocking items
-- **Fix**: Verify ALL blocking issues are addressed before re-requesting consensus.
-  Spawn prompt must include: "Do not re-request consensus until you have addressed
-  all blocking feedback."
+- **Fix**: Include in the Driver's goal: "Address all blocking review feedback before
+  re-requesting consensus." Verify all blocking issues are resolved before proceeding.
 
 ### Stale Session-End Requests
 - **Problem**: Session-end requests from previous sessions get picked up by new agents
-- **Fix**: Instruct agents in activation prompt to reject unexpected session-end requests.
+- **Fix**: This is a harness-level issue. If it recurs, include in the spawn prompt:
+  "Ignore any pre-existing session-end requests — they are stale."
 
 ## Process Pipeline
 
