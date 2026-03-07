@@ -1,6 +1,6 @@
-# System Prompt Patterns
+# Instruction Writing Patterns
 
-Reference for writing effective project-specific system prompts. Based on
+Reference for writing effective project-specific instructions. Based on
 observed patterns from autonomous agent work: what sticks, what decays, and
 how to promote instructions that keep failing.
 
@@ -37,9 +37,8 @@ Observable, checkable, mechanical.
 ```
 At session start:
 1. Read WORKING_STATE.md
-2. Read .claude/SYSTEM_PROMPT.md
-3. Run git status
-4. Confirm current task with user
+2. Run git status
+3. Confirm current task with user
 ```
 Sequential, concrete, impossible to misinterpret.
 
@@ -118,54 +117,36 @@ The gap persists. Rewrite as a hard constraint:
   STOP, run the linter, and only proceed if it passes with zero warnings.
 ```
 
-## System Prompt File Structure
+## Where to Place Directives
 
-```markdown
-# [Project Name] System Prompt
+Route directives to the correct file based on content type. See
+`launcher-templates.md` for the full routing table.
 
-## Role and Constraints
-You are [role]. You [do X, Y, Z].
-You are NOT [other role]. You do NOT [A, B, C].
-
-## Startup Procedure (run every session start)
-1. Read WORKING_STATE.md (if it exists)
-2. Read this system prompt fully
-3. Run git status to understand current state
-4. Confirm current task before proceeding
-
-## Process Requirements
-- MUST [requirement] before [action]
-- MUST [requirement] after [action]
-
-## Common Mistakes (NEVER do these)
-- NEVER [specific forbidden action]. Instead, [correct action].
-- NEVER [specific forbidden action]. If tempted, [alternative].
-
-## Reminders (re-read every 5-10 messages)
-- [Concise reminder 1]
-- [Concise reminder 2]
-```
+- **CLAUDE.md** — Startup procedures, compaction recovery, state tracking
+- **AGENTS.md** — Project rules, conventions, common mistakes, reminders
+- **.team/coordinator-instructions.md** — Role boundaries for
+  coordinators/pipeline-controllers, gate checklists, spawn discipline
 
 ## Content Guidelines
 
-- **Under 500 tokens total.** The system prompt is loaded every session. Keep
-  it tight.
-- **Role boundaries first.** The most important section. Get this wrong and
-  everything else fails.
+- **Keep instructions concise.** CLAUDE.md and AGENTS.md are loaded every
+  session. Do not let them grow unbounded.
+- **Role boundaries first.** The most important directives. Get these wrong
+  and everything else fails.
 - **Startup procedure second.** Ensures consistent session initialization.
-- **No detailed process rules.** Those belong in skills. The system prompt
-  handles project-specific constraints and known failure modes only.
+- **No detailed process rules.** Those belong in skills. Project instructions
+  handle project-specific constraints and known failure modes only.
 - **Use NEVER/ALWAYS/MUST.** Not "try to," "consider," or "remember to."
 - **One idea per bullet.** Do not combine multiple instructions into one item.
-- **Test readability.** If you cannot scan the entire prompt in 30 seconds,
-  it is too long. Cut or move detail to skills/references.
+- **Test readability.** If you cannot scan the instructions in 30 seconds,
+  they are too long. Cut or move detail to skills/references.
 
 ## Refinement Workflow
 
 1. Identify gaps from session reflection analysis
 2. Draft new items or promote existing ones
-3. Review total token count -- stay under 500 tokens
+3. Review total instruction count -- stay under 30 across all files
 4. If over budget, move least-critical items to a Reminders section that gets
    re-read periodically rather than loaded at startup
-5. Test the updated prompt in the next session
+5. Test the updated instructions in the next session
 6. Remove items only after the gap is confirmed solved across 3+ sessions

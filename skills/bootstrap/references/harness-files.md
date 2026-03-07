@@ -111,27 +111,6 @@ ensemble_team:
   preset: none
 ```
 
-## System Prompt (Claude Code + Factory Mode Only)
-
-When Claude Code is the harness AND factory mode is configured (pipeline +
-user selected factory mode), generate a system prompt file and launcher
-script. See `system-prompt-generation.md` for the full procedure.
-
-Generate `.claude/SYSTEM_PROMPT.md` and `bin/ccf` launcher. Add to
-CLAUDE.md managed section:
-
-```markdown
-<!-- BEGIN MANAGED: system-prompt -->
-## System Prompt
-
-Pipeline controller system prompt: `.claude/SYSTEM_PROMPT.md`
-Launcher: `bin/ccf` (uses `claude --system-prompt`)
-<!-- END MANAGED: system-prompt -->
-```
-
-On non-Claude-Code harnesses, skip this section. Fold critical directives
-into the instruction file during normal Step 6 generation instead.
-
 ## Re-run Safety
 
 All generated content lives inside managed markers. Re-running bootstrap:
