@@ -16,7 +16,7 @@ license: CC0-1.0
 compatibility: Designed for any coding agent (Claude Code, Codex, Cursor, OpenCode, etc.)
 metadata:
   author: jwilger
-  version: "2.1.0"
+  version: "2.1.1"
   requires: [domain-modeling]
   context: [source-files, test-files, domain-types, git-history]
   phase: ship

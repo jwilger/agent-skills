@@ -19,7 +19,7 @@ description: >-
 license: CC0-1.0
 metadata:
   author: jwilger
-  version: "1.1.0"
+  version: "1.1.1"
   requires: [pipeline]
   context: [ci-results, git-history, task-state]
   phase: ship
