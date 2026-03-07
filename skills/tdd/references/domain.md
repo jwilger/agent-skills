@@ -22,6 +22,11 @@ or any file that is not a type definition.
 
 Check the test for:
 
+- **Given-clause enforcement:** Does the test setup actually enforce each
+  element of the scenario's Given clause? A test that would pass against
+  any arbitrary server returning the right output does not verify its
+  preconditions. VETO if the Given clause is not enforced by test setup.
+  See `shared-rules.md` § Given-Clause Enforcement.
 - **Primitive obsession:** Does the test use raw `String`, `i32`, or
   similar where a domain-specific newtype should exist?
 - **Naming:** Do type and variable names reflect domain language?

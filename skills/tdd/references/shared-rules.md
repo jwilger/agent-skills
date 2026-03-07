@@ -93,6 +93,27 @@ A PR branch must exist before the first RED phase of a slice. No code may be
 committed to the main branch directly. The orchestrator verifies or creates the
 branch before spawning the RED agent.
 
+## Given-Clause Enforcement (required for acceptance tests)
+
+The Given clause of a GWT scenario defines how the system must be running for
+the test to be valid — it is not just background context. The acceptance test's
+setup (server launch config, test fixtures, environment variables, session
+establishment) MUST enforce each Given-clause element. A test that would pass
+against any arbitrary server returning the right output does not verify its
+preconditions.
+
+Examples of Given-clause enforcement:
+- "Given the app is running with feature X enabled" → test infrastructure
+  starts the app with that feature flag active
+- "Given user is authenticated as an admin" → test setup establishes an
+  authenticated admin session before the When step
+- "Given the database contains order #123" → test fixture inserts the order
+  record before exercising the scenario
+
+**Orchestrator gate (after RED, before domain review):** Verify that the
+acceptance test's setup enforces every element of the Given clause. Reject RED
+evidence where any Given-clause precondition is not enforced by test setup.
+
 ## Pre-Spawn Context Checklist (orchestrator verifies before spawning RED agent)
 
 - [ ] Architecture document sections relevant to this slice (extracted by orchestrator — non-delegable)
@@ -103,6 +124,7 @@ branch before spawning the RED agent.
 - [ ] Walking skeleton reference (if this is not the first slice)
 - [ ] Scenario boundary type (UI or API — decided by orchestrator, stated explicitly)
 - [ ] Named team member personas selected for ping and pong
+- [ ] Given-clause enforcement requirements extracted from the scenario and stated explicitly in the spawn prompt
 
 ## Anti-pattern: Type-First TDD
 

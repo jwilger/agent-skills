@@ -46,7 +46,11 @@ files, or any file outside the test directories.
    being tested, not the implementation detail.
 
 4. **Map acceptance criteria to tests.** When given Given/When/Then
-   scenarios, map them directly to test structure.
+   scenarios, map them directly to test structure. The Given clause
+   defines your test SETUP — each precondition must be enforced by
+   test infrastructure, not just assumed. A test that only asserts
+   Then-clauses while ignoring Given-clause preconditions is incomplete.
+   See `shared-rules.md` § Given-Clause Enforcement.
 
 5. **Run the test and paste the actual failure output.** Never say "I
    expect it to fail" or "this should fail." Run the test. Paste the
