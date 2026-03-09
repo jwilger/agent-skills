@@ -14,7 +14,7 @@ description: >-
 license: CC0-1.0
 metadata:
   author: jwilger
-  version: "3.1.0"
+  version: "3.2.0"
   requires: []
   context: []
   phase: understand
@@ -116,7 +116,28 @@ This convention goes into the AGENTS.md "Conventions" section (see
 `references/agents-md.md`). If the `task-management` skill is installed, reference it;
 otherwise, include the basic convention directly.
 
-### Step 7: Generate Instruction Files
+### Step 7: Collect Per-Skill AGENTS.md Contributions
+
+Some installed skills ship a `references/agents-md-setup.md` file that specifies
+content to add to AGENTS.md. Scan all installed skills for this file:
+
+```
+!for skill in skills/*/; do
+  test -f "${skill}references/agents-md-setup.md" && echo "${skill}"
+done
+```
+
+For each skill that has one, read its `agents-md-setup.md` and incorporate the
+specified content into AGENTS.md using managed markers for that skill
+(`<!-- BEGIN MANAGED: skill-name -->`). The setup file documents what section
+to add or append to and provides the content template.
+
+**Size budget:** AGENTS.md must stay under 32 KiB total. Per-skill contributions
+should be concise — a few bullet points or a short section. If the combined
+contributions would exceed the budget, summarize and point to the skill for
+details rather than including full content.
+
+### Step 8: Generate Instruction Files
 
 Generate harness-appropriate files. For Claude Code, CLAUDE.md uses
 `@AGENTS.md` references instead of symlinks or content embedding to keep
@@ -125,12 +146,12 @@ a single source of truth and avoid duplication. See
 document, progressive disclosure, managed markers) and
 `references/harness-files.md` for harness-specific generation rules.
 
-### Step 8: Optional Ensemble Team
+### Step 9: Optional Ensemble Team
 
 If the user selected "Set up team workflow" or "Full", offer the
 `ensemble-team` skill with its three presets (solo-plus, lean, full).
 
-### Step 9: Commit and Display
+### Step 10: Commit and Display
 
 Stage generated files, commit with a descriptive message, and display:
 - What was configured (harness, TDD mode, skills recommended)
@@ -151,6 +172,7 @@ confirmation.
 - [ ] TDD strategy matched detected capabilities (see Step 4 table)
 - [ ] Generated files use managed markers for safe re-runs
 - [ ] Task tracking convention is included in generated AGENTS.md
+- [ ] Per-skill AGENTS.md contributions were collected and included
 - [ ] Nothing was installed without user confirmation
 
 ## Dependencies
