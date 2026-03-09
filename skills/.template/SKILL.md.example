@@ -92,3 +92,12 @@ Missing a dependency? Install with:
 ```
 npx skills add jwilger/agent-skills --skill other-skill-name
 ```
+
+### Optional: AGENTS.md Setup
+
+If this skill needs behavioral triggers or conventions added to the project's
+AGENTS.md, create `references/agents-md-setup.md`. This file tells the
+`bootstrap` skill what content to add to AGENTS.md during project setup.
+The content should be concise — just the "when to act" triggers. Full protocol
+details stay in SKILL.md. See `memory-protocol/references/agents-md-setup.md`
+for an example.

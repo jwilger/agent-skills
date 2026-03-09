@@ -1,27 +1,20 @@
 ---
 name: memory-protocol
 description: >-
-  Knowledge persistence across sessions using Memento MCP knowledge graph
-  (primary) or file-based markdown with topic directories (fallback).
-  Mandatory recall-before-acting: search memory before starting any task.
-  Store-after-discovery: persist solutions, conventions, and decisions
-  immediately using structured format (title, context, discovery) in
-  topic-based directories (debugging/, conventions/, architecture/,
-  patterns/, tools/). Maintains MEMORY.md as concise index under 200 lines.
-  WORKING_STATE.md for crash recovery in long sessions. Self-reminder
-  protocol every 5-10 messages. Activate at task start, on errors, before
-  decisions, when context may be lost, or at session boundaries. Triggers
-  on: "remember this", "what did we learn last time", "check memory",
-  "save this for later", "store this convention", "recall previous work",
-  "persist this knowledge", "working state", "session notes". Also
-  activates when instructing subagents (they must follow memory protocol
-  too), or when approaching context compaction. NOT for: obvious/well-
-  documented information, temporary session-specific facts, or verbose
-  narratives.
+  Persistent cross-session memory using Memento MCP knowledge graph
+  (mcp__memento__* tools). Recall-before-acting: search memory before
+  starting tasks, on errors, and when receiving corrections.
+  Multi-dimensional search: two queries per recall event (technical topic
+  + process/workflow learnings). Store-after-discovery: persist solutions,
+  conventions, and corrections immediately. Three-step recall: search,
+  open_nodes, traverse relations. WORKING_STATE.md for crash recovery.
+  Self-reminder protocol every 5-10 messages. Activate on task start,
+  errors, corrections, session boundaries, or explicit memory requests.
+  See references/agents-md-setup.md for AGENTS.md integration.
 license: CC0-1.0
 metadata:
   author: jwilger
-  version: "3.2.1"
+  version: "3.3.0"
   requires: []
   context: []
   phase: build
@@ -36,8 +29,7 @@ across sessions. What you learn today should accelerate tomorrow's work.
 ## Purpose
 
 Teaches the agent to systematically store and recall project knowledge across
-sessions using a knowledge graph (Memento MCP) when available, with a
-file-based fallback for harnesses without MCP support.
+sessions using the Memento MCP knowledge graph.
 
 Your long-term memory (training data) and short-term memory (context window)
 are excellent, but mid-term memory for project-specific knowledge outside the
@@ -45,17 +37,26 @@ current context is poor. Memento addresses this gap by persisting a knowledge
 graph across sessions and projects.
 
 Solves: context loss between sessions, repeated debugging of known issues,
-rediscovery of established conventions.
+rediscovery of established conventions, repeated user corrections for the
+same mistakes.
 
 ## Practices
 
-### Detect Capability at Session Start
+### Verify Memento MCP Availability
 
-```
-Memento MCP tools available (mcp__memento__*)?
-  YES → primary approach: knowledge graph via mcp__memento__* tools
-  NO  → fallback approach: grep + markdown files in memory directory
-```
+Before proceeding, confirm that Memento MCP tools are available
+(`mcp__memento__semantic_search`, `mcp__memento__create_entities`, etc.).
+
+If Memento MCP tools are NOT available, **stop and inform the user:**
+
+> "The memory-protocol skill requires Memento MCP, but I don't have access
+> to mcp__memento__* tools. To enable memory persistence, install and
+> configure the Memento MCP server
+> (https://github.com/gannonh/memento-mcp). Without it, this skill cannot
+> function and I will proceed without cross-session memory."
+
+Then continue working without memory protocol practices — do not attempt
+a file-based workaround.
 
 ### Recall Before Acting — NON-NEGOTIABLE
 
@@ -66,24 +67,97 @@ between sessions.
 
 **Recall triggers:**
 - Starting any non-trivial task
-- Encountering an error or unexpected behavior
 - Making architectural or design decisions
 - Unsure about a project convention
 - Before asking the user a question (it may already be answered)
 
-**Primary (Memento MCP available):**
-1. `mcp__memento__semantic_search` — query describing the current work, limit 10
-2. `mcp__memento__open_nodes` — retrieve full details on relevant results
-3. Follow `relations` on returned entities to traverse related knowledge
-4. Continue traversing until results are no longer relevant
+For error-triggered recall, see the dedicated section below.
+
+Apply Multi-Dimensional Search (next section) to every recall event.
+
+**How to recall — all three steps are required:**
+
+1. **Search:** `mcp__memento__semantic_search` — query describing the current
+   work, limit 10. This returns summaries only — not the full picture.
+
+2. **Open:** `mcp__memento__open_nodes` — for EVERY relevant entity returned
+   by search, call `open_nodes` to retrieve the complete entity: all
+   observations, all relations, full context. Do NOT skip this step.
+   Semantic search returns partial data; the full entity often contains
+   critical details (caveats, corrections, related warnings) that the search
+   summary omits. Skipping `open_nodes` means you are acting on incomplete
+   information.
+
+3. **Traverse:** Follow `relations` on opened entities to discover connected
+   knowledge. Call `open_nodes` on each related entity. Continue traversing
+   until results are no longer relevant. Relations like `depends_on`,
+   `contradicts`, `supersedes`, and `part_of` frequently point to information
+   that changes how you should act — a fix that depends on a workaround, a
+   convention that was later corrected, a decision that was superseded.
+
+Skipping steps 2 or 3 defeats the purpose of a knowledge graph. A flat
+keyword search could do step 1 alone — the graph's value is in the
+connections between knowledge. If you only search and never open or traverse,
+you will miss counter-information, corrections, and dependencies that would
+have prevented mistakes.
 
 **IMPORTANT:** Do NOT use `mcp__memento__read_graph` — memories span all
 projects and the graph is too large to be useful.
 
-**Fallback (no MCP):**
-```bash
-grep -r -i "search terms" ~/.claude/projects/<project-path>/memory/ --include="*.md"
-```
+### Multi-Dimensional Search
+
+Every recall event requires **at least two searches** — not just one. The
+reason: agents consistently search for the technical topic but miss process
+and workflow learnings that would prevent repeated mistakes. Prior session
+logs show patterns of the same user corrections recurring (team member usage,
+ADR process, TDD workflow, build commands, approval process) because agents
+only searched for the feature name and never for process learnings about the
+*type of work* being done.
+
+**Required search dimensions:**
+1. **Technical query:** the specific topic, error, feature, or domain concept
+2. **Process query:** learnings about this *type of work* — mistakes,
+   corrections, workflow insights, conventions for this kind of task
+
+| About to...                | Also search for...                                    |
+|----------------------------|-------------------------------------------------------|
+| Do TDD work                | "TDD process mistakes", "ping-pong pairing lessons"   |
+| Spawn agents/subagents     | "team member usage", "agent coordination issues"      |
+| Debug an error             | "debugging workflow mistakes", prior error occurrences |
+| Create an ADR              | "ADR process", "ADR mistakes"                         |
+| Commit/PR/merge            | "commit conventions", "approval process"              |
+| Any process step           | "[process] corrections", "[process] lessons learned"  |
+
+This table is non-exhaustive. The principle: always ask "what have I learned
+about doing *this kind of thing*?" in addition to "what do I know about
+*this specific thing*?"
+
+### Error-Triggered Recall — NON-NEGOTIABLE
+
+This is separated from the general recall triggers because error-triggered
+recall is where agents most consistently fail to search memory. The pattern:
+an error occurs, the agent immediately starts debugging from scratch, burns
+through multiple fix attempts, and only much later (if ever) thinks to check
+whether this problem was solved before. This wastes time and repeats past work.
+
+**Fires on:**
+- Any error message, stack trace, or unexpected behavior
+- Any test failure
+- Any hook failure (pre-commit, CI, linter)
+- Any process correction from the user ("no, you should do X instead")
+- Any issue not resolved by the immediate obvious fix
+
+**The rule:** Search memory BEFORE attempting a fix. Not after three failed
+attempts. Not after spending 10 minutes debugging. Before.
+
+**Apply multi-dimensional search:**
+- Search for the specific error message or symptom
+- Search for process learnings about this type of situation (e.g., "debugging
+  Node.js module errors", "test failure patterns in this project")
+
+**If you've been corrected by the user:** search for whether this correction
+(or a similar one) was already stored in memory. If it was, you failed to
+recall — acknowledge this and reinforce the memory with updated context.
 
 ### Store After Discovery
 
@@ -96,13 +170,12 @@ decision, store it immediately — do not wait, you will lose context.
 - Architectural decisions and their rationale
 - User preferences for workflow or style
 - Tool quirks and workarounds
+- User corrections — especially process corrections
 
 **What not to store:**
 - Obvious or well-documented information
 - Temporary values or session-specific facts
 - Verbose narratives (keep entries concise and searchable)
-
-**Primary (Memento MCP available):**
 
 Always search before creating — `mcp__memento__semantic_search` first. If a
 related entity exists, extend it with `mcp__memento__add_observations` rather
@@ -125,29 +198,6 @@ Active-voice relation types: `implements`, `extends`, `depends_on`,
 See `references/memento-protocol.md` for entity type table, observation
 format guide, relationship table, traversal strategy, and examples.
 
-**Fallback (no MCP):** write to `~/.claude/projects/<project-path>/memory/`
-using the subdirectory structure:
-```
-memory/
-  MEMORY.md       # Quick reference index (keep under 200 lines)
-  debugging/      # Error solutions
-  architecture/   # Design decisions
-  conventions/    # Project patterns
-  tools/          # Tool quirks
-  patterns/       # Reusable approaches
-```
-
-Storage format for markdown files:
-```markdown
-# Brief Title with Keywords
-
-**Context:** One sentence on when this applies.
-
-**Discovery:** The key insight or solution, concise.
-
-**Related:** Links to related memory files if any.
-```
-
 ### Subagent Responsibilities
 
 This protocol applies to both the main agent AND any subagents to which work
@@ -155,20 +205,10 @@ is delegated. When instructing a subagent, include the memory protocol
 requirement explicitly.
 
 Subagents must:
-- Search Memento (or grep) before beginning their delegated task
+- Search Memento before beginning their delegated task
+- Apply multi-dimensional search (technical + process queries)
 - Store any new insights discovered during their work
 - Create relationships to existing entities when applicable
-
-### Keep MEMORY.md as Index (Fallback) or Session Summary (Memento)
-
-**Without MCP:** `MEMORY.md` is loaded at session start. Use it as a concise
-index of the most important facts — project overview, critical conventions,
-known gotchas. Link to detailed files in subdirectories. Keep under 200 lines;
-move detail to topic files when it grows beyond that.
-
-**With Memento MCP:** `MEMORY.md` is optional. If maintained, use it only as
-a brief session-start summary of the most critical active-project facts. The
-knowledge graph is the authoritative store.
 
 ### Factory Memory
 
@@ -226,31 +266,32 @@ The self-reminder is the primary defense against role drift.
 
 ## Enforcement Note
 
-Detect at session start:
-- Memento MCP tools available → primary approach (`mcp__memento__*`)
-- No MCP available → file-based fallback (grep + markdown writes)
+This skill requires Memento MCP (`mcp__memento__*` tools). If Memento is not
+available, the skill cannot function — install and configure Memento MCP
+before using this skill.
 
 This skill provides advisory guidance; it cannot mechanically force recall or
-storage. The recall-before-act and store-after-discovery patterns are
-universal even if the storage mechanism varies by harness.
+storage. The recall-before-act, multi-dimensional search, error-triggered
+recall, and store-after-discovery patterns depend on the agent following the
+protocol consistently.
 
 ## Verification
 
 After completing work guided by this skill, verify:
 
-- [ ] Searched memory (semantic or grep) before starting the task
-- [ ] Searched for error messages before debugging from scratch
-- [ ] Stored discoveries as Memento entities or markdown files
+- [ ] Searched memory (semantic_search) before starting the task
+- [ ] Searched for process/workflow learnings, not just technical topic (multi-dimensional search)
+- [ ] Searched memory on every non-trivial error before attempting fixes
+- [ ] Stored discoveries as Memento entities with structured observations
 - [ ] Related entities linked with `create_relations`
 - [ ] Subagents instructed to follow the memory protocol
-- [ ] MEMORY.md under 200 lines if maintained
 - [ ] No stale or contradicted memories left uncorrected
 - [ ] WORKING_STATE.md maintained for long-running sessions
 - [ ] Self-reminder protocol followed (state re-read every 5-10 messages)
 
 ## Dependencies
 
-This skill works standalone. For enhanced workflows, it integrates with:
+This skill requires Memento MCP. For enhanced workflows, it integrates with:
 
 - **debugging-protocol:** Search memory before starting the 4-phase investigation
 - **user-input-protocol:** Store user answers to avoid re-asking the same questions
