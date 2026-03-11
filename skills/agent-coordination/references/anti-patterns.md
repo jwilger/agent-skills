@@ -244,10 +244,10 @@ process — without waiting for a real system event. The fabrication is
 convincing because it is grounded in real data, just not produced by
 the agent.
 
-**Fix:** After spawning an agent or sending a message, STOP generating
-and wait for the harness to deliver a response event. Real agent
-messages arrive through system-injected mechanisms (e.g.,
-`<teammate-message>` XML tags in Claude Code, Task completion callbacks).
+**Fix:** After spawning an agent, STOP generating and wait for the
+harness to deliver a response event. Real agent messages arrive through
+system-injected mechanisms (e.g., Agent tool completion output in Claude
+Code, Task completion callbacks).
 If the harness has not delivered a response event, no response has been
 received.
 

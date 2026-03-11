@@ -1,114 +1,131 @@
 # Claude Code Coordination Patterns
 
-Detailed guidance for multi-agent coordination using Claude Code's specific
-tools: TeamCreate, SendMessage, Task, and shutdown protocols.
+Detailed guidance for multi-agent coordination using Claude Code's Agent tool
+for subagent spawning, result passing, and lifecycle management.
 
-## TeamCreate Patterns
+## Agent Tool Patterns
 
-### Creating Persistent Teams
+### Spawning Subagents
 
-Use TeamCreate for agents that need to persist across multiple interactions --
-reviewers, domain experts, long-running builders. Each team member gets a
-dedicated context and can receive messages.
+Use `Agent(subagent_type="<agent-name>", prompt="...")` to spawn subagents for
+delegated work. Each subagent gets a fresh context and executes independently.
+Named agent types are defined in `.claude/agents/` as YAML or Markdown files.
 
 **Naming conventions:**
-- Use descriptive, role-based names: `tdd-red`, `tdd-green`, `reviewer-a11y`,
-  `domain-expert`
+- Use descriptive, role-based agent type names: `tdd-red`, `tdd-green`,
+  `reviewer-a11y`, `domain-expert`
 - Avoid generic names like `agent-1`, `worker-2`
 - Include the task domain when multiple agents share a role:
   `reviewer-frontend`, `reviewer-backend`
 
-**Team lifecycle:**
-1. Create agents one at a time (sequential spawning rule)
-2. Wait for each agent's acknowledgment message before creating the next
-3. Provide complete context in the creation prompt -- the agent cannot read
-   your mind or your conversation history
-4. Keep agents alive between related tasks to preserve accumulated context
-5. Only shut down agents when their role is complete for the session
+**Spawning discipline:**
+1. Spawn agents one at a time for dependent work (sequential spawning rule)
+2. Wait for each agent's result before spawning the next
+3. Provide complete context in the spawn prompt -- the subagent cannot read
+   your conversation history
+4. Use the `resume` parameter to continue a subagent with additional context
+   rather than re-spawning from scratch
 
-### What to Include in Agent Creation Prompts
+### What to Include in Subagent Prompts
 
-Every TeamCreate prompt must contain:
+Every Agent tool prompt must contain:
 - The agent's specific role and responsibilities
 - All files and context the agent needs to do its work
-- The communication protocol (who to message, what format)
-- What "done" looks like -- explicit completion criteria
-- Instructions to use the shutdown protocol when finished
+- The expected deliverable (what output format, what content)
+- Any constraints (files not to touch, patterns to follow)
+- Explicit completion criteria -- what "done" looks like
 
-Do NOT assume the agent will inherit any context from your current session.
+Do NOT assume the subagent will inherit any context from your current session.
+
+### Sequential Spawning with Result Collection
+
+The standard pattern for multi-phase work:
+1. Spawn subagent A with full context
+2. Collect subagent A's result
+3. Spawn subagent B with its own context PLUS relevant results from A
+4. Continue the chain
+
+Each subagent's result becomes input context for the next. The orchestrator
+is responsible for selecting which parts of prior results are relevant.
+
+### Using the Resume Parameter
+
+When a subagent needs additional input after returning an initial result,
+use `resume` to continue its session rather than spawning a new agent:
+- The resumed subagent retains its accumulated context
+- Provide the new information or follow-up request in the resume prompt
+- This avoids re-establishing context from scratch
 
 ## Recognizing Real vs. Fabricated Agent Messages
 
-On Claude Code, real agent messages arrive through specific system
+On Claude Code, real agent responses arrive through specific system
 mechanisms. You must NEVER generate text that mimics these.
 
 **Real agent responses look like:**
-- `<teammate-message>` XML tags injected by the system in a new
-  conversation turn (for TeamCreate agents)
-- Task completion output delivered by the harness (for Task/Agent tool)
+- Task/Agent tool completion output delivered by the harness
 - System-level notifications (idle, error, completion)
 
 **Fabricated responses look like:**
 - `[Received message from X]` written by you in the same turn as a spawn
 - Text you generate that describes what an agent "found" or "reported"
-- Any substantive content appearing after a spawn/send without a system
+- Any substantive content appearing after a spawn without a system
   event separating them
 
-**The hard rule:** After calling Agent, TeamCreate, SendMessage, or Task
-with `run_in_background: true`, your turn is DONE for that interaction.
-Generate at most a brief status line ("Spawned X, waiting for response.")
-then stop. The next substantive content you produce must be in response
-to a system-delivered event.
+**The hard rule:** After calling Agent with `run_in_background: true`,
+your turn is DONE for that interaction. Generate at most a brief status
+line ("Spawned X, waiting for response.") then stop. The next substantive
+content you produce must be in response to a system-delivered event.
 
 If you find yourself writing an agent's "findings" in the same output
 block where you spawned that agent, you are fabricating. Stop immediately.
 
-## SendMessage Discipline
+## Result-Passing Discipline
 
-### One Message, Complete Context
+### Passing Results Between Subagents
 
-Every SendMessage call must be self-contained. The recipient may have
-compacted their context since your last interaction.
+When spawning the next subagent, include all relevant results from prior
+subagents in the prompt. The orchestrator is the communication hub -- subagents
+do not talk to each other.
 
-**Message structure:**
+**Prompt structure for downstream subagents:**
 ```
-1. What you need (the request, one sentence)
-2. Context (what happened, what state we're in)
+1. What you need this subagent to do (the request, one sentence)
+2. Context (what prior subagents produced, what state we're in)
 3. Specific deliverable (what you expect back)
 4. Any constraints or deadlines
 ```
 
-**Example of a good message:**
+**Example of a good downstream prompt:**
 ```
-Please review the authentication module changes in src/auth/.
-Context: We refactored the token refresh logic to use a single retry
-with exponential backoff (see git diff HEAD~1). The domain model
-unchanged -- this is purely implementation.
+Review the authentication module changes in src/auth/.
+Context: The tdd-green agent refactored the token refresh logic to use
+a single retry with exponential backoff (see git diff HEAD~1). The domain
+model is unchanged -- this is purely implementation. Here are the test
+results from the prior phase: [test output].
 Deliverable: Written review in .reviews/auth-refactor.md with blocking/
 non-blocking classification.
 ```
 
-**Example of a bad message:**
+**Example of a bad downstream prompt:**
 ```
 Hey, can you take a look at the latest changes?
 ```
 
-### What Never to Send
+### Keeping Context Focused
 
-- "Just checking in" -- violates the cardinal rule
-- "Did you get my last message?" -- yes, they did
-- "Are you still working on this?" -- if no reply, yes they are
-- Status requests without user prompting -- idle means working
-- The same message rephrased -- they heard you the first time
+Do not dump every prior subagent's full output into the next prompt. Select
+the relevant portions:
+- Pass test results to a reviewer, not the full TDD conversation
+- Pass the review summary to a fixer, not the entire review discussion
+- Pass file paths and specific findings, not raw logs
 
-### After Sending
+### Evidence Completeness
 
-After calling SendMessage:
-1. Stop. Do other work if you have any.
-2. Wait for the reply event from the harness.
-3. Do NOT send another message to the same agent before receiving a reply.
-4. If the user asks you to check on the agent, send ONE inquiry -- then
-   wait again.
+Evidence fields must be complete before spawning the next phase. The
+orchestrator verifies evidence completeness, not the subagents:
+- Check that the subagent's result contains all expected deliverables
+- If evidence is incomplete, resume the subagent to request the missing pieces
+- Do not spawn the next phase with incomplete inputs
 
 ## Idle Notification Decision Tree
 
@@ -150,39 +167,23 @@ Is the user asking me to check on this agent?
 
 When in doubt, ask the user rather than messaging the agent.
 
-## Shutdown Protocol
+## Subagent Lifecycle
 
-### shutdown_request / shutdown_response
+Subagents spawned via the Agent tool are ephemeral by default. They do their
+work and return a result. There is no persistent session to shut down.
 
-Always use the proper shutdown handshake. Never force-terminate an agent.
+**Lifecycle rules:**
+- A subagent completes when it returns its result to the orchestrator
+- The orchestrator decides whether to resume the subagent (with `resume`) or
+  spawn a new one for the next phase
+- No explicit shutdown protocol is needed for ephemeral subagents
+- If a subagent was spawned with `run_in_background: true`, wait for its
+  completion notification before acting on its results
 
-**Shutdown sequence:**
-1. Send `shutdown_request` message to the agent
-2. The agent may:
-   - **Accept**: Finishes current work, delivers final output, confirms shutdown
-   - **Reject**: Has pending work or undelivered results, explains why
-3. If accepted: wait for the shutdown confirmation, then proceed
-4. If rejected: report to the user with the agent's reason. Let the user
-   decide whether to force shutdown or wait.
-
-**Never do:**
-- Kill an agent's session without sending shutdown_request
-- Assume an idle agent is "done" and shut it down
-- Shut down an agent that said it has undelivered work
-- Send shutdown_request and immediately proceed without waiting for response
-
-### When to Initiate Shutdown
-
-- The agent has delivered its final output and confirmed completion
-- The user explicitly requests shutting down the agent
-- The agent has been idle AND confirmed it has no pending work
-
-### When NOT to Initiate Shutdown
-
-- The agent is idle (idle means processing, not done)
-- You think the agent "should be done by now"
-- You want to free up resources (ask the user first)
-- The agent is taking longer than expected
+**When to resume vs. re-spawn:**
+- **Resume** when the subagent needs to do follow-up work in the same context
+  (e.g., fix an issue it found, provide additional detail)
+- **Re-spawn** when the next task requires a different role or fresh context
 
 ## User Interruption Handling
 
@@ -219,7 +220,7 @@ Was this a USER-initiated interruption?
 **Why this matters:** User interruptions are INTENTIONAL. The user may
 want to give the agent better guidance, change the approach, redirect
 entirely, or just pause. Auto-recovering treats the user's deliberate
-action as an error to fix — which is disrespectful and wastes resources.
+action as an error to fix -- which is disrespectful and wastes resources.
 
 System interruptions (context compaction, harness timeouts) are NOT
 intentional. The agent was doing useful work and got cut off. Recovery
@@ -228,16 +229,16 @@ is appropriate.
 **The distinction is simple:** Did the user cause the interruption? Wait
 for direction. Did the system cause the interruption? Attempt recovery.
 
-## Task Tool Sequential Delegation
+## Sequential Subagent Delegation
 
-When using the Task tool for subagent work (rather than persistent teams):
+When using the Agent tool for subagent work:
 
 ### Sequential Dependent Tasks
 
 For tasks that depend on each other's output:
-1. Spawn Task A, wait for completion
-2. Read Task A's output
-3. Spawn Task B with Task A's output as context
+1. Spawn subagent A, wait for completion
+2. Read subagent A's output
+3. Spawn subagent B with subagent A's output as context
 4. Continue the chain
 
 Never spawn dependent tasks in parallel hoping they will "figure it out."
@@ -261,8 +262,8 @@ If any checkbox fails, run the tasks sequentially.
 
 ### Context Isolation
 
-Each Task invocation gets a fresh context. This means:
-- Include ALL necessary information in the task prompt
+Each Agent invocation gets a fresh context. This means:
+- Include ALL necessary information in the agent prompt
 - Do not reference "the file we discussed earlier"
 - Provide file paths, not descriptions
 - Include the specific acceptance criteria for the task
