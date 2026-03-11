@@ -58,7 +58,7 @@ requesting it. This is intentional: the human needs full context to break a tie.
 ## Build Phase Visibility
 
 During build-phase work (the team uses the `tdd` skill in automated mode with
-ping-pong pairing when agent teams are available), the human sees only:
+ping-pong pairing via subagents when the Agent tool is available), the human sees only:
 
 - **Pair selection**: Which two members are driving/navigating, and their roles
 - **Test status**: Pass/fail after each RED-DOMAIN-GREEN-DOMAIN-COMMIT cycle (one line each)

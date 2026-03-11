@@ -105,7 +105,7 @@ into every new team setup from day one.
   at each retro. Never let them accumulate as surprises.
 
 ### Team Profiles Should Include Lessons
-- Team member profiles (`.team/*.md`) should have a "Lessons From Previous Sessions"
+- Team member profiles (`.claude/agents/*.md`) should have a "Lessons From Previous Sessions"
   section that the agent updates as they learn. This persists hard-won knowledge.
 
 ## Architecture

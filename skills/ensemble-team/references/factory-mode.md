@@ -76,7 +76,7 @@ The coordinator provides the pipeline with:
    acceptance criteria, priority, and enriched context (boundary annotations,
    event model paths, domain types, UI components)
 2. **Factory config:** Path to `.factory/config.yaml` (already validated)
-3. **Team roster:** List of available engineers with their `.team/` profile
+3. **Team roster:** List of available engineers with their `.claude/agents/` profile
    paths and pairing history
 4. **Decision context:** Paths to relevant architecture decisions, domain
    model, and event model documents
