@@ -14,7 +14,7 @@ description: >-
 license: CC0-1.0
 metadata:
   author: jwilger
-  version: "3.3.0"
+  version: "4.0.0"
   requires: []
   context: []
   phase: understand
@@ -55,7 +55,7 @@ language files are found, note "none" and ask the user in Step 5.
 ### Step 2: Detect Harness Capabilities
 
 Probe for delegation primitives (see `references/capability-detection.md`):
-check for TeamCreate tool, Task tool, and skill chaining (always available).
+check for Agent tool and skill chaining (always available).
 
 ### Step 3: Detect Harness Type
 
@@ -74,8 +74,7 @@ Match the strategy to detected capabilities:
 
 | Capabilities detected | Strategy | Default mode |
 |----------------------|----------|--------------|
-| TeamCreate + Task | Agent teams | Automated |
-| Task only | Serial subagents | Automated |
+| Agent tool | Subagents | Automated |
 | Neither | Chaining | Automated |
 
 Chaining is always available and runs all TDD phases sequentially in a
