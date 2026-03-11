@@ -7,25 +7,17 @@ determines which TDD execution strategy is available.
 
 Probe in order from most capable to least:
 
-### 1. Agent Teams (TeamCreate)
+### 1. Subagents (Agent tool)
 
-Check if the TeamCreate tool is available. On Claude Code, this is a
-built-in tool. On other harnesses, check for equivalent multi-agent
-session management.
-
-**If available:** The agent teams strategy works. Ping-pong TDD pairing
-is possible. This is the most capable mode.
-
-### 2. Subagents (Task tool)
-
-Check if the Task tool (or equivalent subagent spawning) is available.
-On Claude Code, this is the Task tool. On Codex, this is `spawn_agent`.
+Check if the Agent tool (or equivalent subagent spawning) is available.
+On Claude Code, this is the Agent tool. On Codex, this is `spawn_agent`.
 On other harnesses, check for equivalent subprocess or worker spawning.
+When `.claude/agents/` definitions exist, subagents use named personas.
 
-**If available:** The serial subagents strategy works. Each TDD phase
+**If available:** The subagents strategy works. Each TDD phase
 runs in an isolated subagent with constrained scope.
 
-### 3. Skill Chaining (Always Available)
+### 2. Skill Chaining (Always Available)
 
 Every harness that supports Agent Skills supports loading skill files.
 This is the baseline.
@@ -39,24 +31,20 @@ Select the most capable strategy available:
 
 | Detected capabilities | Strategy | TDD mode |
 |----------------------|----------|----------|
-| TeamCreate + Task | Agent teams | Automated (ping-pong) |
-| Task only | Serial subagents | Automated (serial) |
+| Agent tool | Subagents | Automated (with named personas if `.claude/agents/` exist) |
 | Neither | Chaining | Automated (chaining) or Guided |
 
-All three automated strategies work without user intervention. Guided
+Both automated strategies work without user intervention. Guided
 mode is always available as a user-controlled alternative regardless of
 capabilities.
 
 ## Harness-Specific Probes
 
 **Claude Code:**
-- Task tool: Check tool list for "Task"
-- TeamCreate: Check tool list for "TeamCreate"
-- SendMessage: Check tool list for "SendMessage"
+- Agent tool: Check tool list for "Agent"
 
 **Codex:**
-- Subagents: Check for `spawn_agent` / `wait` / `close_agent` support
-- No persistent teams: Codex recreates agents per invocation
+- Subagents: Check for `spawn_agent` / `wait` / `close_agent` support or Agent tool equivalent
 
 **Cursor / Windsurf:**
 - No delegation primitives. Use chaining or guided mode.
@@ -93,9 +81,8 @@ harness:
   type: claude-code  # or codex, cursor, generic
   capabilities:
     subagents: true
-    agent_teams: true
     skill_chaining: true
 tdd:
   mode: automated  # or guided
-  strategy: agent-teams  # or serial-subagents, chaining
+  strategy: subagents  # or chaining
 ```

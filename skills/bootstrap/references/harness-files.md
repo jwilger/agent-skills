@@ -95,11 +95,10 @@ harness:
   type: claude-code
   capabilities:
     subagents: true
-    agent_teams: true
     skill_chaining: true
 tdd:
   mode: automated
-  strategy: agent-teams
+  strategy: subagents
   hooks_installed: false
 languages:
   - rust
