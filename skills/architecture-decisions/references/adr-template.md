@@ -1,10 +1,25 @@
-# ADR PR Description Template
+# ADR File Template
 
-Use this template for the PR body when creating an ADR-as-PR. Replace every
-section with real content from the decision conversation. Never leave
-placeholder text.
+Save ADRs as `docs/decisions/YYYYMMDD-<slug>.md` (e.g.,
+`docs/decisions/20240315-database-choice.md`). Replace every section with
+real content. Never leave placeholder text.
+
+**Supersession fields:**
+- `Supersedes` — list ADR files this decision replaces (or N/A)
+- `Superseded by` — filled in when a newer ADR replaces this one
+
+No explicit status field is needed. An ADR on an open PR is de-facto
+proposed. A merged ADR that isn't superseded is de-facto approved.
+When a new ADR supersedes this one, update this file's `Superseded by`
+field in the same PR.
 
 ```markdown
+# ADR: <Title>
+
+**Date:** YYYY-MM-DD
+**Supersedes:** N/A
+**Superseded by:** N/A
+
 ## Research Findings
 
 Summarize what was learned during the RESEARCH phase. Each finding must
@@ -61,41 +76,26 @@ State the decision in active voice, citing research findings:
 
 - Links to relevant documentation, benchmarks, or prior art
 - Or "N/A"
-
-## Supersedes
-
-- PR numbers if this replaces a previous decision
-- Or "N/A"
 ```
 
-## Without GitHub PRs: Commit Message Format
+## Access Guard Files
 
-When GitHub PRs are not available, use the same template structure in the
-commit message for the commit that updates `docs/ARCHITECTURE.md`:
+On the first ADR in a project, create these two files verbatim:
 
-```bash
-git add docs/ARCHITECTURE.md
-git commit -m "arch: <brief decision summary>
+**`docs/decisions/CLAUDE.md`** and **`docs/decisions/AGENTS.md`**:
 
-## Research Findings
-- <Dependency>: <key finding> (source: <URL or file>)
+```
+These files are Architecture Decision Records (ADRs). They document the
+reasoning behind past architectural choices.
 
-## Context
-What problem motivates this decision?
-
-## Decision
-We will <chosen approach> because <reasoning citing findings>.
-
-## Alternatives Considered
-- <Alternative>: <why not chosen, citing findings>
-
-## Consequences
-- Positive: <what improves>
-- Negative: <trade-offs accepted>
-"
+IMPORTANT: Only read files in this directory when the user explicitly asks
+about architectural decisions, ADR history, or why a specific architectural
+choice was made. Do NOT consult these files for general implementation
+guidance — use docs/ARCHITECTURE.md instead.
 ```
 
-The decision history lives in `git log -- docs/ARCHITECTURE.md`.
+These files exploit harness auto-loading behavior to restrict agents from
+using historical ADR rationale as current directives.
 
 ## Git Workflow for ADR PRs
 
@@ -105,22 +105,46 @@ git checkout main
 git pull origin main
 git checkout -b adr/<decision-slug>
 
+# Create the ADR file
+mkdir -p docs/decisions
+# Write docs/decisions/YYYYMMDD-<slug>.md
+
+# On first ADR: create access guard files
+# Write docs/decisions/CLAUDE.md and docs/decisions/AGENTS.md
+
 # Update the living document
 # Edit docs/ARCHITECTURE.md to reflect this decision
 
-# Commit with conventional prefix
-git add docs/ARCHITECTURE.md
+# Commit and push
+git add docs/decisions/ docs/ARCHITECTURE.md
 git commit -m "arch: <brief decision summary>"
-
-# Push and create labeled PR
 git push -u origin HEAD
+
+# Create labeled PR
 gh label create adr --description "Architecture Decision Record" --color "0075ca" 2>/dev/null || true
-gh pr create --title "ADR: <Decision Title>" --label adr --body "<PR body from template above>"
+gh pr create --title "ADR: <Decision Title>" --label adr \
+  --body "This PR adds an Architecture Decision Record. See the ADR file for the full record."
 
 # Do NOT merge -- the PR enters HOLD phase
 # Return to main for other work
 git checkout main
 ```
+
+## Without GitHub PRs: Commit Message Format
+
+When GitHub PRs are not available, the ADR file is still committed on
+the branch and merged via the normal git flow. Use the commit message:
+
+```bash
+git commit -m "arch: <brief decision summary>
+
+Adds docs/decisions/YYYYMMDD-<slug>.md
+
+See the ADR file for research findings, decision, and consequences.
+"
+```
+
+The decision history lives in `git log -- docs/decisions/`.
 
 ## Decision Categories Checklist
 
