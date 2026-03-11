@@ -91,9 +91,9 @@ and work on any compatible harness. Skills are the single source of truth
 for all practices.
 
 **Enforcement is proportional to capability.** Skills adapt to what the
-harness provides. On harnesses with delegation primitives (subagents,
-agent teams), the `tdd` skill uses structural enforcement -- context
-isolation, handoff schemas, and role specialization. On harnesses without
+harness provides. On harnesses with delegation primitives (subagents),
+the `tdd` skill uses structural enforcement -- context isolation,
+handoff schemas, and role specialization. On harnesses without
 delegation, the agent follows practices by convention with self-verification
 checklists.
 
@@ -137,8 +137,8 @@ each other by name but never assume internal structure.
 
 | Harness | Skills | TDD Strategy | Factory Pipeline | Optional Hardening |
 |---------|--------|--------------|------------------|--------------------|
-| Claude Code | All | Agent teams, serial subagents, chaining | Full (parallel slices in git worktrees, persistent pairs) | Hook templates available |
-| Codex | All | Serial subagents, chaining | Supported (serial execution) | -- |
+| Claude Code | All | Subagents (with named personas), chaining | Full (parallel slices in git worktrees) | Hook templates available |
+| Codex | All | Subagents, chaining | Supported (serial execution) | -- |
 | Cursor / Windsurf | All | Chaining, guided | Supported (chaining mode) | -- |
 | OpenCode | All | Chaining, guided | Degraded (advisory gates) | -- |
 | Goose | All | Chaining, guided | Degraded (advisory gates) | -- |
@@ -274,7 +274,7 @@ The pipeline adapts to what your harness can do. The core workflow is
 identical everywhere -- only the execution mechanism changes.
 
 **Claude Code** (full capability):
-- Pipeline uses agent teams for TDD pairs (persistent ping-pong sessions)
+- Pipeline uses subagents for TDD pairs (sequential ping-pong via Agent tool)
 - Background agents for CI monitoring
 - Full parallel slice execution at the `full` autonomy level using git
   worktree isolation (one worktree per active slice)
@@ -284,7 +284,7 @@ identical everywhere -- only the execution mechanism changes.
 - Recommended: start here if you have a choice of harness
 
 **Codex**:
-- Pipeline uses serial subagents for TDD phases (no persistent pair sessions)
+- Pipeline uses subagents for TDD phases
 - Each TDD phase runs in an isolated subagent with constrained scope
 - No parallel slices (single-threaded execution)
 - All quality gates and audit trail features work identically
@@ -548,7 +548,7 @@ v3.0 consolidates the skill set and removes the plugin layer.
   and supports both guided mode (`/tdd red`, `/tdd green`) and automated
   mode (`/tdd`). Uninstall `tdd-cycle` and install `tdd`.
 - `orchestration` is absorbed into `tdd`. Orchestration patterns (serial
-  subagents, agent teams, ping-pong pairing) are now execution strategies
+  subagents, ping-pong pairing) are now execution strategies
   within the `tdd` skill. Uninstall `orchestration`.
 
 **Plugins removed:**
