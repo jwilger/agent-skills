@@ -86,14 +86,11 @@ scope check.
 
 ## Enforcement by Mode
 
-**Automated mode (serial subagents):** The orchestrator checks return
-values against this schema before dispatching the next phase agent. A
-missing field means the orchestrator re-prompts the current agent for
-the missing evidence.
-
-**Automated mode (agent teams):** Engineers include these fields in
-their structured handoff messages. The orchestrator monitors handoff
-completeness.
+**Automated mode (subagents):** The orchestrator checks returned evidence
+against this schema before spawning the next phase agent. A missing field
+means the orchestrator re-prompts the current agent for the missing
+evidence. When using named personas, the orchestrator passes these evidence
+fields as context in the next subagent's prompt.
 
 **Guided mode:** The skill text prompts the user to provide this
 evidence at each phase transition. The user is responsible for verifying

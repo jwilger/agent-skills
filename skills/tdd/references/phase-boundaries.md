@@ -2,7 +2,7 @@
 
 Each TDD phase may edit only specific file types. Violations indicate
 drift from the cycle discipline. These rules apply in every mode (guided,
-chaining, serial subagents, agent teams).
+chaining, subagents).
 
 ## RED Phase -- Test Files Only
 

@@ -1,8 +1,8 @@
 # Shared TDD Rules
 
-These rules apply to ALL execution strategies (agent teams, serial subagents,
-and chaining). Strategy-specific files reference this file rather than
-duplicating these rules.
+These rules apply to ALL execution strategies (subagents and chaining).
+Strategy-specific files reference this file rather than duplicating these
+rules.
 
 ## Domain Veto Power
 
@@ -77,7 +77,7 @@ one agent implementing everything in one pass.
   test to discover the next error
 - See `references/green.md` for the full scope check protocol
 - See `references/ping-pong-pairing.md` for drill-down ownership and the
-  worked example
+  worked example (applies to the subagent strategy with named personas)
 
 ## No Test Infrastructure in Production Code
 
