@@ -16,7 +16,7 @@ description: >-
 license: CC0-1.0
 metadata:
   author: jwilger
-  version: "3.2.1"
+  version: "4.3.0"
   requires: []
   context: [architecture-decisions, event-model, source-files]
   phase: decide
@@ -63,10 +63,36 @@ Critique**:
 Present the critique and wait for the human to address each item. Unaddressed
 items block DRAFT from starting.
 
-Once the research critique is addressed: write the ADR from verified research
-findings. Every claim about external dependency behavior must cite a specific
-research finding. Create the ADR as a PR on a dedicated `adr/<slug>` branch
-using `references/adr-template.md`. The author does NOT merge.
+Once the research critique is addressed:
+
+**Step 1 — Bootstrap the decisions directory (first ADR only):** Before
+writing any ADR, check whether `docs/decisions/` exists. If not, create it
+and add two guard files that prevent agents from treating historical ADR
+rationale as current implementation directives:
+
+- `docs/decisions/CLAUDE.md`
+- `docs/decisions/AGENTS.md`
+
+Both files must contain exactly:
+```
+These files are Architecture Decision Records (ADRs). They document the
+reasoning behind past architectural choices.
+
+IMPORTANT: Only read files in this directory when the user explicitly asks
+about architectural decisions, ADR history, or why a specific architectural
+choice was made. Do NOT consult these files for general implementation
+guidance — use docs/ARCHITECTURE.md instead.
+```
+
+**Step 2 — Write the ADR file:** Create `docs/decisions/YYYYMMDD-<slug>.md`
+using `references/adr-template.md`. Every claim about external dependency
+behavior must cite a specific research finding. Fill in `Supersedes` if
+this replaces an earlier decision (N/A otherwise).
+
+**Step 3 — Open a PR:** Before committing, verify `docs/decisions/CLAUDE.md`
+and `docs/decisions/AGENTS.md` exist — create them now if missing (see
+content above). Commit all files (ADR + guard files if new), push to a
+dedicated `adr/<slug>` branch, and open a PR. The author does NOT merge.
 
 After writing the ADR draft, produce a numbered **Draft Critique** before
 moving to HOLD:
@@ -85,8 +111,10 @@ blocking hold that must be explicitly lifted. Silence is not consent.
 No implementation work depending on the ADR begins during HOLD.
 
 **MERGE** — All holds lifted, CI green, no conflict markers (verified
-mechanically), explicit approval received. Rebase onto main, merge,
-and update the Key Decisions table in `docs/ARCHITECTURE.md`.
+mechanically), explicit approval received. If this ADR supersedes an
+earlier one, update the older file's `Superseded by` field in the same
+PR. Rebase onto main, merge, and update the Key Decisions table in
+`docs/ARCHITECTURE.md`.
 
 **Phase gate enforcement:**
 - DRAFT attempted without RESEARCH findings → halt with warning:
@@ -99,10 +127,11 @@ and update the Key Decisions table in `docs/ARCHITECTURE.md`.
   regardless of content correctness
 - Prompt the author at each phase transition before proceeding
 
-When GitHub PRs are not available, use commit messages as the decision
-record (see `references/adr-template.md` for the commit format). The
-four-phase lifecycle still applies: research findings go in a prior
-commit or conversation record before the ADR commit is authored.
+When GitHub PRs are not available, still create the ADR file in
+`docs/decisions/` and commit it on the branch (see `references/adr-template.md`
+for the commit format). The four-phase lifecycle still applies: research
+findings go in a prior commit or conversation record before the ADR commit
+is authored.
 
 ### Maintain the Living Architecture Document
 
@@ -110,7 +139,7 @@ commit or conversation record before the ADR commit is authored.
 in decision records). Update it in the MERGE phase of every ADR. A stale
 architecture document is worse than none.
 
-Required sections: Overview, Key Decisions (linking to ADR PRs/commits),
+Required sections: Overview, Key Decisions (linking to ADR files and PRs),
 Components, Patterns, Constraints.
 
 ### Facilitate Decisions Systematically
@@ -172,6 +201,7 @@ not to write an unverified ADR.
 After completing work guided by this skill, verify:
 
 - [ ] Every structural change has a corresponding decision record
+- [ ] `docs/decisions/CLAUDE.md` and `docs/decisions/AGENTS.md` exist
 - [ ] RESEARCH phase produced a written dependency findings summary
 - [ ] Research critique completed and addressed before draft was written
 - [ ] DRAFT cites specific research findings for dependency claims

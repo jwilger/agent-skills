@@ -43,15 +43,18 @@ confirmed understanding.
 
 **Activities:**
 1. Create a branch: `adr/<decision-slug>` from main
-2. Write the ADR using `references/adr-template.md`
-3. Every claim about external dependency behavior must cite a specific
+2. If `docs/decisions/` does not exist, create it with `CLAUDE.md` and
+   `AGENTS.md` guard files (see SKILL.md for required content)
+3. Write the ADR as `docs/decisions/YYYYMMDD-<slug>.md` using
+   `references/adr-template.md` with `Status: Proposed`
+4. Every claim about external dependency behavior must cite a specific
    finding from the RESEARCH phase
-4. Update `docs/ARCHITECTURE.md` to reflect the proposed decision
-5. Create a PR labeled `adr` with the ADR as the PR description
-6. The author does NOT merge and does NOT request merge
+5. Update `docs/ARCHITECTURE.md` to reflect the proposed decision
+6. Commit all files, push the branch, and create a PR labeled `adr`
+7. The author does NOT merge and does NOT request merge
 
-**Exit deliverable:** Open PR with complete ADR and ARCHITECTURE.md
-update.
+**Exit deliverable:** Open PR with ADR file, ARCHITECTURE.md update,
+and (on first ADR) the CLAUDE.md/AGENTS.md access guard files.
 
 **Gate rule:** A DRAFT attempted without RESEARCH findings halts with:
 > "RESEARCH phase incomplete. Summarize dependency findings before
@@ -100,9 +103,11 @@ violation regardless of content correctness.
 **Activities:**
 1. Verify CI is green on the ADR branch
 2. Verify no conflict markers exist (mechanically, not by inspection)
-3. Rebase the ADR branch onto main
-4. Merge the PR
-5. Verify `docs/ARCHITECTURE.md` Key Decisions table is updated with
+3. If this ADR supersedes an earlier one, update the older file's
+   `Superseded by` field in the same PR
+4. Rebase the ADR branch onto main
+5. Merge the PR
+6. Verify `docs/ARCHITECTURE.md` Key Decisions table is updated with
    a link to the merged PR
 
 **Exit deliverable:** Merged PR. ARCHITECTURE.md updated on main.
