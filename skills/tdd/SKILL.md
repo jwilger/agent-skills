@@ -12,7 +12,7 @@ description: >-
 license: CC0-1.0
 metadata:
   author: jwilger
-  version: "2.1.0"
+  version: "2.2.0"
   requires: []
   context: [test-files, domain-types, source-files]
   phase: build
@@ -95,11 +95,9 @@ For verbose output showing phase transitions and evidence, use `/tdd auto --verb
 
 When automated mode activates, detect available primitives in this order:
 
-1. **Agent teams available?** Check for TeamCreate tool. If present, use the
-   **agent teams** strategy with persistent pair sessions.
-2. **Subagents available?** Check for Task tool (subagent spawning). If present,
-   use the **serial subagents** strategy with focused per-phase agents.
-3. **Fallback.** Use the **chaining** strategy -- role-switch internally between
+1. **Subagents available?** Check for Agent tool. If present, use the
+   **subagents** strategy with focused per-phase agents.
+2. **Fallback.** Use the **chaining** strategy -- role-switch internally between
    phases within a single context.
 
 Select the most capable strategy available. Do not attempt a higher strategy
@@ -110,26 +108,22 @@ detection and dispatches directly. Do NOT spawn a single "orchestrator"
 subagent to do it for you -- that hides work, bypasses strategy detection,
 and pre-selects the wrong strategy. Whether you were invoked by `/tdd`, by
 the pipeline, or by any other caller: you detect capabilities, you choose
-the strategy, you create the team or spawn the phase agents yourself.
+the strategy, you spawn the phase agents yourself.
 
 **After determining your strategy, read ONLY the entry-point file for that
 strategy:**
 
 | Strategy | Entry-point file |
 |----------|-----------------|
-| Agent teams | `references/ping-pong-pairing.md` |
-| Serial subagents | `references/orchestrator.md` |
+| Subagents | `references/orchestrator.md` |
 | Chaining | (no entry file -- follow the chaining section below) |
 
-Do NOT read `orchestrator.md` when using agent teams. Do NOT read
-`ping-pong-pairing.md` when using serial subagents. Each file assumes its
-own strategy's execution model.
+Do NOT read `orchestrator.md` when using chaining.
 
-Both `orchestrator.md` and `ping-pong-pairing.md` reference
-`references/shared-rules.md` for rules that apply to all strategies (domain
-veto, outside-in progression, pipeline integration, pre-implementation
-context checklist). Read `shared-rules.md` when directed by your strategy's
-entry-point file.
+`orchestrator.md` references `references/shared-rules.md` for rules that
+apply to all strategies (domain veto, outside-in progression, pipeline
+integration, pre-implementation context checklist). Read `shared-rules.md`
+when directed by your strategy's entry-point file.
 
 ### Execution Strategy: Chaining (Fallback)
 
@@ -147,12 +141,13 @@ Role boundaries are advisory in this mode. The agent must self-enforce phase
 boundaries: only edit file types permitted by the current phase (see
 `references/phase-boundaries.md`).
 
-### Execution Strategy: Serial Subagents
+### Execution Strategy: Subagents
 
-Used when the Task tool is available for spawning focused subagents. Each
+Used when the Agent tool is available for spawning focused subagents. Each
 phase runs in an isolated subagent with constrained scope.
 
-- Spawn each phase agent using the prompt template in `references/{phase}-prompt.md`.
+- Spawn each phase agent using `Agent(subagent_type="<agent-name>", prompt="...")`
+  with the prompt template in `references/{phase}-prompt.md`.
 - The orchestrator follows `references/orchestrator.md` for coordination rules.
 - **Structural handoff schema** (`references/handoff-schema.md`): every phase
   agent must return evidence fields (test output, file paths changed, domain
@@ -161,23 +156,17 @@ phase runs in an isolated subagent with constrained scope.
 - Context isolation provides structural enforcement: each subagent receives
   only the files relevant to its phase.
 
-### Execution Strategy: Agent Teams
+### Named Team Member Personas (Subagent Strategy)
 
-Used when TeamCreate is available for persistent agent sessions. Maximum
-enforcement through role specialization and persistent team context.
+When `.claude/agents/` definitions exist (from the `ensemble-team` skill), the
+subagent strategy uses named personas for ping and pong roles. The orchestrator
+selects team members based on slice context, spawns them as subagents using
+`Agent(subagent_type="<agent-name>", prompt="...")`, and collects results to pass
+as context to the next subagent.
 
-- Follow `references/ping-pong-pairing.md` for three-member team lifecycle
-  (ping, pong, domain reviewer), sequential spawning, structured handoffs,
-  and iterative GREEN discipline.
-- All three members persist for the entire TDD cycle of a vertical slice.
-  Handoffs happen via lightweight structured messages, not agent recreation.
-- Track pairing history in `.team/pairing-history.json`. Do not repeat either
-  of the last 2 ping/pong combinations. Domain reviewer may repeat.
-- Spawn agents sequentially: ping first (wait for RED evidence), then domain
-  reviewer (wait for review), then pong (wait for GREEN). Never spawn all
-  at once.
-- The orchestrator monitors and intervenes only for external clarification
-  routing or blocking disagreements.
+See `references/orchestrator.md` for coordination rules and
+`references/ping-pong-pairing.md` for persona selection, rotation, and
+pairing history.
 
 ### Phase Boundary Rules
 
@@ -253,12 +242,13 @@ Enforcement is proportional to capability:
   transitions.
 - **Automated mode (chaining)**: Advisory with self-enforcement. The agent
   follows phase boundaries by convention.
-- **Automated mode (serial subagents)**: Structural enforcement via context
+- **Automated mode (subagents)**: Structural enforcement via context
   isolation and handoff schemas. Subagents receive only phase-relevant files.
   Missing evidence blocks handoffs.
-- **Automated mode (agent teams)**: Maximum enforcement through role
-  specialization. Neither engineer can skip review because the other is
-  watching. Persistent context means accumulated understanding, not just rules.
+- **Automated mode (subagents with personas)**: Enhanced enforcement through
+  role specialization. Named personas bring domain-specific review focus.
+  The orchestrator ensures every handoff includes complete evidence before
+  spawning the next phase agent.
 - **Optional hooks** (Claude Code): Mechanical enforcement. Pre-tool-use hooks
   block unauthorized file edits per phase. See `references/claude-code.md`.
 

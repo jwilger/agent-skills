@@ -2,31 +2,20 @@
 
 This file is loaded ONLY when the TDD skill runs on Claude Code. It
 documents Claude Code-specific patterns for orchestration, enforcement,
-and team workflows.
+and subagent workflows.
 
 ## Strategy Detection (do this FIRST)
 
 Before reading any other section of this file or any other reference file,
 determine your execution strategy:
 
-1. **Is TeamCreate available?** -> **Agent teams.** Read
-   `references/ping-pong-pairing.md`. Skip the "Serial Subagent Patterns"
-   section below.
-2. **Is Task available (but not TeamCreate)?** -> **Serial subagents.** Read
-   `references/orchestrator.md`. Skip the "Agent Teams Patterns" section
-   below.
-3. **Neither?** -> **Chaining.** Follow the chaining section in SKILL.md.
-
-Do NOT read both strategy files. Each assumes its own execution model.
-
-## Common Tool Notes
-
-**SendMessage tool:** Engineers in a pair exchange structured handoff
-messages. The orchestrator monitors via task updates.
+1. **Is Agent tool available?** -> **Subagents.** Read
+   `references/orchestrator.md`.
+2. **Neither?** -> **Chaining.** Follow the chaining section in SKILL.md.
 
 ## Agent Permissions
 
-Subagents spawned via the Task tool need these tools to do their work:
+Subagents spawned via the Agent tool need these tools to do their work:
 Read, Write, Edit, Bash, Glob, Grep, Skill.
 
 Do NOT use `mode: "delegate"` for phase agents -- delegate mode strips
@@ -64,12 +53,10 @@ the cycle state visible at a glance via `TaskList`.
 Task dependencies provide supplementary visibility. They do not replace
 hook-based or structural enforcement -- they complement it.
 
-## Serial Subagent Patterns
+## Subagent Patterns
 
-> Skip this section if you are using agent teams.
-
-**Task tool:** Spawn focused subagents. Each phase agent runs in its own
-Task invocation with a phase-specific prompt from `references/{phase}-prompt.md`.
+**Agent tool:** Spawn focused subagents. Each phase agent runs in its own
+Agent invocation with a phase-specific prompt from `references/{phase}-prompt.md`.
 
 ### Agent Debate Protocol
 
@@ -81,32 +68,6 @@ representability, and parse-don't-validate violations.
 3. Orchestrator facilitates (max 2 rounds).
 4. No consensus: escalate to user via the ask-user skill or
    AskUserQuestion tool.
-
-## Agent Teams Patterns
-
-> Skip this section if you are using serial subagents.
-
-**TeamCreate tool:** Create persistent agent teams for ping-pong pairing.
-Name teams descriptively (e.g., `pair-<slice-id>`).
-
-### Ensemble Team Integration
-
-Before beginning orchestration, detect ensemble team mode:
-
-1. Glob for `.team/*.md` -- are there team member profiles?
-2. Read `ensemble_team.preset` from `.claude/sdlc.yaml` -- is it set
-   to something other than `"none"`?
-
-If both conditions are met, the ensemble team is active. Switch to
-ping-pong pairing mode:
-
-- Create a persistent pair team via TeamCreate.
-- Select two engineers from `.team/` profiles. Track history in
-  `.team/pairing-history.json` (no repeat of last 2 pairings).
-- Load compressed active-context forms for bootstrapping.
-- Both engineers stay alive for the entire TDD cycle of a vertical
-  slice. Handoffs happen via SendMessage, not agent recreation.
-- Use mob review (full team, compressed contexts) for PR reviews.
 
 ## Code Review Gate
 
@@ -121,14 +82,13 @@ Use the code-review skill or code-reviewer agent for details.
 ### Parallel Review
 
 When the project's `.claude/sdlc.yaml` includes `parallel_review: true`,
-use TeamCreate to spawn three reviewer agents in parallel:
+spawn three reviewer subagents using the Agent tool:
 
 - `spec-reviewer` -- checks acceptance criteria coverage
 - `quality-reviewer` -- checks cleanliness, maintainability, tests
 - `domain-reviewer` -- checks type usage, parse-don't-validate
 
-Assign review tasks via TaskUpdate with `owner`. Synthesize results
-when all three complete. Shut down the review team after synthesis.
+Collect results from all three and synthesize.
 
 When `parallel_review` is not set or is `false`, use a single
 code-reviewer agent running all three stages sequentially.

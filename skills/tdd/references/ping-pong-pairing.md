@@ -1,13 +1,14 @@
 # Ping-Pong TDD Team Protocol
 
-> **Scope:** This file applies to the **agent teams** execution strategy only.
-> If you are using serial subagents (Task tool without TeamCreate), use
-> `orchestrator.md` instead. If you are using chaining (no delegation
-> primitives), follow the chaining section in SKILL.md.
+> **Scope:** This file applies to the **subagents** execution strategy with
+> named personas. If you are using chaining (no Agent tool), follow the
+> chaining section in SKILL.md.
 
-For use when persistent agent teams are available. Three members alternate
-roles through structured TDD cycles: ping (writes failing tests), pong
-(makes tests pass), and domain reviewer (reviews tests and implementation).
+For use when the Agent tool is available and `.claude/agents/` definitions
+exist. Three roles alternate through structured TDD cycles: ping (writes
+failing tests), pong (makes tests pass), and domain reviewer (reviews tests
+and implementation). The orchestrator spawns each role as an ephemeral
+subagent and passes results between them.
 
 ## Shared Rules
 
@@ -40,8 +41,9 @@ pong.
 
 ## Named Team Member Personas (not generic roles)
 
-When using agent teams, ping and pong should embody named team members from the
-project's ensemble roster — not generic "Programmer" or "Engineer" agents.
+When using the subagent strategy with named personas, ping and pong should
+embody named team members from the project's ensemble roster — not generic
+"Programmer" or "Engineer" agents.
 
 The orchestrator selects personas based on slice context:
 - TDD / test-first focus → the team's development practice lead
@@ -50,9 +52,9 @@ The orchestrator selects personas based on slice context:
 - AI / LLM integration → the team's AI architecture specialist
 - Accessibility-focused slice → the team's accessibility specialist
 
-Include the team member's profile file in the spawn prompt (`.team/<name>.md` or
-equivalent). State the persona explicitly: "You are [Name], [Role]. Your job is
-to [write a failing test / implement...]"
+Spawn the subagent using the agent definition from `.claude/agents/<name>.md`.
+State the persona explicitly in the prompt: "You are [Name], [Role]. Your job
+is to [write a failing test / implement...]"
 
 ## Rotation Rules
 
@@ -77,48 +79,53 @@ to [write a failing test / implement...]"
 }
 ```
 
-Create this file if it does not exist. Append a new entry when a session
+Create this file if it does not exist. Append a new entry when a cycle
 begins.
 
 ## Sequential Spawning
 
-Spawn team members one at a time, waiting for evidence before proceeding:
+Spawn subagents one at a time, waiting for evidence before proceeding:
 
-1. **Spawn ping.** Wait for RED evidence (failing test output).
-2. **Spawn domain reviewer.** Provide the failing test for review. Wait for
-   domain review verdict.
-3. **Spawn pong.** Provide the reviewed test and domain feedback. Wait for
-   GREEN evidence (passing test output).
-4. **Domain reviewer reviews implementation.** Provide the GREEN changeset.
-   Wait for domain review verdict.
-5. **COMMIT.** Orchestrator commits (or delegates commit).
+1. **Spawn ping subagent.** Using `Agent(subagent_type="<ping-name>", prompt="...")`.
+   Wait for RED evidence (failing test output).
+2. **Spawn domain reviewer subagent.** Provide the failing test and RED evidence
+   in the prompt. Wait for domain review verdict.
+3. **Spawn pong subagent.** Provide the reviewed test, domain feedback, and all
+   prior evidence in the prompt. Wait for GREEN evidence (passing test output).
+4. **Spawn domain reviewer subagent.** Provide the GREEN changeset and all prior
+   evidence. Wait for domain review verdict.
+5. **COMMIT.** Orchestrator commits (or delegates commit to a subagent).
 
-Never spawn all three simultaneously. Each agent needs the output of the
-prior step to do meaningful work. Spawning in parallel causes agents to
-idle-wait or work on stale assumptions.
+Never spawn multiple subagents simultaneously. Each subagent needs the output
+of the prior step to do meaningful work. Spawning in parallel causes agents to
+work on stale assumptions.
 
-## Session Lifecycle
+If a subagent needs additional context after returning, use the `resume`
+parameter to continue it rather than spawning a new subagent from scratch.
 
-1. **Establish the team session.** Create a persistent team for the vertical
-   slice (e.g., `team-<slice-id>`). All three members are activated and
-   persist for the entire TDD cycle.
-2. **Bootstrap each member** with full initial context:
-   - Their persona profile
+## Subagent Lifecycle
+
+1. **Select personas** for the vertical slice based on slice context and
+   pairing history. Record the assignment.
+2. **Bootstrap each subagent** with full initial context in its prompt:
+   - Their persona profile (from `.claude/agents/<name>.md`)
    - The scenario being implemented (GWT acceptance criteria)
    - Current codebase context (file paths, test output, domain types)
    - Their role assignment (ping, pong, or domain reviewer)
+   - All evidence from prior phases in the current cycle
    - The ping-pong-review protocol
-3. **Members work and hand off** via structured messages. The orchestrator
-   does NOT relay handoffs between members.
-4. **Orchestrator monitors** via task updates and status notifications.
-   Intervenes only for: external clarification routing, blocking
-   disagreements, or workflow gate verification.
-5. **End the session** when the acceptance test passes and the slice is
+3. **Collect results** from each subagent and include them as context in
+   the next subagent's prompt. The orchestrator is the single point of
+   communication — subagents do not message each other directly.
+4. **Orchestrator monitors** returned evidence against the handoff schema.
+   Intervenes for: missing evidence fields, external clarification routing,
+   or blocking disagreements.
+5. **End the cycle** when the acceptance test passes and the slice is
    complete.
 
 ## Phase Reference Loading (Every Turn)
 
-At the START of every turn, each agent must read the reference file for the
+At the START of every turn, each subagent must read the reference file for the
 phase it is CURRENTLY executing — not just its "default" phase. Roles shift
 during drill-downs: ping may end up in a GREEN turn, pong may end up writing
 a test (RED turn). Context compaction may discard earlier loads, so re-read
@@ -130,29 +137,29 @@ every turn regardless.
 | GREEN (implementing) | `references/green.md` |
 | DOMAIN (reviewing) | `references/domain.md` |
 
-If an agent starts a GREEN turn but the scope check triggers a drill-down
+If a subagent starts a GREEN turn but the scope check triggers a drill-down
 (writing a failing test), it should switch and load `references/red.md`
 before writing that test.
 
-The orchestrator's spawn prompt should remind agents of this rule, but agents
-are also responsible for self-enforcing it.
+The orchestrator's spawn prompt should remind subagents of this rule, but
+subagents are also responsible for self-enforcing it.
 
 ## Ping-Pong-Review Rhythm
 
-1. **Ping** reads `references/red.md`, then writes a failing test (RED step).
-2. **Domain reviewer** reads `references/domain.md`, then reviews the test for
-   primitive obsession, invalid state risks, and boundary correctness. Sends
-   verdict to ping and pong.
-3. **Pong** reads `references/green.md`, then addresses the immediate error
+1. **Ping subagent** reads `references/red.md`, then writes a failing test (RED step).
+2. **Domain reviewer subagent** reads `references/domain.md`, then reviews the test
+   for primitive obsession, invalid state risks, and boundary correctness.
+   Returns verdict to the orchestrator.
+3. **Pong subagent** reads `references/green.md`, then addresses the immediate error
    (see GREEN Phase: Scope Check and Drill-Down below). Runs the scope check
    before every change.
 4. If pong returns a **DRILL_DOWN**: roles swap at the inner level (see
    Drill-Down Protocol below). When the inner cycle completes, pop back up
    and pong re-runs the outer test to check the next error.
-5. If pong returns **standard GREEN** (test passes): **Domain reviewer** reads
-   `references/domain.md` and reviews the implementation for domain violations.
-   Sends verdict to team.
-6. **COMMIT** — orchestrator or designated member commits.
+5. If pong returns **standard GREEN** (test passes): **Domain reviewer subagent**
+   reads `references/domain.md` and reviews the implementation for domain
+   violations. Returns verdict to the orchestrator.
+6. **COMMIT** — orchestrator or designated subagent commits.
 7. **Roles swap.** Ping becomes pong, pong becomes ping. Domain reviewer
    may stay or rotate.
 8. Repeat until the acceptance test passes.
@@ -253,7 +260,11 @@ After every commit:
 This prevents the common failure mode where test files or type definitions
 are left uncommitted and break the next agent's context.
 
-## Structured Handoff Messages
+## Structured Handoff Evidence
+
+The following evidence formats are used by the orchestrator when passing
+results between subagents. The orchestrator includes the relevant evidence
+packet in each subagent's spawn prompt.
 
 ### Ping to Domain Reviewer (after RED)
 
@@ -293,12 +304,19 @@ Concerns: [list of concerns, or "none"]
 Ready to commit: [yes / no - if no, explain what needs rework]
 ```
 
-Because all three members persist, handoffs provide the delta — not a full
-re-bootstrap.
+Each subagent returns its evidence to the orchestrator. The orchestrator
+validates completeness against the handoff schema and includes the evidence
+in the next subagent's prompt.
 
-## Message Routing
+## Communication Flow
 
-The orchestrator manages the team directly. No intermediate coordination
-layer. All external clarification requests from the team route through the
-orchestrator to the appropriate team role or the user. Team members message
-each other directly for handoffs — the orchestrator does not relay.
+All communication flows through the orchestrator. Subagents do not communicate
+with each other directly. The orchestrator:
+
+1. Spawns a subagent with full context (persona, role, prior evidence).
+2. Collects the subagent's returned evidence.
+3. Validates evidence completeness against the handoff schema.
+4. Includes the validated evidence in the next subagent's spawn prompt.
+
+External clarification requests from any subagent route through the
+orchestrator to the user.

@@ -1,9 +1,8 @@
 # TDD Orchestrator Instructions
 
-> **Scope:** This file applies to the **serial subagents** execution strategy
-> only. If you are using agent teams (TeamCreate available), use
-> `ping-pong-pairing.md` instead. If you are using chaining (no delegation
-> primitives), follow the chaining section in SKILL.md.
+> **Scope:** This file applies to the **subagents** execution strategy only.
+> If you are using chaining (no Agent tool), follow the chaining section in
+> SKILL.md.
 
 You coordinate the TDD cycle by delegating to phase agents. You NEVER write,
 edit, or create project files yourself.
@@ -103,10 +102,11 @@ Fresh Context Protocol delegation. This ensures each phase agent has full
 domain awareness without relying on conversational memory. Include file
 paths and relevant excerpts -- not just references to document names.
 
-## Serial Subagent Delegation Cycle
+## Subagent Delegation Cycle
 
 The cycle above (RED -> DOMAIN -> GREEN -> DOMAIN -> COMMIT) is executed by
-spawning a fresh subagent for each phase. Use the agent selection table and
+spawning a fresh subagent for each phase using the Agent tool. Use the agent
+selection table and
 handoff schema enforcement in this file for coordination. For rules that apply
 to all strategies (domain veto, outside-in progression, type-first anti-pattern,
 pipeline integration, recovery), see `references/shared-rules.md`.
