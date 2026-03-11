@@ -7,10 +7,10 @@ description: >-
   loops (event-driven only), never fabricate agent responses (wait for real
   system events), sequential agent spawning (acknowledge between each), and
   proper shutdown protocol (request, wait, respect rejection). Activate when
-  orchestrating multiple agents, managing agent teams, coordinating handoffs
+  orchestrating multiple agents, coordinating handoffs
   between agents, spawning subagents, or building multi-agent workflows.
-  Triggers on: "coordinate agents", "spawn multiple agents", "manage agent
-  team", "agent keeps sending messages", "polling loop", "agent idle", "shut
+  Triggers on: "coordinate agents", "spawn multiple agents", "manage agents",
+  "agent keeps sending messages", "polling loop", "agent idle", "shut
   down agent", "multi-agent workflow", "agent handoff", "coordinate parallel
   work", "stop bothering the other agent". Also relevant when an agent is
   fabricating responses, sending follow-up messages before replies arrive, or
@@ -18,7 +18,7 @@ description: >-
 license: CC0-1.0
 metadata:
   author: jwilger
-  version: "1.4.0"
+  version: "2.0.0"
   requires: []
   context: []
   phase: build
@@ -79,7 +79,7 @@ response. If the harness provides task completion notifications, use those.
 
 **Do:**
 - Send a request and wait for the response event
-- Use harness-native completion signals (Task tool callbacks, message replies)
+- Use harness-native completion signals (Agent tool callbacks, subagent results)
 - Trust the system to notify you when work completes
 
 **Do not:**
@@ -106,10 +106,10 @@ Explicit rules for when to act versus when to wait.
 
 ### Never Fabricate Agent Responses
 
-After spawning an agent or sending a message, STOP generating and wait
-for the harness to deliver a response. Real agent responses arrive via
-system-injected events (e.g., `<teammate-message>` tags, Task completion
-callbacks). You do not produce them yourself.
+After spawning an agent, STOP generating and wait for the harness to
+deliver a response. Real agent responses arrive via system-injected events
+(e.g., Agent tool completion output, Task completion callbacks). You do
+not produce them yourself.
 
 **The rule:** If the harness has not delivered a response event, no
 response has been received. Period.
@@ -155,30 +155,30 @@ undelivered work.
 
 If unsure whether an agent is done, ask the user rather than guessing.
 
-### Message Routing
+### Result Passing
 
-The coordinator relays between user and team. Where the harness supports
-direct peer messaging, agents should message each other directly. Avoid
-hub-and-spoke bottlenecks where all messages must pass through one
-coordinator.
+The orchestrator collects results from each subagent and passes relevant
+context to the next subagent's prompt. This is inherently hub-and-spoke
+(the orchestrator is the hub), which is correct for the subagent model.
 
 **Do:**
-- Use direct messaging between agents when the harness supports it
-- Keep the coordinator informed of key decisions without routing all traffic
-  through it
+- Include all relevant results from prior subagents in the next subagent's prompt
+- Keep context focused -- pass only what the next subagent needs
+- Use the Agent tool's `resume` parameter to continue a subagent with additional
+  context rather than re-spawning
 
 **Do not:**
-- Route every message through the coordinator when direct paths exist
-- Create single points of failure in communication
+- Spawn subagents that need to communicate with each other directly
+- Omit prior results that the next subagent needs to do its work
 
 For harness-specific coordination patterns, see `references/`.
 
 ## Enforcement Note
 
-This skill provides advisory guidance. On harnesses with agent teams (Claude
-Code TeamCreate), the structured messaging protocol provides partial
-structural enforcement. On harnesses without multi-agent support, these
-practices apply to subagent spawning and tool-based coordination. The idle
+This skill provides advisory guidance. On harnesses with subagent support
+(Claude Code Agent tool), the structured spawning and result-passing protocol
+provides partial structural enforcement. On harnesses without multi-agent
+support, these practices apply to tool-based coordination. The idle
 notification and polling anti-patterns require agent self-discipline -- no
 mechanical enforcement exists. If you observe an agent violating a practice,
 point it out.
