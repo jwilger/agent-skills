@@ -1,104 +1,72 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-if [[ $# -lt 3 ]]; then
-  echo "Usage: $0 <old_version> <new_version> <bump_type> [<last_tag>]" >&2
-  echo "  bump_type: major | minor | patch" >&2
+# Two subcommands:
+#
+#   bump.sh skill <skill_md_path> <bump_type>
+#     Bump the version field in a skill's SKILL.md frontmatter.
+#     Prints the transition: "<old_ver> -> <new_ver>"
+#
+#   bump.sh project <new_version>
+#     Write <new_version> to the VERSION file at the repo root.
+#     Prints the transition: "<old_ver> -> <new_ver>"
+
+if [[ $# -lt 2 ]]; then
+  echo "Usage:" >&2
+  echo "  $0 skill <skill_md_path> <bump_type>  (bump_type: major|minor|patch)" >&2
+  echo "  $0 project <new_version>" >&2
   exit 1
 fi
 
-OLD_VERSION="$1"
-NEW_VERSION="$2"
-BUMP_TYPE="$3"
-LAST_TAG="${4:-}"
-
-# Calculate repo root: this script lives at .claude/skills/bump/
+SUBCOMMAND="$1"
 REPO_ROOT="$(cd "$(dirname "$0")/../../.." && pwd)"
 
-echo "Bumping version: ${OLD_VERSION} -> ${NEW_VERSION} (${BUMP_TYPE})"
-echo "Repo root: ${REPO_ROOT}"
-echo ""
-
-# --- VERSION file: single source of truth for project version ---
-
-VERSION_FILE="${REPO_ROOT}/VERSION"
-
-echo "Updating VERSION file ..."
-echo "${NEW_VERSION}" > "${VERSION_FILE}"
-
-# --- Bump modified skills ---
-
-echo ""
-echo "Finding modified skills ..."
-
-if [[ -n "${LAST_TAG}" ]]; then
-  MODIFIED_SKILLS=$(git -C "${REPO_ROOT}" diff "${LAST_TAG}..HEAD" --name-only \
-    | grep '^skills/.*/SKILL\.md$' || true)
-else
-  MODIFIED_SKILLS=$(git -C "${REPO_ROOT}" log --name-only --pretty=format: \
-    | grep '^skills/.*/SKILL\.md$' | sort -u || true)
-fi
-
 bump_semver() {
-  local ver="$1"
-  local type="$2"
+  local ver="$1" type="$2"
   local major minor patch
   IFS='.' read -r major minor patch <<< "${ver}"
   case "${type}" in
     major) echo "$((major + 1)).0.0" ;;
     minor) echo "${major}.$((minor + 1)).0" ;;
     patch) echo "${major}.${minor}.$((patch + 1))" ;;
+    *) echo "ERROR: Unknown bump type '${type}'" >&2; exit 1 ;;
   esac
 }
 
-BUMPED_SKILLS=()
+case "${SUBCOMMAND}" in
+  skill)
+    if [[ $# -lt 3 ]]; then
+      echo "Usage: $0 skill <skill_md_path> <bump_type>" >&2; exit 1
+    fi
+    SKILL_MD="$2"
+    BUMP_TYPE="$3"
 
-while IFS= read -r skill_file; do
-  [[ -z "${skill_file}" ]] && continue
-  full_path="${REPO_ROOT}/${skill_file}"
-  [[ -f "${full_path}" ]] || continue
+    current_ver=$(grep -m1 '^  version:' "${SKILL_MD}" | sed 's/.*version: *"\([^"]*\)".*/\1/')
+    if [[ -z "${current_ver}" ]]; then
+      echo "ERROR: No version found in ${SKILL_MD}" >&2; exit 1
+    fi
 
-  # Extract current version from frontmatter
-  current_ver=$(grep -m1 '^  version:' "${full_path}" | sed 's/.*version: *"\([^"]*\)".*/\1/')
-  if [[ -z "${current_ver}" ]]; then
-    echo "  Skipping ${skill_file}: no version found in frontmatter"
-    continue
-  fi
+    new_ver=$(bump_semver "${current_ver}" "${BUMP_TYPE}")
+    sed -i "0,/^  version: \"${current_ver}\"/s//  version: \"${new_ver}\"/" "${SKILL_MD}"
+    echo "${current_ver} -> ${new_ver}"
+    ;;
 
-  new_ver=$(bump_semver "${current_ver}" "${BUMP_TYPE}")
-  echo "  ${skill_file}: ${current_ver} -> ${new_ver}"
+  project)
+    if [[ $# -lt 2 ]]; then
+      echo "Usage: $0 project <new_version>" >&2; exit 1
+    fi
+    NEW_VERSION="$2"
+    VERSION_FILE="${REPO_ROOT}/VERSION"
+    OLD_VERSION=$(cat "${VERSION_FILE}")
+    echo "${NEW_VERSION}" > "${VERSION_FILE}"
+    echo "${OLD_VERSION} -> ${NEW_VERSION}"
+    ;;
 
-  # Replace the version line in frontmatter (first occurrence only)
-  sed -i "0,/^  version: \"${current_ver}\"/s//  version: \"${new_ver}\"/" "${full_path}"
-
-  BUMPED_SKILLS+=("${skill_file}")
-done <<< "${MODIFIED_SKILLS}"
-
-if [[ ${#BUMPED_SKILLS[@]} -eq 0 ]]; then
-  echo "  (no modified skills found)"
-fi
-
-# --- Verification ---
-
-echo ""
-echo "=== Verification ==="
-
-ACTUAL=$(cat "${VERSION_FILE}")
-echo "  VERSION file: ${ACTUAL}"
-
-if [[ "${ACTUAL}" != "${NEW_VERSION}" ]]; then
-  echo "WARNING: VERSION file does not contain expected version" >&2
-  exit 1
-fi
-
-echo ""
-echo "Version bump complete."
-echo ""
-
-# Print list of modified skill files for the caller to stage
-if [[ ${#BUMPED_SKILLS[@]} -gt 0 ]]; then
-  echo "BUMPED_SKILL_FILES:"
-  for f in "${BUMPED_SKILLS[@]}"; do
-    echo "  ${f}"
-  done
-fi
+  *)
+    echo "ERROR: Unknown subcommand '${SUBCOMMAND}'" >&2
+    echo "Usage:" >&2
+    echo "  $0 skill <skill_md_path> <bump_type>" >&2
+    echo "  $0 project <new_version>" >&2
+    exit 1
+    ;;
+esac

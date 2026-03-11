@@ -55,10 +55,9 @@ The optional pipeline orchestrates autonomous build-and-ship: Human plans → Ag
 ### TDD Execution Strategies
 
 The `tdd` skill auto-detects harness capabilities and selects:
-1. **Agent teams** — persistent ping-pong pair sessions (Claude Code with TeamCreate)
-2. **Serial subagents** — isolated phases via Task tool (Codex, Claude Code)
-3. **Chaining** — sequential roles in single context (all harnesses)
-4. **Guided** — manual phase control via `/tdd red`, `/tdd green`, etc.
+1. **Subagents** — isolated phases via Agent tool, with named personas when `.claude/agents/` definitions exist (Claude Code, Codex)
+2. **Chaining** — sequential roles in single context (all harnesses)
+3. **Guided** — manual phase control via `/tdd red`, `/tdd green`, etc.
 
 ## Authoring Skills
 
