@@ -95,11 +95,12 @@ Date: YYYY-MM-DD
 
 ## Coordination Model
 
-Uses the ensemble TeamCreate model (same as other planning-phase reviews):
-- One task per reviewer (parallel, no `blockedBy`)
-- One Driver task blocked by all reviewer tasks
-- Reviewers report via `SendMessage` + write to `.reviews/<name>-<slice-id>-readiness.md`
-- Driver writes the plan document and sends completion via `SendMessage`
+Uses the subagent model (same as other planning-phase reviews):
+- Spawn each reviewer as a subagent via `Agent(subagent_type="<reviewer-name>", prompt="...")`
+- Collect each reviewer's output
+- Spawn the Driver subagent with all reviewer results as context
+- Reviewers write to `.reviews/<name>-<slice-id>-readiness.md`
+- Driver writes the plan document and returns it as the subagent result
 
 **Driver selection:** The team member with the strongest expertise for the primary
 challenge of this slice (e.g. frontend specialist for UI-heavy slices, domain

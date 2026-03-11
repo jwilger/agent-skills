@@ -5,7 +5,7 @@ description: >-
   (decompose, slice readiness review, implement via TDD pairs, three-stage
   code review, address feedback, mutation testing, push/CI, merge/flag).
   Manages slice queue (walking skeleton first, dependency ordering), dispatches
-  TDD pairs with capability detection (TeamCreate, Task, or chaining),
+  TDD pairs with capability detection (Agent tool or chaining),
   enforces 5 binary quality gates with 3-cycle rework budgets and human
   escalation, maintains audit trail, and respects strict controller role
   boundaries (never writes code, delegates all creative work). Supports three
@@ -20,7 +20,7 @@ description: >-
 license: CC0-1.0
 metadata:
   author: jwilger
-  version: "3.1.1"
+  version: "4.0.0"
   requires: [tdd, code-review, mutation-testing, task-management, ci-integration]
   context: [test-files, domain-types, source-files, ci-results, task-state, git-history]
   phase: build
@@ -78,7 +78,7 @@ quality gate. A gate failure routes back for rework; it never skips forward.
    `.factory/audit-trail/slices/<slice-id>/decomposition.json`.
 
 2. **Slice Readiness Review** (full ensemble, before first TDD cycle)
-   - Convene the full ensemble using the TeamCreate model
+   - Convene the full ensemble using subagent spawning
    - Produce an approved Slice Plan document including the Agent Delivery Contract
      (see `references/slice-readiness-review.md` and `references/agent-delivery-contract.md`)
    - Gate: the build trio does NOT start until the plan is approved (all members,
@@ -100,16 +100,13 @@ quality gate. A gate failure routes back for rework; it never skips forward.
    hierarchy) and dispatches directly. Do NOT spawn a single "orchestrator"
    subagent -- that hides work and bypasses strategy detection.
 
-   - **TeamCreate available:** Create a pair team (e.g.,
-     `pair-<slice-id>`), spawn two developer agents into it, bootstrap
-     both with pre-implementation context and the ping-pong protocol from
-     `tdd/references/ping-pong-pairing.md`. The pair exchanges handoffs
-     via SendMessage. The pipeline controller monitors via task updates
-     and handles operational tasks (running tests, git commits) directly.
-   - **Task available (no TeamCreate):** The pipeline controller acts as
-     the serial subagent orchestrator per `tdd/references/orchestrator.md`,
-     spawning per-phase agents (RED, DOMAIN, GREEN, COMMIT) using the
-     Task tool with fresh context each time.
+   - **Agent tool available:** The pipeline controller acts as the
+     orchestrator per `tdd/references/orchestrator.md`, spawning
+     per-phase subagents using `Agent(subagent_type="<agent-name>",
+     prompt="...")` with fresh context each time. When `.claude/agents/`
+     definitions exist, named personas are used for ping and pong roles
+     per `tdd/references/ping-pong-pairing.md`. The orchestrator collects
+     results from each subagent and passes them as context to the next.
    - **Neither available:** The pipeline controller runs chaining mode,
      playing each TDD role sequentially per the TDD skill's chaining
      section.
