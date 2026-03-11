@@ -39,7 +39,7 @@ version-controlled deliverables.
 <reviewer-name>-<task-slug>-pass<N>.md   (re-reviews)
 ```
 
-- `reviewer-name`: Kebab-case name matching the `.team/` profile filename (without extension)
+- `reviewer-name`: Kebab-case name matching the `.claude/agents/` profile filename (without extension)
 - `task-slug`: Kebab-case short description of the task under review
 - `pass<N>`: Appended for re-review passes (pass2, pass3, etc.)
 
@@ -109,7 +109,7 @@ Previous review files are kept for audit trail — do not overwrite them.
 
 ## Workflow
 
-### Variant 1: Messaging Available (Claude Code TeamCreate, Task tool)
+### Variant 1: Messaging Available (Claude Code Agent tool)
 
 1. Reviewer reads the code under review
 2. Reviewer writes structured review to `.reviews/<name>-<task>.md`
@@ -132,8 +132,7 @@ Previous review files are kept for audit trail — do not overwrite them.
 
 | Harness | Messaging | Review Mode | Notes |
 |---------|-----------|-------------|-------|
-| Claude Code (TeamCreate) | Yes | Files + messages | Full workflow — files for content, messages for coordination |
-| Claude Code (Task tool) | Yes | Files + messages | Subagents write files, return summary via Task result |
+| Claude Code (Agent tool) | Yes | Files + messages | Full workflow — files for content, messages for coordination |
 | Codex | Limited | Files + messages | CLI agents can write files; coordination via task descriptions |
 | Cursor | No | Files only | Reviewers write files; Driver polls `.reviews/` |
 | Windsurf | No | Files only | Same as Cursor |

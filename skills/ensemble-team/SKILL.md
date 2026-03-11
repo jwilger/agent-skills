@@ -2,7 +2,7 @@
 name: ensemble-team
 description: >
   Set up a full AI ensemble/mob programming team for any software project. Creates
-  team member profiles (.team/), coordinator instructions (.team/coordinator-instructions.md),
+  agent definition files (.claude/agents/), coordinator instructions (.team/coordinator-instructions.md),
   project owner constraints (PROJECT.md), team conventions (AGENTS.md), architectural
   decisions (docs/ARCHITECTURE.md), domain glossary, and supporting docs. Use when:
   (1) starting a new project and wanting a full expert agent team, (2) the user asks
@@ -13,7 +13,7 @@ description: >
 license: CC0-1.0
 metadata:
   author: jwilger
-  version: "2.3.0"
+  version: "3.0.0"
   requires: []
   optional: [pipeline, agent-coordination]
   context: []
@@ -88,7 +88,7 @@ fit THIS project, and what they'd focus on. Let user approve, swap, or remove.
 
 ### Phase 3: Generate Team Profiles
 
-Create `.team/<name>.md` for each member.
+Create `.claude/agents/<name>.md` for each member.
 
 **PREREQUISITE**: Read `references/profile-template.md` before proceeding.
 
@@ -145,7 +145,7 @@ coordinator only.
 #### AGENTS.md — Team Structure Section
 
 Insert a "Team Structure" managed section into `AGENTS.md` noting:
-- Team member profiles are located in `.team/`
+- Team member profiles are located in `.claude/agents/`
 - Project owner constraints are defined in `PROJECT.md`
 - Domain glossary is maintained at `docs/glossary.md`
 
@@ -225,7 +225,7 @@ include mechanism), and the coordinator reads `.team/coordinator-instructions.md
 for its operating instructions. Suggest telling the coordinator what to build.
 
 **Files created**:
-- `.team/<name>.md` — team member profiles
+- `.claude/agents/<name>.md` — agent definition files (team member profiles)
 - `.team/coordinator-instructions.md` — coordinator operating instructions
 - `AGENTS.md` — team structure and conventions (populated during formation session)
 - `PROJECT.md` — project owner constraints
@@ -241,7 +241,7 @@ for its operating instructions. Suggest telling the coordinator what to build.
 
 A single agent writing all perspectives is NOT a retrospective — it is a
 summary. Every agent spawned for a retrospective MUST be a named team member
-from `.team/`.
+from `.claude/agents/`.
 
 Retrospectives are event-driven, not time-based. Trigger: after each shipped
 PR (merged to the integration branch).
@@ -274,7 +274,7 @@ Non-negotiable aspects baked in from production experience.
 **PREREQUISITE**: Read `references/lessons-learned.md` before proceeding.
 
 - Named team members only: every agent spawned for team work MUST be a named
-  member from `.team/`. Never use generic background agents for team activities.
+  member from `.claude/agents/`. Never use generic background agents for team activities.
 - Consensus before push (review locally, then push)
 - Refactor step is mandatory every commit
 - CI wait rule (never queue multiple CI runs)

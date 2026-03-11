@@ -7,7 +7,7 @@ each bringing their own accumulated context and perspective.
 ## Prerequisites
 
 - Every agent spawned for the retrospective MUST be a named team member
-  from `.team/`. Never use generic background agents.
+  from `.claude/agents/`. Never use generic background agents.
 - The coordinator facilitates but does NOT contribute observations (the
   coordinator has no development perspective to share).
 - The human is a team member who participates in the consent protocol.
