@@ -21,7 +21,7 @@ description: >-
 license: CC0-1.0
 metadata:
   author: jwilger
-  version: "2.0.0"
+  version: "2.1.0"
   requires: []
   optional: [memory-protocol, agent-coordination]
   context: [git-history]
