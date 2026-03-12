@@ -2,20 +2,16 @@
 name: task-management
 description: >-
   Work decomposition, dependency ordering, and status tracking for software
-  tasks. Provides a structured methodology: hierarchical decomposition
-  (features into stories into leaf tasks), Slice-to-Task decomposition
-  (walking skeleton first, then acceptance tests before implementation tasks),
-  GWT acceptance criteria on every task, explicit dependency declarations,
-  estimated scope per task, and a strict lifecycle (Open/Active/Closed with
-  one-at-a-time active task rule). Activate whenever breaking down features
-  into tasks, managing work items, tracking dependencies, creating stories or
-  epics, slicing work for incremental delivery, deciding what to work on next,
-  or analyzing blocked vs ready tasks. Also triggers on: "decompose this
-  feature", "create tasks for this story", "what should I work on next",
-  "break this into smaller pieces", "set up a walking skeleton", "slice this
-  into tasks", "manage task dependencies", "track task status". Works with any
-  task tool: harness-native todos, dot CLI, GitHub Issues, or file-based
-  tracking.
+  tasks. Provides hierarchical decomposition (features into stories into leaf
+  tasks), Slice-to-Task decomposition (walking skeleton first, then acceptance
+  tests before implementation), GWT acceptance criteria on every task, explicit
+  dependency declarations, estimated scope, and a strict lifecycle
+  (Open/Active/Closed with one-at-a-time active task rule). Use when breaking
+  down features, managing work items, tracking dependencies, creating stories
+  or epics, slicing work for incremental delivery, or deciding what to work on
+  next. Triggers on: "decompose this feature", "create tasks", "what should I
+  work on next", "break this into smaller pieces", "walking skeleton", "slice
+  into tasks", "task dependencies". Works with any task tool.
 license: CC0-1.0
 compatibility: Designed for any coding agent (Claude Code, Codex, Cursor, OpenCode, etc.)
 metadata:

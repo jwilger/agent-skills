@@ -3,21 +3,16 @@ name: session-reflection
 description: >-
   Structured session analysis and project instruction refinement using a
   five-type intervention taxonomy (Correction, Repetition, Role Redirect,
-  Frustration Escalation, Workaround) with severity scoring to categorize
-  process gaps. Refines project instructions (CLAUDE.md, AGENTS.md,
-  .team/coordinator-instructions.md) with structural (not advisory) language,
-  maintains WORKING_STATE.md for crash recovery (read-first-after-any-
-  interruption protocol), and implements a self-reminder protocol (re-read
-  constraints every 5-10 messages to prevent role drift). Includes advisory-
-  to-structural promotion pattern for recurring gaps. Activate after
-  milestones, repeated user corrections, session restarts, crash recovery,
-  every 5 completed tasks, or on user request. Triggers on: "reflect on this
-  session", "why do I keep correcting you", "update project instructions",
-  "update working state", "session retrospective", "crash recovery", "context
-  compaction", "role drift", "I keep telling you the same thing", "analyze my
-  corrections". Also relevant when the agent notices repeated corrections,
-  needs to resume after compaction, or wants to prevent known failure modes
-  from recurring.
+  Frustration Escalation, Workaround) with severity scoring. Refines project
+  instructions (CLAUDE.md, AGENTS.md) with structural language, maintains
+  WORKING_STATE.md for crash recovery, and implements a self-reminder protocol
+  to prevent role drift. Includes advisory-to-structural promotion for
+  recurring gaps. Use after milestones, repeated user corrections, session
+  restarts, crash recovery, every 5 completed tasks, or on request. Triggers
+  on: "reflect on this session", "why do I keep correcting you", "update
+  project instructions", "session retrospective", "crash recovery", "context
+  compaction", "role drift", "analyze my corrections". Also relevant when
+  noticing repeated corrections or resuming after compaction.
 license: CC0-1.0
 metadata:
   author: jwilger

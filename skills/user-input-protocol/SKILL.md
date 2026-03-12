@@ -2,21 +2,18 @@
 name: user-input-protocol
 description: >-
   Structured AWAITING_USER_INPUT checkpoint format for requesting human
-  decisions. When an agent hits a decision point, it stops, presents
-  context, shows 2-4 labeled options with implications, states a
-  recommendation, and waits. Groups related decisions into single
-  multi-question checkpoints. Includes subagent state-save-before-pause
-  and resume-without-redoing-work patterns, plus factory-mode urgency
-  classification (blocking/next-review/informational). Activate whenever
-  encountering business rule ambiguities, architecture trade-offs, scope
-  questions, destructive actions (deleting files, dropping columns, force
-  pushing), or any point requiring human judgment. Triggers on: "should I
-  use X or Y", "which approach", "need a decision", "before I proceed",
-  "confirm this action", "multiple options", "trade-off", "destructive
-  change". Also activates when delegating to subagents that may hit
-  decision points, or when running background tasks that need human input.
-  NOT for: implementation details with one clearly correct answer, or
-  formatting/style choices covered by project conventions.
+  decisions. When hitting a decision point, stop, present context, show 2-4
+  labeled options with implications, state a recommendation, and wait. Groups
+  related decisions into single multi-question checkpoints. Includes subagent
+  state-save-before-pause and resume-without-redoing-work patterns, plus
+  factory-mode urgency classification (blocking/next-review/informational).
+  Use when encountering business rule ambiguities, architecture trade-offs,
+  scope questions, destructive actions, or any point requiring human judgment.
+  Triggers on: "should I use X or Y", "which approach", "need a decision",
+  "before I proceed", "confirm this action", "trade-off", "destructive
+  change". Also activates when delegating to subagents that may hit decision
+  points. NOT for: implementation details with one correct answer, or
+  style choices covered by project conventions.
 license: CC0-1.0
 metadata:
   author: jwilger
