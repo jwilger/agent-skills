@@ -13,7 +13,7 @@ description: >
 license: CC0-1.0
 metadata:
   author: jwilger
-  version: "3.0.0"
+  version: "3.1.0"
   requires: []
   optional: [pipeline, agent-coordination]
   context: []
