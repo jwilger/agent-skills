@@ -20,7 +20,7 @@ description: >-
 license: CC0-1.0
 metadata:
   author: jwilger
-  version: "4.0.0"
+  version: "4.1.0"
   requires: [tdd, code-review, mutation-testing, task-management, ci-integration]
   context: [test-files, domain-types, source-files, ci-results, task-state, git-history]
   phase: build
