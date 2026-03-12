@@ -16,7 +16,7 @@ description: >-
 license: CC0-1.0
 metadata:
   author: jwilger
-  version: "4.4.0"
+  version: "4.5.0"
   requires: []
   context: [architecture-decisions, event-model, source-files]
   phase: decide
