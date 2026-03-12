@@ -20,7 +20,7 @@ license: CC0-1.0
 compatibility: Designed for any coding agent (Claude Code, Codex, Cursor, OpenCode, etc.)
 metadata:
   author: jwilger
-  version: "1.1.1"
+  version: "1.2.0"
   requires: []
   context: [task-state]
   phase: build
