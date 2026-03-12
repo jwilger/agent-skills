@@ -19,6 +19,7 @@ metadata:
   context: []
   phase: build
   standalone: true
+  constraint_resolution: true
 ---
 
 # Ensemble Team Setup
@@ -293,6 +294,30 @@ Non-negotiable aspects baked in from production experience.
 - Compressed active-context form on every profile
 - Stand-aside means deference, not disapproval
 - File-based reviews survive context compaction (messaging supplements, not replaces)
+
+## Enforcement Note
+
+- **Subagent mode**: Structural. Named agent profiles enforce persona
+  boundaries.
+- **Chaining mode**: Advisory. Self-enforced role switching.
+- **Pipeline mode**: Gating. Consensus gates block pipeline progression at
+  defined checkpoints.
+
+## Constraints
+
+- **AI disclaimer**: The disclaimer must be substantively honest, not just
+  formally present. Including the disclaimer text while writing the profile
+  in a tone that implies real endorsement violates the spirit. The profile
+  should read as "here is how an AI might approximate this person's
+  perspective" not "here is what this person thinks."
+- **"Named members only for team activities"**: Team activities include:
+  retrospectives, consensus rounds, code reviews, and any task where the
+  team member's perspective (not just their labor) matters. Background
+  research, file manipulation, and mechanical tasks do not require named
+  members.
+
+See `CONSTRAINT-RESOLUTION.md` in the template directory for factory-mode
+consensus resolution.
 
 ## Factory Mode (Optional)
 

@@ -129,10 +129,24 @@ The human decides: resolve, override, or send back for more rework.
 
 ## Enforcement Note
 
-This skill provides advisory guidance for structuring the review experience.
-It reads from audit trail files produced by the pipeline and presents them
-in a human-friendly format. It cannot enforce that the human reviews every
-item -- it can only make the review efficient and thorough.
+Advisory in all modes. Summaries and trend reports are self-enforced
+formatting disciplines.
+
+**Hard constraints:**
+- No silent config changes: `[H]`
+
+## Constraints
+
+- **"No editorializing"**: Report what the team said, not what you think
+  about what the team said. "The team discussed X and decided Y" is
+  reporting. "The team wisely decided Y" is editorializing. "The team
+  discussed X but missed the important point about Z" is editorializing.
+  If you have a concern, present it separately as your own analysis,
+  clearly labeled.
+- **Config validation**: "Never apply config changes silently" means every
+  config change goes through explicit user confirmation, even if the user
+  previously said "go ahead and configure things." Each individual change
+  is confirmed. Blanket permission does not exist for config changes.
 
 ## Verification
 

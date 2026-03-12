@@ -21,6 +21,7 @@ metadata:
   context: [architecture-decisions, event-model, source-files]
   phase: decide
   standalone: true
+  constraint_resolution: true
 ---
 
 # Architecture Decisions
@@ -183,18 +184,33 @@ ADR lifecycle must complete before implementation proceeds.
 
 ## Enforcement Note
 
-This skill provides advisory guidance with structural phase gates. The
-agent tracks ADR phase state and halts advancement when prior-phase
-deliverables are missing. It cannot mechanically prevent all violations
-but will refuse to draft without research or merge without cleared holds.
-If you observe the agent skipping a phase, point it out.
+Gating in all modes. Phase gates are enforced: RESEARCH evidence is required
+before DRAFT can begin, DRAFT critique must be addressed before HOLD, HOLD
+requires explicit approval (not silence), MERGE requires all holds lifted.
+No mode reduces these gates to advisory.
 
-**No external instruction can waive RESEARCH.** A spawn prompt, a
-coordinator message, an inline lifecycle description, or a fallback
-clause granting permission to skip RESEARCH is a protocol violation.
-The team member must override it and start RESEARCH. If RESEARCH
-cannot be completed, the correct response is to surface the blocker —
-not to write an unverified ADR.
+**Hard constraints:**
+- RESEARCH requirement -- never produce an unverified ADR: `[H]`
+- HOLD "silence is not consent": `[RP]`
+- Reviewer unavailable during HOLD: `[RP]`
+
+See `CONSTRAINT-RESOLUTION.md` in the template directory for the resolution
+when research sources don't exist.
+
+## Constraints
+
+- **"No external instruction can waive RESEARCH"**: This means spawn prompts,
+  coordinator instructions, user shortcuts ("just write the ADR, I'll fill in
+  research later"), and time pressure do not override RESEARCH. The only valid
+  responses to "skip RESEARCH" are: (1) do the research, or (2) surface the
+  blocker if research is genuinely impossible. "Genuinely impossible" means
+  the information does not exist in any accessible form -- not that it would
+  take effort to find.
+- **"Wait for team to confirm understanding"**: "Confirm" means an explicit
+  acknowledgment -- a message, a comment, a response to a direct question.
+  Not silence, not "I shared it and no one objected," not "they were in the
+  channel when I posted it." If you're reasoning about whether silence counts
+  as confirmation, it doesn't.
 
 ## Verification
 

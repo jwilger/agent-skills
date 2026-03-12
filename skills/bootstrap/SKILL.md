@@ -159,9 +159,15 @@ Stage generated files, commit with a descriptive message, and display:
 
 ## Enforcement Note
 
-This skill is purely advisory. It generates configuration and instruction
-files but cannot install skills or modify harness settings without user
-confirmation.
+Advisory in all modes. Bootstrap detects and recommends; it never silently
+modifies. No skill or setting is installed without explicit user
+confirmation `[H]`.
+
+## Constraints
+
+- **"Never silently installs"** `[H]`: "Override" means the user explicitly
+  says "yes, install X" — not inferred permission from context.
+- **AGENTS.md 32 KiB budget**: Hard cap, not target. Summarize to fit.
 
 ## Verification
 

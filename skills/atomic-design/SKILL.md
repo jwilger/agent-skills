@@ -151,10 +151,31 @@ through class inheritance or deep prop-forwarding chains.
 
 ## Enforcement Note
 
-This skill provides advisory guidance on component organization. It cannot
-mechanically prevent an agent from skipping levels or hard-coding design
-values. The agent follows these practices by convention. If you observe the
-agent building organisms from raw markup, point it out.
+Advisory in all modes. Component hierarchy and token discipline are
+self-enforced.
+
+**Hard constraints:**
+- Token-only references (no raw values in components): `[RP]`
+
+## Constraints
+
+- **"Never skip a level"**: An atom that's actually a molecule (it composes
+  multiple visual elements) is skipping a level even if you name it "atom."
+  The classification is based on what the component IS, not what directory
+  it's in. If your "atom" has 3 internal elements with layout logic, it's
+  a molecule.
+- **"No raw values"**: Defining a token for every unique value and then
+  never reusing those tokens defeats the purpose. Tokens exist for reuse
+  and consistency. If a token is used exactly once, ask: should this value
+  be shared with other components? If yes, the token is correct. If no,
+  the value should probably come from a more general token (e.g., use
+  `spacing-md` not `card-header-padding-top`).
+- **Presentational boundary**: Presentational means: data in via props,
+  events out via callbacks. Filtering data for display IS presentational
+  (it's a view concern). Fetching data, mutating state, or calling APIs is
+  NOT presentational. The test: could this component render identically in
+  a Storybook story with mock props? If it needs a running backend, it's
+  not presentational.
 
 ## Verification
 

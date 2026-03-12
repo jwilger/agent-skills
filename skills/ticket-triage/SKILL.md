@@ -209,6 +209,27 @@ Then, based on the verdict:
 
 **Nearly Ready threshold**: Use this when the ticket fails exactly 1 criterion and the fix is small (< 30 minutes of refinement). Two or more failing criteria means Not Ready, even if each fix is individually small.
 
+## Enforcement Note
+
+- **Standalone mode**: Advisory. The agent follows evaluation criteria by
+  convention.
+- **Pipeline mode**: Gating. NOT READY tickets cannot enter the slice queue.
+
+**Hard constraints:**
+- All six criteria PASS for READY verdict: `[H]`
+
+## Constraints
+
+- **"Default to passing"**: Default to passing means: when a criterion is
+  borderline and reasonable developers would disagree, give the benefit of
+  the doubt. It does NOT mean: find a generous interpretation of every
+  criterion to avoid failing tickets. If you're contorting logic to pass a
+  criterion, that's a signal it should fail.
+- **"< 30 min fix" for NEARLY READY**: This is a rough human-effort estimate,
+  not a precise threshold. The spirit is: could the ticket author fix this in
+  a single short iteration? If the fix requires research, meetings, or design
+  decisions, it's not a 30-minute fix regardless of typing speed.
+
 ## Tone
 
 Be direct and constructive. The goal is to help the team ship better tickets, not to gatekeep. Frame remediation as "here's what would make this ready" rather than "here's what's wrong." When a ticket is well-written, say so -- recognizing good practices helps establish patterns across the team.

@@ -21,6 +21,7 @@ metadata:
   context: [source-files, test-files, domain-types, git-history]
   phase: ship
   standalone: true
+  constraint_resolution: true
 ---
 
 # Code Review
@@ -237,12 +238,36 @@ These are not blocking concerns but should be noted when relevant.
 
 ## Enforcement Note
 
-This skill provides advisory guidance. It instructs the agent on correct
-review procedure but cannot mechanically prevent skipping stages or merging
-without review. When used with the `tdd` skill in automated mode, the
-orchestrator can gate PR creation on review completion. In guided mode or
-standalone, the agent follows these practices by convention. If you observe
-stages being skipped, point it out.
+- **Standalone mode**: Advisory. The agent cannot mechanically prevent
+  merging without review.
+- **Pipeline mode**: Gating. Review verdicts block pipeline progression --
+  FAIL or CHANGES REQUIRED halts the slice.
+
+**Hard constraints:**
+- Stage 1 FAIL blocks later stages: `[H]`
+- Convention violation (Convention Over Precedent rule): `[RP]`
+
+See `CONSTRAINT-RESOLUTION.md` in the template directory for pipeline
+rework budget conflicts.
+
+## Constraints
+
+- **Non-blocking escalation**: The escalation rule triggers when the SAME
+  issue (not just the same category) appears in 2+ consecutive reviews of
+  DIFFERENT slices. Varying the wording of the same concern to avoid
+  triggering escalation is a violation. The test is: would a human reviewer
+  recognize these as the same underlying issue?
+- **Convention Over Precedent**: "Written conventions" means conventions
+  documented in CLAUDE.md, AGENTS.md, ADRs, or crate/package-level
+  documentation. Patterns observed only in existing code are precedent, not
+  convention. But if a pattern is universal (100% of files follow it) and
+  no written convention contradicts it, flag it as a candidate for
+  documentation -- don't just ignore it.
+- **Vertical slice coverage**: The layer coverage check applies when the
+  change modifies user-observable behavior. "User-observable" means a human
+  using the application would notice a difference. Infrastructure changes
+  that improve performance but don't change behavior are not user-observable.
+  A new API endpoint IS user-observable even if no UI exists yet.
 
 ## Verification
 

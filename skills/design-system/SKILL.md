@@ -122,12 +122,27 @@ the philosophy is incomplete. Resolve before proceeding.
 
 ## Enforcement Note
 
-This skill provides advisory guidance. The agent tracks phase state and
-halts if the philosophy phase is skipped or if raw values are used
-instead of token references in components. It cannot mechanically prevent
-all violations but will flag traceability gaps when detected. If you
-observe the agent skipping a phase or using hard-coded values, point it
-out.
+Advisory in all modes. Phase gates are self-enforced: the agent must
+complete each phase's outputs and get user confirmation before proceeding.
+Token traceability is self-enforced: the agent must verify every component
+references tokens, not raw values.
+
+**Hard constraints:**
+- Phase ordering (complete each phase before starting the next): `[RP]`
+
+## Constraints
+
+- **"No raw values in components"**: This means no literal color codes, pixel
+  values, font sizes, or spacing values anywhere in component definitions.
+  "I defined a token for it" is not sufficient if the component file contains
+  the raw value instead of the token reference. Defining many single-use
+  tokens to technically satisfy this rule while defeating reusability is also
+  a violation.
+- **Philosophy phase**: Philosophy means named principles with enough
+  specificity to guide decisions. "Modern and clean" is not a philosophy --
+  it constrains nothing. Each principle should be testable: given a design
+  decision, the principle should help you choose between options. If it
+  doesn't eliminate any option, it's not specific enough.
 
 ## Verification
 

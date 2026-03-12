@@ -152,6 +152,20 @@ from this set.
   standalone: false  # needs other skills to be useful
   ```
 
+### `metadata.constraint_resolution`
+
+Whether this skill has known cross-skill conflicts documented in
+`CONSTRAINT-RESOLUTION.md`. When true, agents should consult the
+constraint resolution document when this skill's constraints interact
+with another skill's constraints.
+
+- **Type:** boolean
+- **Default:** `false` (omit if no known conflicts)
+- **Example:**
+  ```yaml
+  constraint_resolution: true  # has cross-skill conflicts documented
+  ```
+
 ## Complete Frontmatter Example
 
 ```yaml
@@ -180,9 +194,10 @@ limits to ensure compatibility across harnesses with varying context windows:
 | Tier | Skills | Budget |
 |------|--------|--------|
 | Tier 0 (Bootstrap) | `bootstrap` | 1000 tokens |
-| Tier 1 (Core Process) | `tdd`, `domain-modeling`, `code-review`, `architecture-decisions`, `event-modeling`, `design-system` | 3000 tokens |
+| Tier 1 (Core Process) | `tdd`, `domain-modeling`, `code-review`, `architecture-decisions`, `event-modeling`, `ticket-triage`, `design-system` | 3000 tokens |
 | Tier 2 (Team Workflows) | `ensemble-team`, `task-management` | 4000 tokens |
-| Tier 3 (Utility) | `debugging-protocol`, `user-input-protocol`, `memory-protocol` | 3000 tokens |
+| Tier 3 (Utility) | `debugging-protocol`, `user-input-protocol`, `memory-protocol`, `agent-coordination`, `session-reflection` | 3000 tokens |
+| Tier 4 (Factory Pipeline) | `pipeline`, `ci-integration`, `factory-review` | 3000 tokens |
 | Advanced | `mutation-testing`, `atomic-design` | 3000 tokens |
 
 The Agent Skills spec recommends under 5000 tokens and under 500 lines for
@@ -199,9 +214,14 @@ After the frontmatter, the SKILL.md body follows this section order:
 1. **Value** -- Which XP value(s) this serves (1-2 sentences)
 2. **Purpose** -- What this skill teaches (2-3 sentences)
 3. **Practices** -- Concrete instructions (the main body, largest section)
-4. **Enforcement Note** -- What this skill can/cannot guarantee
-5. **Verification** -- Self-check checklist (binary, observable criteria)
-6. **Dependencies** -- Integration points and install commands
+4. **Enforcement Note** -- What this skill can/cannot guarantee (use
+   vocabulary from `ENFORCEMENT-VOCABULARY.md`, tag hard constraints with
+   severity from `GRADUATED-RESPONSE.md`)
+5. **Constraints** -- _(optional)_ Spirit-of-the-law statements for
+   constraints where an LLM might find technical workarounds
+6. **Verification** -- Self-check checklist (binary, observable criteria)
+7. **Dependencies** -- Integration points and install commands
 
-Every section is required. Keep Practices as the dominant section. Minimize
-all others to a few sentences each.
+Value, Purpose, Practices, Enforcement Note, Verification, and Dependencies
+are required. Constraints is optional. Keep Practices as the dominant
+section. Minimize all others to a few sentences each.

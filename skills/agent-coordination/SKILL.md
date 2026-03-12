@@ -175,13 +175,31 @@ For harness-specific coordination patterns, see `references/`.
 
 ## Enforcement Note
 
-This skill provides advisory guidance. On harnesses with subagent support
-(Claude Code Agent tool), the structured spawning and result-passing protocol
-provides partial structural enforcement. On harnesses without multi-agent
-support, these practices apply to tool-based coordination. The idle
-notification and polling anti-patterns require agent self-discipline -- no
-mechanical enforcement exists. If you observe an agent violating a practice,
-point it out.
+Advisory in all modes. The cardinal rule and idle-notification discipline
+are self-enforced. No mechanism prevents message spamming or premature
+shutdown.
+
+**Hard constraints:**
+- Never fabricate agent responses: `[H]`
+- Never prematurely shut down an agent with undelivered work: `[RP]`
+
+## Constraints
+
+- **Cardinal rule (one message then wait)**: This means: after sending a
+  message to another agent, produce NO further output directed at or about
+  that agent until you receive a response. "I'll just add one more thing"
+  is a second message. Narrating what the agent is probably doing is
+  fabrication. The discipline is: send, then silence.
+- **"Truly independent agents may be spawned in parallel"**: "Truly
+  independent" means: no shared files, no shared state, no ordering
+  dependency, and no merge conflicts possible. If agents will eventually
+  need to integrate their work (even just merging branches), they have a
+  dependency. Independent means the work could be done by two people who
+  never communicate.
+- **"Extended idle"**: Judge "extended" relative to the expected task
+  duration. A 2-minute idle on a task that should take seconds is extended.
+  A 2-minute idle on a task that should take 10 minutes is normal. Do not
+  define "extended" in absolute terms.
 
 ## Verification
 

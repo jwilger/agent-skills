@@ -59,15 +59,23 @@ Repeat the pattern. Each practice should be independently understandable.
 
 ## Enforcement Note
 
-_State honestly what this skill can and cannot guarantee._
+_State honestly what this skill can and cannot guarantee. Use vocabulary
+from `ENFORCEMENT-VOCABULARY.md`: Advisory, Gating, Structural, or
+Mechanical. State the level per mode if it varies (standalone, pipeline,
+ensemble). Never claim a higher level than the mechanism provides._
 
-This skill provides advisory guidance. It instructs the agent on correct
-behavior but cannot mechanically prevent violations. Enforcement is
-proportional to harness capability: on harnesses with delegation primitives,
-skills use structural enforcement (context isolation, handoff schemas). On
-Claude Code, optional hook templates add mechanical guardrails. On harnesses
-without delegation, the agent follows practices by convention. If you observe
-the agent violating a practice, point it out.
+_Tag hard constraints with graduated-response severity from
+`GRADUATED-RESPONSE.md`: `[RC]`, `[RP]`, or `[H]`._
+
+Advisory in standalone mode. [State other modes if enforcement differs.]
+
+## Constraints
+
+_Optional section. Add explicit "spirit of the law" statements for any
+constraint where an LLM might find a technical workaround. Each statement
+clarifies the intent behind a rule so that technical compliance that
+defeats the purpose is recognized as a violation. Omit this section if
+the skill has no constraints that need anti-gaming clarification._
 
 ## Verification
 

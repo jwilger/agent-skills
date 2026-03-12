@@ -190,13 +190,31 @@ silently accept designs that violate these principles.
 
 ## Enforcement Note
 
-This skill provides advisory guidance on domain modeling quality. It cannot
-mechanically prevent an agent from using primitives or creating invalid state
-representations. When used with the `tdd` skill, domain review is a mandatory
-checkpoint with veto power -- enforcement ranges from advisory (guided mode)
-to structural (automated mode with subagent isolation). Without the `tdd`
-skill, these principles are followed by convention and verified through code
-review.
+- **Standalone mode**: Advisory. The agent follows domain modeling principles
+  by convention.
+- **TDD domain review (chaining)**: Advisory. Veto is self-enforced: the agent
+  must reject its own work when it violates these principles, with the same
+  rigor as if a separate agent were reviewing.
+- **TDD domain review (subagents)**: Gating. Domain veto blocks phase
+  progression. The reviewing agent can reject the handoff.
+
+**Hard constraints:**
+- Do not silently accept designs that violate these principles: `[RP]` -- if
+  human explicitly overrides, record the override and the principle it violates.
+
+## Constraints
+
+- **Veto authority -- "do not back down"**: Do not rationalize away a valid
+  concern to avoid the friction of escalation. It does not mean refuse to
+  engage with counterarguments. If the counterargument is genuinely convincing
+  -- the principle doesn't apply here -- update your assessment. If you're
+  backing down because escalation is inconvenient, that's a violation.
+- **Bool-as-state vs. conditions**: The test is: does this boolean represent a
+  state transition the domain cares about (e.g., active/inactive, open/closed)?
+  If yes, use an enum. If it genuinely answers a yes/no question with no
+  domain state implications (e.g., "is this calculation positive?"), a boolean
+  is fine. When in doubt, use an enum -- the cost of a small enum is lower
+  than the cost of a boolean that silently accumulates domain meaning.
 
 ## Verification
 
