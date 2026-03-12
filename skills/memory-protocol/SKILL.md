@@ -14,7 +14,7 @@ description: >-
 license: CC0-1.0
 metadata:
   author: jwilger
-  version: "3.4.0"
+  version: "3.5.0"
   requires: []
   context: []
   phase: build
