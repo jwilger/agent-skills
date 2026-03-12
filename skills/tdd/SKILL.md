@@ -12,7 +12,7 @@ description: >-
 license: CC0-1.0
 metadata:
   author: jwilger
-  version: "2.2.0"
+  version: "2.3.0"
   requires: []
   context: [test-files, domain-types, source-files]
   phase: build
