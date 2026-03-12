@@ -17,7 +17,7 @@ license: CC0-1.0
 compatibility: Requires a mutation testing tool (cargo-mutants, Stryker, mutmut, or Muzak)
 metadata:
   author: jwilger
-  version: "2.2.0"
+  version: "2.2.1"
   requires: [tdd]
   context: [test-files, source-files]
   phase: ship
