@@ -3,19 +3,15 @@ name: factory-review
 description: >-
   Structures the human review experience for factory-mode builds with
   dashboard-style audit trail summaries (slice counts, rework rates, gate
-  failure distribution), PR digests (one-paragraph per merged PR with gate
-  results), retrospective synthesis (recurring rework causes, pair
-  effectiveness, domain hotspots), quality trend tracking (session-over-session
-  comparison tables with trend direction), escalation review (full rework
-  history with resolve/override/send-back options), and autonomy tuning
-  interface (validate config changes before applying). Activate during Phase 3
-  human review of factory-mode builds, when reviewing autonomous build output,
-  or when a tech lead needs to assess build quality. Triggers on: "review the
-  build", "factory review", "audit trail summary", "build session review",
-  "quality trends", "escalation review", "PR digest", "autonomy tuning",
-  "rework rate", "what happened in the build", "review factory output". NOT
-  for: running the pipeline itself (use pipeline), individual code reviews
-  (use code-review), or CI triage (use ci-integration).
+  failure distribution), PR digests (per merged PR with gate results),
+  retrospective synthesis (recurring rework causes, pair effectiveness,
+  domain hotspots), quality trend tracking (session-over-session comparison),
+  escalation review (rework history with resolve/override/send-back options),
+  and autonomy tuning interface. Use during Phase 3 human review of factory-mode
+  builds or when assessing autonomous build quality. Triggers on: "review the
+  build", "factory review", "audit trail", "quality trends", "escalation
+  review", "PR digest", "autonomy tuning", "rework rate". NOT for: running
+  the pipeline (use pipeline), individual code reviews (use code-review).
 license: CC0-1.0
 metadata:
   author: jwilger

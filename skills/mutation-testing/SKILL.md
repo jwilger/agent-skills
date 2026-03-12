@@ -3,20 +3,16 @@ name: mutation-testing
 description: >-
   Mutation testing quality gate with scenario coverage enforcement and
   structured evidence output. Detects project type and runs the right tool
-  (cargo-mutants, Stryker, mutmut, Muzak), parses results, analyzes surviving
-  mutants by mutation type (arithmetic, comparison, boolean, return value,
-  statement removal), enforces scenario coverage check before recommending
-  tests (survivors without acceptance/domain scenarios are flagged for human
-  decision, not auto-tested), recommends specific tests to kill each covered
-  survivor, produces MUTATION_RESULT JSON evidence packets, and enforces a
-  100% kill rate quality gate that blocks PR creation. Activate when running
-  mutation testing, validating test quality, preparing PRs, checking test
-  coverage, or analyzing surviving mutants. Triggers on: "run mutation
-  testing", "mutation score", "surviving mutants", "kill rate", "test quality
-  gate", "cargo mutants", "stryker run", "mutmut", "pre-PR quality check",
-  "are my tests good enough", "mutation analysis", "validate test coverage".
-  NOT for: writing the tests themselves (use tdd), debugging test failures
-  (use debugging-protocol), or code review (use code-review).
+  (cargo-mutants, Stryker, mutmut, Muzak), analyzes surviving mutants by
+  mutation type (arithmetic, comparison, boolean, return value, statement
+  removal), enforces scenario coverage check before recommending tests,
+  produces MUTATION_RESULT JSON evidence packets, and enforces a 100% kill
+  rate quality gate. Use when running mutation testing, validating test
+  quality, preparing PRs, or analyzing surviving mutants. Triggers on: "run
+  mutation testing", "mutation score", "surviving mutants", "kill rate",
+  "cargo mutants", "stryker", "pre-PR quality check", "are my tests good
+  enough". NOT for: writing tests (use tdd), debugging test failures (use
+  debugging-protocol).
 license: CC0-1.0
 compatibility: Requires a mutation testing tool (cargo-mutants, Stryker, mutmut, or Muzak)
 metadata:

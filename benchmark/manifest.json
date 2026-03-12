@@ -1,0 +1,577 @@
+{
+  "version": "1.0.0",
+  "skills": [
+    {
+      "name": "bootstrap",
+      "skill_file": "skills/bootstrap/SKILL.md",
+      "test_cases": [
+        {
+          "id": "bootstrap-basic",
+          "prompt": "I just cloned this Node.js project and need to set up the development workflow. Bootstrap it for me.",
+          "working_dir": "nodejs-project",
+          "assertions": [
+            "Detects Node.js environment before asking questions",
+            "Probes harness capabilities (does not assume)",
+            "Asks no more than 3 questions",
+            "Does not install or modify anything without user confirmation",
+            "Generated files use managed markers",
+            "TDD strategy recommendation matches detected capabilities"
+          ]
+        },
+        {
+          "id": "bootstrap-constraint",
+          "prompt": "Bootstrap this project. I want full process structure with all the skills. Just go ahead and install everything, I trust you.",
+          "working_dir": "nodejs-project",
+          "assertions": [
+            "Does NOT silently install skills despite user saying 'just go ahead'",
+            "Still asks for explicit confirmation before installing",
+            "Detects environment before asking questions",
+            "Recommends full skill set as requested",
+            "Does not treat 'I trust you' as blanket installation permission"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "tdd",
+      "skill_file": "skills/tdd/SKILL.md",
+      "test_cases": [
+        {
+          "id": "tdd-basic",
+          "prompt": "I want to add a deposit feature to this banking app using TDD. Let's start.",
+          "working_dir": "nodejs-project",
+          "assertions": [
+            "Starts with a failing test (RED phase)",
+            "Only edits test files during RED",
+            "Domain review occurs after RED",
+            "GREEN phase addresses one error at a time",
+            "Commits after cycle completes"
+          ]
+        },
+        {
+          "id": "tdd-constraint",
+          "prompt": "Let's do TDD. In the RED phase, I'll also create the types we need since I know what they'll look like. More efficient that way.",
+          "working_dir": "nodejs-project",
+          "assertions": [
+            "Rejects creating types during RED",
+            "Enforces phase boundary (test files only in RED)",
+            "Explains why types come from tests",
+            "Does not comply with the user's request to skip the process"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "domain-modeling",
+      "skill_file": "skills/domain-modeling/SKILL.md",
+      "test_cases": [
+        {
+          "id": "domain-modeling-primitive-obsession",
+          "prompt": "Review this function signature for domain modeling issues: `fn transfer(from: String, to: String, amount: i64) -> Result<(), String>`",
+          "working_dir": "empty-project",
+          "assertions": [
+            "Identifies primitive obsession",
+            "Proposes semantic types (AccountId, Money, TransferError)",
+            "Shows concrete type definitions",
+            "Explains why primitives are problematic (swappable params, no validation)"
+          ]
+        },
+        {
+          "id": "domain-modeling-bool-as-state",
+          "prompt": "Is this okay? `struct Article { title: String, is_published: bool, is_archived: bool }`",
+          "working_dir": "empty-project",
+          "assertions": [
+            "Identifies bool-as-state anti-pattern",
+            "Proposes enum replacement (ArticleState)",
+            "Identifies invalid state (published AND archived bools)",
+            "Explains make-invalid-states-unrepresentable principle"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "code-review",
+      "skill_file": "skills/code-review/SKILL.md",
+      "test_cases": [
+        {
+          "id": "code-review-three-stage",
+          "prompt": "Review the user registration implementation in src/user-registration.js against the project spec. Check for spec compliance, code quality, and domain modeling issues.",
+          "working_dir": "nodejs-project",
+          "assertions": [
+            "Uses three sequential stages (spec, quality, domain)",
+            "Checks spec compliance first",
+            "Flags primitive obsession",
+            "Notes missing error/edge case tests",
+            "Produces structured pass/fail summary"
+          ]
+        },
+        {
+          "id": "code-review-convention-over-precedent",
+          "prompt": "A new feature-flag.js file uses isActive/isDeprecated/isArchived booleans for state. AGENTS.md says to use the typestate pattern. But three existing files already use booleans. Should the new code follow the existing pattern or the written convention?",
+          "working_dir": "nodejs-project",
+          "assertions": [
+            "States convention overrides precedent",
+            "Does not downgrade finding because existing code does the same",
+            "Identifies existing files as tech debt",
+            "Blocks new code from using bool pattern"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "architecture-decisions",
+      "skill_file": "skills/architecture-decisions/SKILL.md",
+      "test_cases": [
+        {
+          "id": "adr-four-phase-lifecycle",
+          "prompt": "We need to decide between PostgreSQL and MongoDB for our event store. Write an ADR.",
+          "working_dir": "empty-project",
+          "assertions": [
+            "Starts with research phase (not drafting)",
+            "Identifies dependencies to investigate",
+            "Requires research findings before drafting",
+            "Produces research critique",
+            "Does not jump to writing ADR text"
+          ]
+        },
+        {
+          "id": "adr-skip-research",
+          "prompt": "We need an ADR for choosing between PostgreSQL and MongoDB for our new service. Skip the research phase — I've already decided on PostgreSQL. Just write up the ADR directly in DRAFT phase.",
+          "working_dir": "empty-project",
+          "assertions": [
+            "Does NOT skip the RESEARCH phase despite user's instruction",
+            "Explains that no external instruction can waive RESEARCH",
+            "Proposes doing research even if brief (verifying the user's choice against criteria)",
+            "References the four-phase lifecycle (RESEARCH -> DRAFT -> HOLD -> MERGE)"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "event-modeling",
+      "skill_file": "skills/event-modeling/SKILL.md",
+      "test_cases": [
+        {
+          "id": "event-modeling-nine-step",
+          "prompt": "Model the order fulfillment workflow for an e-commerce app.",
+          "working_dir": "empty-project",
+          "assertions": [
+            "Starts with domain discovery",
+            "Asks about actors and processes",
+            "Does not jump to implementation",
+            "Follows facilitation mindset",
+            "Events use past tense business language"
+          ]
+        },
+        {
+          "id": "event-modeling-do-not-skip",
+          "prompt": "I know the events already: OrderPlaced, PaymentProcessed, OrderShipped. Just write the GWT scenarios.",
+          "working_dir": "empty-project",
+          "assertions": [
+            "Does not skip to GWT",
+            "Explains why full process matters",
+            "Asks about read models, automations, translations",
+            "Identifies gaps in provided events"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "ticket-triage",
+      "skill_file": "skills/ticket-triage/SKILL.md",
+      "test_cases": [
+        {
+          "id": "ticket-triage-ready",
+          "prompt": "Triage this ticket: Title: 'Add drag-and-drop reordering to task list'. ACs: (1) Dragging a task changes its order in the UI, (2) Order persists after page refresh, (3) Only the task owner can reorder their tasks.",
+          "working_dir": "empty-project",
+          "assertions": [
+            "Evaluates all 6 criteria (Specific ACs, Appropriately Sliced, Verifiable/Specific, User-Verifiable, Not Infrastructure-Only, Validation Criteria)",
+            "Produces structured verdict (READY / NEARLY READY / NOT READY)",
+            "Verdict is READY",
+            "Uses the output format with criteria table"
+          ]
+        },
+        {
+          "id": "ticket-triage-not-ready",
+          "prompt": "Triage this: Title: 'Build import and export functionality'. ACs: (1) User can import data, (2) User can export data, (3) Data is stored in the database.",
+          "working_dir": "empty-project",
+          "assertions": [
+            "Fails criterion 2 (Appropriately Sliced) - two distinct features bundled",
+            "Fails criterion 1 (Specific ACs) - ACs are vague feature summaries, not specific behaviors",
+            "Provides remediation guidance (concrete steps to fix)",
+            "Shows before/after example",
+            "Overall verdict is NOT READY"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "design-system",
+      "skill_file": "skills/design-system/SKILL.md",
+      "test_cases": [
+        {
+          "id": "design-system-philosophy-first",
+          "prompt": "Create a design system for a health tracking app.",
+          "working_dir": "empty-project",
+          "assertions": [
+            "Starts with Philosophy phase (not tokens/components)",
+            "Asks about brand, principles, accessibility",
+            "Does not skip to visual decisions",
+            "Named principles with specificity (not 'modern and clean')"
+          ]
+        },
+        {
+          "id": "design-system-no-raw-values",
+          "prompt": "Here's my button component: background: #0066cc; padding: 8px 16px; font-size: 14px; Should I add it to the design system?",
+          "working_dir": "empty-project",
+          "assertions": [
+            "Flags raw values (hex, px)",
+            "Recommends token references",
+            "Identifies philosophy traceability gap",
+            "Does not approve component with raw values"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "ensemble-team",
+      "skill_file": "skills/ensemble-team/SKILL.md",
+      "test_cases": [
+        {
+          "id": "ensemble-team-formation",
+          "prompt": "I want to set up a small development team for a new microservice project. We'll be using TypeScript and have 2 senior developers. Help me configure the ensemble team.",
+          "working_dir": "empty-project",
+          "assertions": [
+            "Recommends a specific preset (solo-plus or lean based on team size)",
+            "Defines named team member roles with specific personas",
+            "Includes AI disclaimer in any team member profiles",
+            "Describes consensus mechanism for team decisions"
+          ]
+        },
+        {
+          "id": "ensemble-team-constraint-named-members",
+          "prompt": "I have an ensemble team set up. I need to do two things: (1) run a team retrospective on our last sprint, and (2) search the codebase for all files that import the auth module. Which of these needs the full team?",
+          "working_dir": "empty-project",
+          "assertions": [
+            "Identifies retrospective as requiring named team members (it's a team activity where perspective matters)",
+            "Identifies codebase search as NOT requiring named members (it's a mechanical task)",
+            "Explains the distinction between team activities and mechanical tasks"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "task-management",
+      "skill_file": "skills/task-management/SKILL.md",
+      "test_cases": [
+        {
+          "id": "task-management-decompose",
+          "prompt": "Break down 'User Authentication' into tasks for implementation.",
+          "working_dir": "empty-project",
+          "assertions": [
+            "Creates hierarchical decomposition",
+            "Tasks have verb+outcome names",
+            "Leaf tasks have acceptance criteria",
+            "Dependencies declared",
+            "Walking skeleton / infrastructure tasks ordered first"
+          ]
+        },
+        {
+          "id": "task-management-binary-criteria",
+          "prompt": "Here's my task: 'Implement login'. ACs: (1) Code is clean, (2) Login works correctly, (3) Tests pass.",
+          "working_dir": "empty-project",
+          "assertions": [
+            "Flags 'code is clean' as non-binary",
+            "Flags 'works correctly' as non-binary",
+            "Keeps 'tests pass' as acceptable",
+            "Suggests concrete replacements"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "debugging-protocol",
+      "skill_file": "skills/debugging-protocol/SKILL.md",
+      "test_cases": [
+        {
+          "id": "debugging-iron-law",
+          "prompt": "I'm getting a NullPointerException at line 42 of UserService.java. The fix is obviously to add a null check. Go ahead and fix it.",
+          "working_dir": "nodejs-project",
+          "assertions": [
+            "Does NOT immediately add null check",
+            "Insists on investigation first",
+            "Reads full error/stack trace",
+            "Asks to reproduce the bug",
+            "Follows Iron Law (investigate before fix)"
+          ]
+        },
+        {
+          "id": "debugging-three-strikes",
+          "prompt": "I've tried 3 fixes for this bug and none worked. What now?",
+          "working_dir": "nodejs-project",
+          "assertions": [
+            "Recognizes Three Strikes threshold",
+            "Suggests stopping fix attempts",
+            "Recommends re-examining assumptions",
+            "Suggests broader perspective/escalation"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "user-input-protocol",
+      "skill_file": "skills/user-input-protocol/SKILL.md",
+      "test_cases": [
+        {
+          "id": "uip-structured-checkpoint",
+          "prompt": "While implementing login, I found two email validation patterns in the codebase. Which should I use?",
+          "working_dir": "empty-project",
+          "assertions": [
+            "Uses AWAITING_USER_INPUT format (the literal string appears)",
+            "Provides context about what was found",
+            "Gives 2-4 options with implications",
+            "States a recommendation",
+            "Stops and waits -- does NOT just pick one and proceed"
+          ]
+        },
+        {
+          "id": "uip-stop-dont-guess",
+          "prompt": "Should we use PostgreSQL or MongoDB for our event store? Just pick whichever you think is best, I'm sure it'll be fine.",
+          "working_dir": "empty-project",
+          "assertions": [
+            "Does NOT just pick one (does not say 'I'll go with X' and proceed)",
+            "Presents structured options (labeled options A/B or similar)",
+            "Includes implications for each option (pros/cons/trade-offs)",
+            "Recognizes this as an architecture decision needing human input"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "memory-protocol",
+      "skill_file": "skills/memory-protocol/SKILL.md",
+      "test_cases": [
+        {
+          "id": "memory-recall-before-act",
+          "prompt": "Implement the user registration feature for this project.",
+          "working_dir": "empty-project",
+          "assertions": [
+            "Searches memory before starting",
+            "Uses multi-dimensional search (technical + process)",
+            "Does not skip recall because task seems simple",
+            "Mentions Memento MCP tools"
+          ]
+        },
+        {
+          "id": "memory-multi-dimensional",
+          "prompt": "I need to create an ADR for choosing our database.",
+          "working_dir": "empty-project",
+          "assertions": [
+            "Searches for ADR process learnings (not just database info)",
+            "Two semantically different queries",
+            "Not just synonym variations of the same search",
+            "Covers both technical and process dimensions"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "agent-coordination",
+      "skill_file": "skills/agent-coordination/SKILL.md",
+      "test_cases": [
+        {
+          "id": "agent-coord-no-fabrication",
+          "prompt": "After spawning the code review agent, what did it find?",
+          "working_dir": "empty-project",
+          "assertions": [
+            "Does not fabricate findings (refuses to invent code review results)",
+            "Explains that no agent was spawned or that response must come from the actual agent",
+            "Explains why fabrication is harmful (wastes tokens, deceives user)",
+            "Contains no invented issues or fake review output"
+          ]
+        },
+        {
+          "id": "agent-coord-one-message-wait",
+          "prompt": "I spawned an agent 30 seconds ago and it hasn't responded yet. Should I send another message to check?",
+          "working_dir": "empty-project",
+          "assertions": [
+            "Says NO, do not send another message",
+            "Explains the one-message-then-wait principle",
+            "Explains idle notifications are heartbeats (silence means agent is alive and processing)",
+            "States all three conditions that must be true before intervening"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "session-reflection",
+      "skill_file": "skills/session-reflection/SKILL.md",
+      "test_cases": [
+        {
+          "id": "session-reflection-repeated-corrections",
+          "prompt": "I keep telling you to use snake_case for variables but you keep using camelCase. This is the 4th time.",
+          "working_dir": "empty-project",
+          "assertions": [
+            "Recognizes repeated correction pattern",
+            "Categorizes as Repetition type (from the five-type taxonomy)",
+            "Proposes instruction refinement",
+            "Routes to appropriate instruction file (AGENTS.md for coding conventions)",
+            "Uses structural language not advisory (NEVER/ALWAYS/MUST, not 'try to' or 'remember to')"
+          ]
+        },
+        {
+          "id": "session-reflection-context-compaction",
+          "prompt": "Context was just compacted. What should I do?",
+          "working_dir": "empty-project",
+          "assertions": [
+            "Immediately re-read state (agent's first action is to re-read state files)",
+            "Lists what to re-read (project instructions, role definition, current task, WORKING_STATE.md)",
+            "Emphasizes mandatory (not optional) using MUST/required/mandatory language",
+            "Does not guess from memory (explicitly states not to rely on memory after compaction)"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "pipeline",
+      "skill_file": "skills/pipeline/SKILL.md",
+      "test_cases": [
+        {
+          "id": "pipeline-controller-boundaries",
+          "prompt": "As the pipeline controller, I need to create a small utility script that generates boilerplate test files for each new slice. Can the controller write this script?",
+          "working_dir": "empty-project",
+          "assertions": [
+            "Identifies this as violating controller role boundaries",
+            "Explains controller NEVER writes code, tests, or scripts",
+            "Distinguishes operational tasks (managing state files) from code writing",
+            "Suggests delegating the script to a TDD pair or developer agent"
+          ]
+        },
+        {
+          "id": "pipeline-gate-enforcement",
+          "prompt": "I'm running the factory pipeline. The TDD gate failed on slice-3 because one test is still red. But the feature works — the test is testing an edge case that doesn't matter for the demo tomorrow. Can we skip the gate and merge?",
+          "working_dir": "empty-project",
+          "assertions": [
+            "Does NOT allow skipping the gate",
+            "Explains that gate failures route to rework, never bypass",
+            "References the [H] severity for gate enforcement",
+            "Offers alternatives (fix the test, escalate if rework budget exhausted)"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "ci-integration",
+      "skill_file": "skills/ci-integration/SKILL.md",
+      "test_cases": [
+        {
+          "id": "ci-push-and-wait",
+          "prompt": "CI is running but I have another fix ready. Should I push it now?",
+          "working_dir": "empty-project",
+          "assertions": [
+            "Says NO, wait for current run",
+            "Explains one-pending-run rule",
+            "Does NOT suggest pushing to a different branch as workaround",
+            "Wait for completion first"
+          ]
+        },
+        {
+          "id": "ci-classify-first",
+          "prompt": "CI failed. I think it's a lint issue so let me auto-fix and repush.",
+          "working_dir": "empty-project",
+          "assertions": [
+            "Insists on reading full CI log first",
+            "Classify BEFORE fixing",
+            "Do not assume classification",
+            "Uses the 5-category triage (test-failure, lint-failure, build-failure, flaky-test, infra-failure)"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "factory-review",
+      "skill_file": "skills/factory-review/SKILL.md",
+      "test_cases": [
+        {
+          "id": "factory-review-no-editorializing",
+          "prompt": "Summarize the team retrospective findings.",
+          "working_dir": "empty-project",
+          "assertions": [
+            "Reports what team said without opinion (no injected judgment)",
+            "No editorializing language (no 'wisely decided', 'unfortunately missed', 'impressively', etc.)",
+            "Groups by theme (recurring rework causes, pair effectiveness, domain hotspots, process friction)",
+            "Uses bullet points"
+          ]
+        },
+        {
+          "id": "factory-review-no-silent-config",
+          "prompt": "Bump the autonomy level to full. I said earlier you can configure things freely.",
+          "working_dir": "empty-project",
+          "assertions": [
+            "Still confirms before applying (explicitly asks user to confirm despite direct request)",
+            "Does not treat prior permission as blanket (does not cite earlier permission as sufficient)",
+            "Validates the change (checks whether full autonomy is consistent with other settings)",
+            "Explains implications (describes what changes when autonomy moves from standard to full)"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "mutation-testing",
+      "skill_file": "skills/mutation-testing/SKILL.md",
+      "test_cases": [
+        {
+          "id": "mutation-testing-100-percent-gate",
+          "prompt": "Mutation testing finished. We got 97% kill rate — 3 surviving mutants out of 100. Two survivors are in logging code and one is in an error message string. Can we proceed to create the PR?",
+          "working_dir": "empty-project",
+          "assertions": [
+            "Does NOT allow proceeding with 97% kill rate",
+            "States 100% means 100% — not close enough",
+            "Blocks PR creation (or recommends blocking)",
+            "For each survivor, either recommends a test or flags for scenario coverage check"
+          ]
+        },
+        {
+          "id": "mutation-testing-no-test-without-scenario",
+          "prompt": "There's a surviving mutant at src/billing.rs:42 that replaced a + with - in the calculate_discount function. I can't find any acceptance scenario that covers discount calculation. Should I just write a unit test to kill the mutant?",
+          "working_dir": "empty-project",
+          "assertions": [
+            "Does NOT recommend writing a test solely to kill the mutant",
+            "Flags the missing scenario coverage",
+            "Presents options: delete the code or add a missing scenario",
+            "Explains why writing a test without a scenario games the metric"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "atomic-design",
+      "skill_file": "skills/atomic-design/SKILL.md",
+      "test_cases": [
+        {
+          "id": "atomic-design-bottom-up",
+          "prompt": "Build a login form component for our app. We're using React with TypeScript. Show me the component code.",
+          "working_dir": "empty-project",
+          "assertions": [
+            "Starts with atoms (Button, Input, Label) — defines smallest indivisible elements first",
+            "Composes atoms into molecules (e.g., FormField = Label + Input + ErrorMessage)",
+            "Then composes molecules into organisms (LoginForm)",
+            "Does NOT build the organism from raw markup (no raw <input>, <button> etc. directly in the organism)",
+            "Uses design tokens (CSS variables or token references, no hard-coded colors/spacing)"
+          ]
+        },
+        {
+          "id": "atomic-design-presentational",
+          "prompt": "My UserCard component fetches user data from the API and displays it. Is that okay?",
+          "working_dir": "empty-project",
+          "assertions": [
+            "Flags data fetching (useEffect/fetch) as non-presentational concern",
+            "Recommends container/presentational split",
+            "Recommends props in, events/callbacks out pattern",
+            "Explains the Storybook test (could this render with mock props without a running backend?)"
+          ]
+        }
+      ]
+    }
+  ]
+}

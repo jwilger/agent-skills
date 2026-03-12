@@ -5,18 +5,15 @@ description: >-
   (decompose, slice readiness review, implement via TDD pairs, three-stage
   code review, address feedback, mutation testing, push/CI, merge/flag).
   Manages slice queue (walking skeleton first, dependency ordering), dispatches
-  TDD pairs with capability detection (Agent tool or chaining),
-  enforces 5 binary quality gates with 3-cycle rework budgets and human
-  escalation, maintains audit trail, and respects strict controller role
-  boundaries (never writes code, delegates all creative work). Supports three
-  autonomy levels (conservative/standard/full with parallel worktree
-  isolation). Activate when running factory mode, orchestrating build phases,
-  managing slice queues, coordinating TDD pairs with review gates, or setting
-  up autonomous build pipelines. Triggers on: "run the pipeline", "factory
-  mode", "build phase", "slice queue", "dispatch TDD pair", "quality gates",
-  "auto-merge", "pipeline controller", "autonomous build", "gate failure
-  rework". NOT for: individual TDD sessions (use tdd), standalone code reviews
-  (use code-review), or CI-only workflows (use ci-integration).
+  TDD pairs with capability detection, enforces 5 binary quality gates with
+  3-cycle rework budgets and human escalation, maintains audit trail, and
+  respects strict controller boundaries (never writes code, delegates all
+  creative work). Supports three autonomy levels (conservative/standard/full).
+  Use when running factory mode, orchestrating build phases, managing slice
+  queues, or coordinating TDD pairs with review gates. Triggers on: "run the
+  pipeline", "factory mode", "build phase", "slice queue", "quality gates",
+  "autonomous build". NOT for: individual TDD (use tdd), standalone code
+  reviews (use code-review), CI-only workflows (use ci-integration).
 license: CC0-1.0
 metadata:
   author: jwilger
