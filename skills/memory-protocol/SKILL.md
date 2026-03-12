@@ -19,6 +19,7 @@ metadata:
   context: []
   phase: build
   standalone: true
+  constraint_resolution: true
 ---
 
 # Memory Protocol
@@ -255,25 +256,34 @@ See `references/working-state.md` for the full format and examples.
 
 ### Self-Reminder Protocol
 
-Long sessions cause instruction decay. Counter this by periodically
-re-reading critical context:
-
-- Every 5-10 messages, re-read: WORKING_STATE.md, role constraints, active task
-- After ANY context compaction, immediately re-read all state before acting
-- Critical for: pipeline controllers, team coordinators, long TDD sessions
-
-The self-reminder is the primary defense against role drift.
+See `CONSTRAINT-RESOLUTION.md` in the template directory for the
+consolidated self-reminder protocol (frequency, combined re-read list,
+and post-compaction rules).
 
 ## Enforcement Note
 
-This skill requires Memento MCP (`mcp__memento__*` tools). If Memento is not
-available, the skill cannot function — install and configure Memento MCP
-before using this skill.
+Advisory in all modes. Recall and storage discipline are self-enforced.
+The constraint against `read_graph` is gating: the tool will return
+unhelpful results, acting as a natural deterrent.
 
-This skill provides advisory guidance; it cannot mechanically force recall or
-storage. The recall-before-act, multi-dimensional search, error-triggered
-recall, and store-after-discovery patterns depend on the agent following the
-protocol consistently.
+**Hard constraints:**
+- Recall before acting on non-trivial tasks: `[RP]` -- if Memento is
+  unavailable, document the gap, continue without memory, inform user.
+
+## Constraints
+
+- **"At least two searches -- not just one"**: Two searches means two
+  semantically different queries exploring different dimensions of the
+  problem. Searching "auth middleware" and "authentication middleware" is
+  one search with a synonym, not two searches. The spirit is: explore
+  both the technical dimension (what technology/pattern) and the process
+  dimension (what decisions/conventions exist).
+- **"Non-trivial task" threshold**: A task is non-trivial if its outcome
+  depends on project context -- conventions, prior decisions, architectural
+  choices, or domain knowledge. A task is trivial if any competent agent
+  would produce the same output regardless of project history. When in
+  doubt, recall. The cost of an unnecessary search is seconds; the cost
+  of missing relevant context is rework.
 
 ## Verification
 

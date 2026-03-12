@@ -123,11 +123,30 @@ produce it, even for passing runs.
 
 ## Enforcement Note
 
-This skill provides advisory guidance. It instructs the agent to follow
-push-and-wait discipline and structured triage but cannot mechanically prevent
-concurrent pushes. When used within a pipeline orchestrator, the pipeline can
-enforce the one-pending-run constraint. In standalone use, the agent follows
-these practices by convention.
+- **Pipeline mode**: Gating. CI pass/fail mechanically gates merge.
+- **Standalone mode**: Advisory. The agent self-enforces push-and-wait
+  discipline.
+
+**Hard constraints:**
+- Push-and-wait: `[H]` in pipeline mode, `[RP]` in standalone
+- Flaky pass not counted as real pass: `[H]`
+
+## Constraints
+
+- **Push-and-wait**: One pending run means one. Not "one per branch" or
+  "one per type of change." If a CI run is in progress, do not push
+  regardless of how unrelated the change seems. The discipline exists
+  because CI resource contention and merge ordering matter.
+- **Failure classification**: Classify BEFORE attempting any fix. Not "I
+  tried a fix and it worked, so it must have been a lint failure." The
+  classification determines the fix strategy, not the other way around.
+  If you can't confidently classify, investigate further -- don't guess
+  and fix.
+- **Flaky test**: A flaky test is one that produces different results on
+  the same code. "Passes on retry without code changes" is the definition.
+  If you changed the environment, the retry is not evidence of flakiness --
+  it's evidence of an environment-dependent test. Those are different
+  problems with different fixes.
 
 ## Verification
 

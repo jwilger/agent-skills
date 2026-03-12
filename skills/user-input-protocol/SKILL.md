@@ -204,10 +204,25 @@ Decisions needed:
 
 ## Enforcement Note
 
-This skill is advisory. It instructs agents to pause at decision points
-and use structured checkpoints. The agent follows these practices by
-convention. If you observe the agent making decisions it should have asked
-about, point it out.
+- **Standalone mode**: Advisory. The agent self-enforces pause discipline.
+- **Pipeline mode**: Structural. AWAITING_USER_INPUT writes pipeline state
+  to disk and halts the current agent.
+
+**Hard constraints:**
+- Human input required for judgment decisions: `[RP]`
+
+## Constraints
+
+- **"Stop immediately, do not guess"**: "Stop" means stop the decision
+  path, not necessarily stop all work. If other unrelated work can proceed,
+  proceed with it. But do not make progress on the path that requires the
+  decision -- not even "preparing" code that assumes one option. Preparing
+  IS deciding.
+- **"2-4 specific options"**: Options must be genuinely distinct
+  alternatives, not variations of the same approach. "Use library A," "Use
+  library A with option X," "Use library A with option Y" is one option
+  with configuration choices, not three options. Each option should
+  represent a meaningfully different path.
 
 ## Verification
 

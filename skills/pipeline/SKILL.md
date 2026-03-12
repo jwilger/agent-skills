@@ -25,6 +25,7 @@ metadata:
   context: [test-files, domain-types, source-files, ci-results, task-state, git-history]
   phase: build
   standalone: false
+  constraint_resolution: true
 ---
 
 # Pipeline
@@ -235,10 +236,9 @@ memory.
 
 Long pipeline runs are vulnerable to context compaction and crashes.
 
-**Self-reminder protocol:** Every 5-10 messages, re-read:
-- `WORKING_STATE.md` for current pipeline state
-- The gate task list for the active slice
-- Controller Role Boundaries (above)
+**Self-reminder protocol:** See `CONSTRAINT-RESOLUTION.md` in the template
+directory for the consolidated self-reminder protocol (frequency, combined
+re-read list, and post-compaction rules).
 
 **Crash recovery:** See `references/crash-recovery.md` for the full
 recovery procedure. Key principle: read persistent state, do not
@@ -263,12 +263,34 @@ skill version, and scenario ID.
 
 ## Enforcement Note
 
-The pipeline provides structural enforcement through gating: no stage proceeds
-without evidence from the prior stage, and gate failures mechanically route to
-rework. The pipeline cannot prevent an agent from producing low-quality work,
-but it can prevent low-quality work from reaching the main branch. Rework
-budgets and human escalation provide a safety net when automated gates are
-insufficient.
+Gating in all modes. The pipeline provides gating enforcement: no stage
+proceeds without meeting gate criteria. Gate failures route to rework,
+never bypass. This prevents low-quality work from reaching the main branch.
+It cannot prevent low-quality work from being written -- that depends on
+the advisory/structural enforcement of the skills invoked during each phase.
+
+**Hard constraints:**
+- Gate failures route to rework, never skip: `[H]`
+- Rework budget exhausted (3 cycles): `[RP]` -- escalate, do not force a
+  4th cycle
+- Walking skeleton first: `[H]` -- first slice in any project must be a
+  walking skeleton
+
+See `CONSTRAINT-RESOLUTION.md` in the template directory for all known
+cross-skill conflicts.
+
+## Constraints
+
+- **Controller role boundaries**: The controller NEVER writes code, tests,
+  types, or documentation content. "Operational" tasks like updating gate
+  checklists, writing WORKING_STATE.md, and managing audit trail files are
+  not "writing code." But writing a "helper script" or "utility function"
+  to assist orchestration IS writing code and is forbidden.
+- **"No consensus during TDD build"**: This means the TDD pair implements
+  without team discussion. It does NOT mean the pair cannot ask clarifying
+  questions about the spec. A clarifying question is: "Does the AC mean X
+  or Y?" A consensus round is: "Should we use approach A or approach B?"
+  The former is allowed; the latter is not.
 
 ## Verification
 

@@ -133,10 +133,30 @@ Result: 90% of time in external API call. Not a database problem at all.
 
 ## Enforcement Note
 
-This skill provides advisory guidance. It instructs the agent to investigate
-before fixing but cannot mechanically prevent premature fix attempts. The
-agent follows these practices by convention. If you observe the agent
-skipping investigation, point it out.
+- **Standalone mode**: Advisory. The Iron Law is self-enforced.
+- **Pipeline mode**: Gating. Debugging evidence is required before fix
+  commits pass the TDD gate.
+
+**Hard constraints:**
+- Iron Law (investigate before fix): `[H]`
+- Three Strikes escalation: `[RP]`
+
+## Constraints
+
+- **Iron Law**: The temptation to skip investigation is strongest when the
+  fix seems obvious. That is exactly when investigation is most valuable --
+  because "obvious" fixes that are wrong waste more time than investigation
+  would have cost. If you're reasoning about why THIS bug is the exception
+  that doesn't need investigation, you're violating the Iron Law.
+- **Three Strikes**: After three failed hypotheses, the problem is not what
+  you think it is. "Stop" means stop fixing and return to investigation. It
+  does not mean stop working entirely. Re-examine your assumptions, widen
+  your investigation, look at adjacent systems. If you still can't identify
+  the root cause, escalate.
+- **Undo failed hypotheses**: "Undo completely" means the codebase returns
+  to exactly the state before the hypothesis was tested. Not "mostly undone
+  with a few improvements kept." Not "undone in the main file but I left the
+  debug logging." Every change from the failed hypothesis is reverted.
 
 ## Verification
 

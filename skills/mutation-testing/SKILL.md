@@ -26,6 +26,7 @@ metadata:
   context: [test-files, source-files]
   phase: ship
   standalone: true
+  constraint_resolution: true
 ---
 
 # Mutation Testing
@@ -192,12 +193,30 @@ When invoked by the pipeline orchestrator:
 
 ## Enforcement Note
 
-This skill provides advisory guidance. It instructs the agent to run
-mutation testing and enforce a 100% kill rate, but cannot mechanically
-prevent PR creation with surviving mutants. When used with the `tdd` skill
-in automated mode, the orchestrator can gate PR creation on mutation score.
-In guided mode or standalone, the agent follows this practice by convention.
-If you observe the agent skipping mutation testing before a PR, point it out.
+- **Pipeline mode**: Gating. 100% kill rate is a gate -- failing blocks
+  merge.
+- **Standalone mode**: Advisory. The agent reports but cannot prevent
+  override.
+
+**Hard constraints:**
+- 100% kill rate: `[H]` in pipeline mode, `[RP]` in standalone (block PR,
+  user can override with documented reason)
+
+See `CONSTRAINT-RESOLUTION.md` in the template directory for override
+documentation requirements.
+
+## Constraints
+
+- **100% kill rate**: 100% means 100%. Not "close enough." Not "98% with
+  justification." The only path below 100% is an explicit user override,
+  which MUST include a documented reason explaining why each surviving
+  mutant is acceptable. "I want to ship" is not a reason. "This mutant
+  tests logging output which is not a business rule" is a reason.
+- **"No test without scenario"**: Writing a test solely to kill a mutant
+  without a corresponding scenario games the metric. The test proves you
+  can kill the mutant, not that the behavior matters. If no scenario covers
+  the behavior, the correct response is to flag the gap for the team -- the
+  missing scenario might reveal a missing requirement.
 
 ## Verification
 

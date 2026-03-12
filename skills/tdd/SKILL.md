@@ -17,6 +17,7 @@ metadata:
   context: [test-files, domain-types, source-files]
   phase: build
   standalone: true
+  constraint_resolution: true
 ---
 
 # TDD
@@ -235,25 +236,34 @@ from `references/hooks/claude-code-hooks.json`.
 
 ## Enforcement Note
 
-Enforcement is proportional to capability:
+- **Guided mode**: Advisory. The human enforces by controlling phase transitions.
+- **Chaining mode**: Advisory. The agent self-enforces phase boundaries.
+- **Subagent mode**: Structural. Context isolation and handoff schemas enforce
+  phase boundaries. Missing evidence blocks handoffs.
+- **Pipeline mode**: Gating. Evidence gates reject incomplete phase transitions.
+- **Optional hooks** (Claude Code): Mechanical. Pre-tool-use hooks block
+  unauthorized file edits per phase. See `references/claude-code.md`.
 
-- **Guided mode**: Advisory. The skill text instructs correct behavior but
-  cannot prevent violations. The human enforces by controlling phase
-  transitions.
-- **Automated mode (chaining)**: Advisory with self-enforcement. The agent
-  follows phase boundaries by convention.
-- **Automated mode (subagents)**: Structural enforcement via context
-  isolation and handoff schemas. Subagents receive only phase-relevant files.
-  Missing evidence blocks handoffs.
-- **Automated mode (subagents with personas)**: Enhanced enforcement through
-  role specialization. Named personas bring domain-specific review focus.
-  The orchestrator ensures every handoff includes complete evidence before
-  spawning the next phase agent.
-- **Optional hooks** (Claude Code): Mechanical enforcement. Pre-tool-use hooks
-  block unauthorized file edits per phase. See `references/claude-code.md`.
+**Hard constraints:**
+- Phase boundary violation (wrong file type in wrong phase): `[H]`
+- Domain veto escalation (contested design decision): `[RP]`
+- Commit gate (no new RED before prior cycle committed): `[H]`
 
-No mode guarantees perfect discipline. If you observe violations -- production
-code edited during RED, domain review skipped, commits missing -- point it out.
+See `references/constraint-resolution.md` in the template directory for
+pipeline rework budget conflicts and domain veto resolution in pipeline mode.
+
+## Constraints
+
+- **Chaining mode self-enforcement**: Self-enforcement means you produce the
+  same file-type restrictions as if separate agents were enforcing them.
+  Writing production code during RED phase violates this constraint even
+  though no mechanism prevents it. If you catch yourself reasoning about
+  why a phase boundary doesn't apply in chaining mode, you are violating it.
+- **"~20 lines, one file" scope check**: This is a judgment heuristic, not a
+  precise threshold. The spirit is: if the change touches multiple concerns,
+  multiple files, or requires understanding distant code, it is too large for
+  a single cycle. Do not game this by making a 40-line change across 2
+  functions in one file and claiming it's "one file."
 
 ## Verification
 

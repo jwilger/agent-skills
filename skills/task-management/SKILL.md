@@ -25,6 +25,7 @@ metadata:
   context: [task-state]
   phase: build
   standalone: true
+  constraint_resolution: true
 ---
 
 # Task Management
@@ -194,12 +195,26 @@ is the same regardless of tool. The tool is interchangeable; the discipline is n
 
 ## Enforcement Note
 
-This skill provides advisory guidance on task decomposition and tracking. It
-cannot mechanically prevent an agent from skipping task creation or working on
-blocked items. When used with the `tdd` skill in automated mode, the
-orchestrator can enforce task activation before code changes and block work on
-tasks with unresolved dependencies. In other contexts, the agent follows these
-practices by convention.
+Advisory in all modes. Task structure and dependency tracking are
+self-enforced.
+
+**Hard constraints:**
+- Close reason required when closing a task: `[RC]`
+
+## Constraints
+
+- **"One active task per agent"**: Per agent means per execution context. In
+  pipeline mode with parallel worktrees, each worktree is a separate context.
+  A single human operator managing multiple worktrees is not violating this
+  rule. A single agent context with multiple "active" tasks is.
+- **Binary acceptance criteria**: "Binary" means an outside observer could
+  verify met/not-met without subjective judgment. "Code is clean" is not
+  binary. "All functions are under 50 lines" is binary. "Tests pass" is
+  binary. "Code follows best practices" is not. If you have to argue about
+  whether a criterion is met, it's not binary.
+
+See `CONSTRAINT-RESOLUTION.md` in the template directory for pipeline
+parallelization rules.
 
 ## Verification
 

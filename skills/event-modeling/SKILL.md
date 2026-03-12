@@ -202,12 +202,29 @@ purpose.
 
 ## Enforcement Note
 
-This skill provides advisory guidance. It instructs the agent on the event
-modeling methodology but cannot mechanically prevent skipping steps or
-producing incomplete models. When used with the `tdd` skill, GWT scenarios
-from event modeling become acceptance tests that enforce the model. Without
-it, the agent follows these practices by convention. If you observe steps
-being skipped, point it out.
+- **Standalone mode**: Advisory. The agent follows the nine-step methodology
+  by convention.
+- **Pipeline mode**: Gating. Incomplete models (missing GWT scenarios,
+  undefined automations) block slice decomposition.
+
+**Hard constraints:**
+- Do not proceed with gaps in the model: `[RP]`
+
+## Constraints
+
+- **"MUST follow nine-steps.md"**: Following the nine steps means executing
+  each step's specific activities and producing its specific outputs. It does
+  not mean reading the reference and claiming "I followed the spirit." Each
+  step has defined outputs -- produce them.
+- **"Do not design multiple workflows simultaneously"**: This includes
+  starting "discovery" for Workflow 2 while Workflow 1's steps are incomplete.
+  Discovery IS design. If you're gathering information about a future
+  workflow, you're designing it.
+- **Facilitation vs. stenography**: Facilitation means asking questions that
+  help the domain expert discover things they haven't articulated yet. It
+  does not mean asking leading questions that guide toward your preferred
+  answer. The test: could the expert's answer genuinely surprise you? If not,
+  you're leading, not facilitating.
 
 ## Verification
 

@@ -27,6 +27,7 @@ metadata:
   context: [git-history]
   phase: build
   standalone: true
+  constraint_resolution: true
 ---
 
 # Session Reflection
@@ -87,11 +88,9 @@ until the gap is confirmed solved across 3+ sessions. See
 
 ### Self-Reminder Protocol
 
-Every 5-10 messages during long sessions, re-read: project instructions
-(CLAUDE.md, AGENTS.md, coordinator-instructions.md as applicable), role
-constraints, current task context, WORKING_STATE.md. Mandatory after context
-compaction (you lose implicit context). This is the primary defense against
-role drift in long sessions.
+See `CONSTRAINT-RESOLUTION.md` in the template directory for the
+consolidated self-reminder protocol (frequency, combined re-read list,
+and post-compaction rules).
 
 ### Working State Persistence
 
@@ -122,13 +121,25 @@ change to the workflow.
 
 ## Enforcement Note
 
-This skill provides advisory guidance. The self-reminder protocol and working
-state maintenance require agent self-discipline. On Claude Code, a
-pre-tool-use hook could mechanically enforce state file reads, but no such
-hook is provided by default. The reflection triggers are event-driven and
-cannot be mechanically enforced. If you observe the agent drifting from its
-role or repeating corrected mistakes, point out the pattern and suggest a
-reflection.
+Advisory in all modes. Reflection triggers and instruction generation are
+self-enforced.
+
+**Hard constraints:**
+- Mandatory after context compaction: `[H]` -- context compaction destroys
+  implicit state; re-reading is not optional.
+
+## Constraints
+
+- **"3+ repeated corrections"**: A "repeated correction" means the user
+  corrected the same underlying behavior multiple times. Different phrasings
+  of the same correction count as one correction repeated. Different
+  corrections in the same category (e.g., two different formatting
+  preferences) count separately.
+- **"Never remove instructions until confirmed solved across 3+ sessions"**:
+  This prevents premature cleanup. An instruction that hasn't triggered in
+  3 sessions might be preventing the problem -- that's success, not staleness.
+  Remove only when you have positive evidence the underlying behavior is
+  fixed (e.g., the code pattern that caused the issue no longer exists).
 
 ## Verification
 
