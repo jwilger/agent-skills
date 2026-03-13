@@ -17,7 +17,7 @@ description: >-
 license: CC0-1.0
 metadata:
   author: jwilger
-  version: "4.1.1"
+  version: "4.2.0"
   requires: [tdd, code-review, mutation-testing, task-management, ci-integration]
   context: [test-files, domain-types, source-files, ci-results, task-state, git-history]
   phase: build
@@ -57,6 +57,17 @@ pre-implementation type discovery), and UI components referenced (triggering
 conditional context gathering when the slice touches the interface layer). See
 `references/slice-queue.md` for the full two-tier scenario schema.
 
+**Vertical slice integrity:** Every slice MUST deliver behavior through a
+user-facing boundary (UI for a human) or an external-API boundary (for
+third-party software consumers). Internal APIs that serve the application's
+own front-end are NOT external — slices touching them still require UI
+acceptance tests. There are no "domain-only," "infrastructure-only," or
+"backend-only" slices — infrastructure exists to serve functionality. If a
+slice does not include a user-facing or external-API boundary, it is not a
+vertical slice and MUST NOT enter the queue. Any rare deviation (e.g.,
+backend restructuring with no net-new acceptance tests) requires explicit
+human approval before the slice enters the queue.
+
 **Ordering strategy:** Walking skeleton first (the thinnest end-to-end path),
 then by dependency graph (slices whose predecessors are complete), then by
 priority. The first slice in any project must always be a walking skeleton.
@@ -85,7 +96,16 @@ quality gate. A gate failure routes back for rework; it never skips forward.
    - Create Tasks from the plan's Task Breakdown section with `blockedBy` encoding
      component pre-work dependencies
 
-3. **Implement** -- Before dispatching the TDD pair, the pipeline gathers
+3. **Implement** -- **TDD skill invocation gate (BLOCKING):** Before
+   dispatching any TDD work, invoke the `tdd` skill. The TDD skill detects
+   harness capabilities and loads the appropriate strategy entry-point
+   (orchestrator.md for subagent strategy, chaining rules for chaining
+   strategy). The pipeline MUST NOT dispatch TDD phases until the TDD skill's
+   orchestration rules are loaded — without them, the pipeline lacks scenario
+   boundary classification, outside-in progression enforcement, and
+   drill-down rules. This is not optional prose; it is a prerequisite gate.
+
+   Before dispatching the TDD pair, the pipeline gathers
    pre-implementation context scoped to what TDD needs: Contract Tiers 2–3
    (acceptance scenarios and feature constraints), existing domain types
    matching the slice's referenced types, and event model context. If the

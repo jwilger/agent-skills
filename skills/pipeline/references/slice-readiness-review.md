@@ -122,7 +122,7 @@ Each reviewer has a specific scope. Include their focus explicitly in the spawn 
 | UX | User journey coherence, UX concerns |
 | Product | Product value, scope alignment, MVP fit |
 | Event modeling | Scenario completeness, event model alignment |
-| Pipeline integrity | Cross-slice dependency check: compare this slice's bounded context, `domain_types_referenced`, and `ui_components_referenced` against all currently `active` slices in `.factory/slice-queue.json`. If overlap exists on any shared domain type or bounded context, the slice is **not ready** — add the conflicting active slice to `depends_on` before approval. |
+| Pipeline integrity | **Cross-slice dependency check:** compare this slice's bounded context, `domain_types_referenced`, and `ui_components_referenced` against all currently `active` slices in `.factory/slice-queue.json`. If overlap exists on any shared domain type or bounded context, the slice is **not ready** — add the conflicting active slice to `depends_on` before approval. **Vertical slice integrity:** every slice MUST deliver behavior through a user-facing boundary (UI for a human) or an external-API boundary (for third-party software consumers). Internal APIs that serve the application's own front-end are NOT external — slices touching them still require UI acceptance tests. There are no "domain-only," "infrastructure-only," or "backend-only" slices — infrastructure exists to serve functionality. If a slice does not include a user-facing or external-API boundary, it is **not ready** regardless of how its scenarios are worded. Any rare deviation (e.g., backend restructuring with no net-new acceptance tests) requires explicit human approval before the slice enters the queue. |
 
 ## Component Pre-Work Gate
 
@@ -145,6 +145,9 @@ Additional requirements:
 - Specification quality checklist is complete
 - Zero overlap with active slices on shared domain types or bounded context
   (or explicit dependency declared in `depends_on`)
+- **Vertical slice integrity (BLOCKING):** Slice delivers behavior through a
+  user-facing or external-API boundary. A slice without such a boundary is
+  NOT READY — no exceptions without explicit human approval
 
 ## Relation to TDD Skill
 
