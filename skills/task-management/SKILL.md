@@ -16,7 +16,7 @@ license: CC0-1.0
 compatibility: Designed for any coding agent (Claude Code, Codex, Cursor, OpenCode, etc.)
 metadata:
   author: jwilger
-  version: "1.2.1"
+  version: "1.3.0"
   requires: []
   context: [task-state]
   phase: build
@@ -124,27 +124,41 @@ Use the dependency graph to find unblocked work.
 
 ### Slice-to-Task Decomposition
 
-When working from vertical slices with GWT (Given-When-Then) scenarios (e.g., from event modeling), decompose slices into leaf tasks systematically:
+When working from vertical slices with GWT (Given-When-Then) scenarios (e.g.,
+from event modeling), decompose slices so that each task represents one
+testable behavior increment going through a full RED-GREEN-COMMIT cycle:
 
 1. Each GWT scenario becomes at least one task
-2. Order tasks by:
-   - **Walking skeleton dependencies first** -- infrastructure or plumbing that multiple scenarios need
-   - **Acceptance test (outermost)** -- the end-to-end test for the scenario
-   - **Unit-level subtasks** -- internal implementation tasks driven by the TDD cycle
-3. Each task includes:
-   - **Description:** Verb + outcome (e.g., "Implement deposit command handler")
+2. Each task = one TDD cycle: one failing test + its implementation + commit
+3. Order tasks by:
+   - **Walking skeleton dependencies first** -- infrastructure or plumbing
+     that multiple scenarios need (each as its own TDD cycle)
+   - **Acceptance scenario tasks** -- each scenario is a task that starts
+     with the outermost failing test and completes through drill-down cycles
+4. Each task includes:
+   - **Description:** Verb + outcome (e.g., "Implement deposit scenario
+     end-to-end via TDD")
    - **Acceptance criteria:** Directly from the GWT scenario
-   - **Estimated scope:** Files likely affected (helps with mutation testing scoping)
+   - **Estimated scope:** Files likely affected (helps with mutation testing
+     scoping)
 
 **Example:**
 ```
 Slice: "Customer deposits funds"
-  GWT: Given a verified account, When customer deposits $100, Then balance increases by $100
-    Task 1: Create Account aggregate with balance tracking (skeleton)
-    Task 2: Write acceptance test for deposit scenario (outermost)
-    Task 3: Implement deposit command handler (unit-level)
-    Task 4: Add deposit event persistence (unit-level)
+  Task 1: Walking skeleton — wire request-to-response path (RED: acceptance
+    test hits endpoint and gets 404 → GREEN: route exists, returns stub →
+    COMMIT)
+  Task 2: Deposit scenario — deposit $100 into verified account (RED:
+    acceptance test asserts balance increases → drill-down into command
+    handler, event persistence, projection — each inner cycle is
+    RED-GREEN-COMMIT within this task → outer acceptance test passes → COMMIT)
 ```
+
+**Anti-pattern:** Do not create tasks that batch multiple types or behaviors
+into one RED phase followed by a separate GREEN phase — this is waterfall
+disguised as TDD. A task like "Create all domain types" followed by
+"Implement all handlers" splits phases across tasks instead of keeping each
+task as a complete TDD cycle.
 
 ### Pipeline Tracking Metadata
 
