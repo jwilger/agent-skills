@@ -14,7 +14,7 @@ description: >-
 license: CC0-1.0
 metadata:
   author: jwilger
-  version: "3.5.0"
+  version: "3.6.0"
   requires: []
   context: []
   phase: build
@@ -58,6 +58,23 @@ If Memento MCP tools are NOT available, **stop and inform the user:**
 
 Then continue working without memory protocol practices — do not attempt
 a file-based workaround.
+
+### Anti-Pattern: File-Based Memory When Memento Is Available
+
+When this skill is active and Memento MCP tools are available, do NOT use any
+file-based memory system for cross-session knowledge storage. This includes
+the built-in `memory/` directory, `MEMORY.md` index, auto-memory features, or
+any other file-based persistence mechanism. All cross-session memory storage
+goes through Memento MCP tools exclusively.
+
+File-based memory systems and Memento serve the same purpose — persisting
+knowledge across sessions. Using both creates split-brain: knowledge stored in
+files is invisible to Memento searches, and knowledge in Memento is invisible
+to file reads. Pick one. When this skill is loaded, Memento is the one.
+
+Note: this does NOT prohibit `WORKING_STATE.md` (which is crash-recovery
+infrastructure, not cross-session memory) or project documentation files
+(which are deliverables, not memory).
 
 ### Recall Before Acting — NON-NEGOTIABLE
 
