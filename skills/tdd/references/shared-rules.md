@@ -39,12 +39,25 @@ drill down into the implementation.
 ## Scenario Boundary Classification (required before RED)
 
 Before writing any acceptance test, the orchestrator classifies the scenario:
-- Scan the GWT spec for user-visible behavior ("screen," "panel," "displays,"
-  "viewing," "opens," "types," "clicks," "navigates," "sees")
+- Scan the GWT spec for user-visible behavior. UI indicator words include
+  (non-exhaustive): "screen," "panel," "displays," "viewing," "opens,"
+  "types," "clicks," "navigates," "sees," "wizard," "form," "dashboard,"
+  "submits," "advances," "shown," "not shown," "login," "page," "button,"
+  "input," "modal," "dialog," "tab," "menu," "dropdown," "toggle,"
+  "checkbox," "link," "redirect," "landing," "profile," "settings," "list"
+  → If ANY element of the scenario describes user-observable UI behavior —
+  what a user sees, interacts with, or navigates to — classify as UI, even
+  if the slice is labeled "domain" or "infrastructure"
   → UI scenario → browser-boundary test (e.g. Playwright)
 - Background, machine-to-machine, no user-facing behavior
   → API scenario → HTTP-boundary test (e.g. endpoint/integration test)
 - When in doubt, classify as UI — browser tests prove more of the stack
+
+**Scope mismatch gate:** If the scenario is classified as UI but the slice has
+no web layer dependency (no UI framework, no browser test infrastructure), the
+orchestrator MUST STOP and escalate to the human — the slice scope is wrong,
+not the boundary classification. Do not downgrade a UI classification to
+"integration" to fit the slice's stated scope.
 
 The classification is made by the orchestrator, not the RED agent. It must be
 stated explicitly in the RED agent's spawn prompt. If the spawn prompt omits
