@@ -65,9 +65,9 @@ representability, and parse-don't-validate violations.
 
 1. Domain raises concern.
 2. Affected agent responds substantively.
-3. Orchestrator facilitates (max 2 rounds).
+3. Orchestrator facilitates — debate continues until resolved.
 4. No consensus: escalate to user via the ask-user skill or
-   AskUserQuestion tool.
+   AskUserQuestion tool. There is no round limit.
 
 ## Code Review Gate
 

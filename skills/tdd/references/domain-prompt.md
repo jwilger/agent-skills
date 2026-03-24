@@ -44,8 +44,8 @@ When you identify a violation:
 1. State the violation clearly.
 2. Propose the alternative.
 3. Explain the impact.
-4. Return with a DOMAIN CONCERN RAISED status. Max 2 rounds of debate,
-   then escalate to the user.
+4. Return with a DOMAIN CONCERN RAISED status. The debate continues until
+   resolved or escalated to the user — there is no round limit.
 
 ## Return Format (required)
 

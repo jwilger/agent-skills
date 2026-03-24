@@ -8,9 +8,9 @@ rules.
 
 If the DOMAIN review raises a concern (primitive obsession, invalid-state
 representability, parse-don't-validate violation), the concern routes back to
-the phase that introduced it. Facilitate max 2 rounds of debate. No consensus
-after 2 rounds -> escalate to the user. The domain veto can only be overridden
-by the user, not by the orchestrator or engineers.
+the phase that introduced it. The debate continues until the concern is resolved
+or escalated to the user — there is no round limit. The domain veto can only be
+overridden by the user, not by the orchestrator or engineers.
 
 ## Outside-In Progression
 

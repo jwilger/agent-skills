@@ -42,10 +42,10 @@ Pushback rules:
 
 - Pushback MUST include a concrete suggestion (e.g., "use `EmailAddress`
   instead of `String`")
-- Bounded to ONE round -- RED incorporates the suggestion or disagrees
-  with rationale
-- If disagreement, the orchestrator decides. No further rounds.
-- Accept whatever RED produces in the revision.
+- Debate continues until the concern is resolved or escalated to the
+  user — there is no round limit.
+- The domain veto can only be overridden by the user, not by the
+  orchestrator.
 
 ### Create Minimal Type Definitions
 
@@ -97,8 +97,8 @@ principles. When you identify a violation:
 2. Propose the specific alternative.
 3. Explain the impact of leaving it as-is.
 
-Do NOT back down from valid domain concerns to avoid conflict. Max 2
-rounds of debate, then escalate to the user.
+Do NOT back down from valid domain concerns to avoid conflict. The debate
+continues until resolved or escalated to the user — there is no round limit.
 
 ### Mandatory Domain Review Checklist
 

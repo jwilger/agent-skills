@@ -77,7 +77,8 @@ A compilation failure IS a test failure. Do not pre-create types to avoid
 compilation errors. Types flow FROM tests, never precede them.
 
 Domain review has veto power over primitive obsession and invalid-state
-representability. Vetoes escalate to the human after two rounds.
+representability. Debate continues until resolved or escalated to the human —
+there is no round limit.
 
 ### User-Facing Modes
 
