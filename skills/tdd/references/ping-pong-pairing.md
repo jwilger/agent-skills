@@ -15,7 +15,7 @@ subagent and passes results between them.
 Read `references/shared-rules.md` for rules that apply to all execution
 strategies:
 
-- Domain veto power (max 2 rounds, then escalate)
+- Domain veto power (no round limit — debate until resolved or escalate to user)
 - Outside-in progression (first test must target application boundary)
 - Type-first TDD anti-pattern (types flow from tests, never precede them)
 - Pre-implementation context checklist (architecture, glossary, types,
