@@ -20,6 +20,7 @@ metadata:
   context: [ci-results, git-history]
   phase: ship
   standalone: true
+effort: low
 ---
 
 # CI Integration

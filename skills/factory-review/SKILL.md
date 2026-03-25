@@ -20,6 +20,8 @@ metadata:
   context: [ci-results, git-history, task-state]
   phase: ship
   standalone: false
+effort: medium
+context: fork
 ---
 
 # Factory Review

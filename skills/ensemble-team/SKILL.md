@@ -20,6 +20,8 @@ metadata:
   phase: build
   standalone: true
   constraint_resolution: true
+effort: medium
+context: fork
 ---
 
 # Ensemble Team Setup

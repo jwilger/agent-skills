@@ -19,6 +19,7 @@ metadata:
   context: [domain-types, source-files]
   phase: decide
   standalone: true
+effort: high
 ---
 
 # Domain Modeling

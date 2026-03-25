@@ -23,6 +23,8 @@ metadata:
   phase: build
   standalone: false
   constraint_resolution: true
+effort: high
+context: fork
 ---
 
 # Pipeline

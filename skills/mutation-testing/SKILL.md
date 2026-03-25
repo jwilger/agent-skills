@@ -23,6 +23,7 @@ metadata:
   phase: ship
   standalone: true
   constraint_resolution: true
+effort: low
 ---
 
 # Mutation Testing

@@ -20,6 +20,7 @@ metadata:
   phase: build
   standalone: true
   constraint_resolution: true
+effort: low
 ---
 
 # Memory Protocol

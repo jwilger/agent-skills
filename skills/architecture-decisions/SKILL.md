@@ -22,6 +22,7 @@ metadata:
   phase: decide
   standalone: true
   constraint_resolution: true
+effort: high
 ---
 
 # Architecture Decisions

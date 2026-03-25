@@ -22,6 +22,7 @@ metadata:
   phase: ship
   standalone: true
   constraint_resolution: true
+effort: high
 ---
 
 # Code Review

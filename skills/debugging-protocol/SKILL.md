@@ -23,6 +23,7 @@ metadata:
   context: [source-files, test-files, git-history]
   phase: build
   standalone: true
+effort: high
 ---
 
 # Debugging Protocol

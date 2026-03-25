@@ -24,6 +24,7 @@ metadata:
   context: []
   phase: decide
   standalone: true
+effort: medium
 ---
 
 # Ticket Triage
