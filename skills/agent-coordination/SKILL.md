@@ -23,6 +23,7 @@ metadata:
   context: []
   phase: build
   standalone: true
+effort: low
 ---
 
 # Agent Coordination

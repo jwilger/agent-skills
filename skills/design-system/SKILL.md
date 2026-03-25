@@ -21,6 +21,7 @@ metadata:
   context: [event-model]
   phase: decide
   standalone: true
+effort: high
 ---
 
 # Design System

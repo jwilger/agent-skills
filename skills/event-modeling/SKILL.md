@@ -20,6 +20,7 @@ metadata:
   context: [event-model]
   phase: understand
   standalone: true
+effort: high
 ---
 
 # Event Modeling

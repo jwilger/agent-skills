@@ -22,6 +22,7 @@ metadata:
   phase: build
   standalone: true
   constraint_resolution: true
+effort: medium
 ---
 
 # Task Management

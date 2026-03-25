@@ -22,6 +22,7 @@ metadata:
   context: []
   phase: build
   standalone: true
+effort: low
 ---
 
 # User Input Protocol

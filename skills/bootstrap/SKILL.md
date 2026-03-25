@@ -19,6 +19,8 @@ metadata:
   context: []
   phase: understand
   standalone: true
+effort: medium
+context: fork
 ---
 
 # Bootstrap
